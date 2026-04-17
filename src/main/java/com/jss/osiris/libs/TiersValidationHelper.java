@@ -60,8 +60,8 @@ public class TiersValidationHelper {
             TiersSearch tiersSearch = new TiersSearch();
             tiersSearch.setIsToTakeCare(true);
             List<ITiersSearchResult> tiersToCare = tiersService.searchTiers(tiersSearch);
-            if (tiersToCare != null && tiersToCare.size() > 20)
-                throw new OsirisClientMessageException("Impossible d'avoir plus de 20 tiers à risque");
+            if (tiersToCare != null && tiersToCare.size() > 24)
+                throw new OsirisClientMessageException("Impossible d'avoir plus de 24 tiers à risque");
         }
 
         validationHelper.validateReferential(tiers.getTiersCategory(), false, "TiersCategory");

@@ -76,6 +76,7 @@
                 <table style="border : solid; border-color: rgb(0,83,159);width: 100%;">
                     <tr>
                         <td th:if="${billingDocument!=null} and ${billingDocument.isRecipientClient}">
+                            <span th:text="${responsable.tiers.denomination}"></span><br />
                             <span th:text="${responsable.firstname}+' ' +${responsable.lastname}"></span><br />
                             <span th:if="${responsable.tiers} and ${responsable.tiers.address!=null}"
                                 th:text="${responsable.tiers.address}"></span><br />

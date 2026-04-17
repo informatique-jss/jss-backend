@@ -20,7 +20,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Transient;
 
@@ -97,9 +96,10 @@ public class ServiceType implements Serializable, IId {
 	@JsonView(JacksonViews.MyJssListView.class)
 	private Boolean isMergeable;
 
-	@OneToOne(fetch = FetchType.LAZY)
-	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
+	@ManyToOne
 	@JoinColumn(name = "id_service_type_linked")
+	@JsonIgnoreProperties(value = { "serviceTypeLinked", "serviceFamily" })
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private ServiceType serviceTypeLinked;
 
 	private Boolean hideInMyJss;

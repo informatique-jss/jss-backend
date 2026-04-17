@@ -45,124 +45,134 @@ public interface TiersRepository extends QueryCacheCrudRepository<Tiers, Integer
         List<Tiers> findByPostalCodeAndDenomination(@Param("postalCode") String postalCode,
                         @Param("denomination") String denomination);
 
-        @Query(nativeQuery = true, value = "" +
-                        "   with nbr_for as ( " +
-                        "   select " +
-                        "          r.id_tiers as id_tiers , " +
-                        "           sum(case when a.id_confrere is not null and a.id_confrere = :jssSpelConfrereId then 1 else 0 end) as announcementJssNbr, "
-                        +
-                        "           sum(case when a.id_confrere is not null and a.id_confrere <> :jssSpelConfrereId then 1 else 0 end) as announcementConfrereNbr, "
-                        +
-                        "           sum(case when a.id_confrere is not null then 1 else 0 end) as announcementNbr, " +
-                        "           sum(case when p.id_formalite is not null or p.id_simple_provision is not null then 1 else 0 end ) as formalityNbr "
-                        +
-                        "   from " +
-                        "           asso_affaire_order aao " +
-                        "  left join service on service.id_asso_affaire_order = aao.id left join provision p on " +
-                        "           p.id_service= service.id " +
-                        "   left join announcement a on " +
-                        "           a.id = p.id_announcement " +
-                        "           join customer_order co on co.id = aao.id_customer_order " +
-                        "   left join responsable r on r.id = co.id_responsable " +
-                        "   where " +
-                        "           aao.id_customer_order is not null " +
-                        "   group by " +
-                        "           r.id_tiers )   " +
-                        "          select " +
-                        "          coalesce(t.denomination, " +
-                        "          concat(t.firstname, " +
-                        "          ' ', " +
-                        "          t.lastname)) tiersLabel, " +
-                        "          tc.label as tiersCategory, " +
-                        "          concat(t.address, ' ', city.label) as address, tc.label as tiersCategory, " +
-                        "          t.id as tiersId, " +
-                        "          tt.label as tiersTypeLabel, " +
-                        "          concat(e1.firstname, " +
-                        "          ' ', " +
-                        "          e1.lastname) as salesEmployeeLabel, " +
-                        "          e1.id as salesEmployeeId, " +
-                        "          min(co2.created_date) as firstOrderDay, " +
-                        "          max(co2.created_date) as lastOrderDay,  " +
-                        "          min(a1.created_date) as createdDateDay, " +
-                        "          max(nbr_for.announcementJssNbr) as announcementJssNbr, " +
-                        "          max(nbr_for.announcementConfrereNbr) as announcementConfrereNbr, " +
-                        "          max(nbr_for.announcementNbr) as announcementNbr, " +
-                        "          max(nbr_for.formalityNbr) as formalityNbr, " +
-                        "          concat(e2.firstname,' ',e2.lastname) as formalisteLabel, " +
-                        "          e2.id as formalisteId, " +
-                        "          t.is_new_tiers as isNewTiers, " +
-                        "          t.is_to_take_care as isToTakeCare, " +
-                        "          blt.label as billingLabelType, " +
-                        "          sum( case when i.id_invoice_status =115359  then -1 else 1 end * (ii.pre_tax_price-coalesce (ii.discount_amount, 0) ) ) as turnoverAmountWithoutTax, "
-                        +
-                        "          sum(case when i.id_invoice_status =115359  then -1 else 1 end *( ii.pre_tax_price + coalesce (ii.vat_price, 0)-coalesce (ii.discount_amount, 0)) ) as turnoverAmountWithTax, "
-                        +
-                        "          sum(case when i.id_invoice_status =115359  then -1 else 1 end * case when bt.id is not null and bt.is_debour is not null and bt.is_debour then 0 else 1 end * (ii.pre_tax_price-coalesce (ii.discount_amount, 0) ) ) as turnoverAmountWithoutDebourWithoutTax, "
-                        +
-                        "          sum(case when i.id_invoice_status =115359  then -1 else 1 end * case when bt.id is not null and bt.is_debour is not null and bt.is_debour then 0 else 1 end * (ii.pre_tax_price + coalesce (ii.vat_price, 0)-coalesce (ii.discount_amount, 0) ) ) as turnoverAmountWithoutDebourWithTax "
-                        +
-                        "  from " +
-                        "          tiers t left join city on city.id =  t.id_city " +
-                        "  left join tiers_category tc on " +
-                        "          tc.id = t.id_tiers_category  left join employee e2 on e2.id = t.id_formaliste   " +
-                        "  left join responsable r on " +
-                        "          r.id_tiers = t.id " +
-                        "  left join employee e1 on " +
-                        "          e1.id = t.id_commercial " +
-                        "  left join customer_order co2 on " +
-                        "          co2.id_responsable = r.id   "
-                        +
-                        "  left join index_entity a1 on " +
-                        "            a1.entity_type = 'Tiers' " +
-                        "          and a1.entity_id = t.id " +
-                        "  left join document d on " +
-                        "          d.id_tiers= t.id " +
-                        "          and d.id_document_type = :documentTypeBillingId " +
-                        "  left join billing_label_type blt on " +
-                        "          blt.id = d.id_billing_label_type " +
-                        "  left join invoice i on " +
-                        "          i.customer_order_id = co2.id " +
-                        "          and i.id_invoice_status in (:invoiceStatusIds) and  i.created_date>=:startDate and i.created_date<=:endDate "
-                        +
-                        "  left join invoice_item ii on " +
-                        "          ii.id_invoice = i.id " +
-                        "  left join billing_item bi on " +
-                        "          bi.id = ii.id_billing_item " +
-                        "  left join billing_type bt on " +
-                        "          bt.id = bi.id_billing_type " +
-                        "  left join nbr_for on " +
-                        "         nbr_for.id_tiers = t.id " +
-                        "  left join tiers_type tt on " +
-                        "         tt.id = t.id_tiers_type " +
-                        " where " +
-                        "    ( :tiersId =0 or t.id = :tiersId) " +
-                        "   and ( :isNewTiers =false or coalesce(t.is_new_tiers,false) = true) " +
-                        "   and ( :isToTakeCare =false or coalesce(t.is_to_take_care,false) = true) " +
-                        " and  ( :salesEmployeeId =0 or e1.id = :salesEmployeeId) " +
-                        " and (:mail='' or exists (select 1 from asso_tiers_mail a join mail m on m.id = a.id_mail where t.id = a.id_tiers and lower(m.mail) like '%' || lower(trim(:mail)) || '%')) "
-                        +
-                        " and (CAST(:label as text) ='' or CAST(r.id as text) = upper(CAST(:label as text)) or  upper(concat(r.firstname, ' ',r.lastname))  like '%' || trim(upper(CAST(:label as text)))  || '%' or  upper(t.denomination)  like '%' || trim(upper(CAST(:label as text)))  || '%' or  upper(concat(t.firstname, ' ',t.lastname))  like '%' || trim(upper(CAST(:label as text)))  || '%' ) "
-                        +
-                        " group by " +
-                        " 	 t.is_new_tiers,t.is_to_take_care , coalesce(t.denomination, " +
-                        " 	concat(t.firstname, " +
-                        " 	' ', " +
-                        " 	t.lastname)), " +
-                        " 	tc.label,concat(t.address, ' ', city.label) , " +
-                        " 	coalesce(concat(e1.firstname, " +
-                        " 	' ', " +
-                        " 	e1.lastname)), concat(e2.firstname,' ',e2.lastname),e2.id, tt.label," +
-                        " 	 e1.id, " +
-                        " 	blt.label ,t.id   having :withNonNullTurnover=false or sum( (ii.pre_tax_price-coalesce (ii.discount_amount, 0) ) )>0 "
-                        +
-                        "")
+        @Query(nativeQuery = true, value = """
+                        with rt as(
+                        select
+                        	t.id as id_tiers ,
+                        	sum(rt.turnover_without_tax_with_debour) as turnover_without_tax_with_debour,
+                        	sum(rt.turnover_with_tax_with_debour) as turnover_with_tax_with_debour,
+                        	sum(rt.turnover_without_tax_without_debour) as turnover_without_tax_without_debour,
+                        	sum(rt.turnover_with_tax_without_debour) as turnover_with_tax_without_debour,
+                         min(a1.created_date) as createdDateDay
+                        from reporting_turnover rt
+                        left join tiers t on
+                        	rt.id_tiers = t.id
+                        left join index_entity a1 on
+                        	a1.entity_type = 'Tiers'
+                        	and a1.entity_id = t.id
+                        where
+                        	rt.created_date >= :startDate
+                        	and rt.created_date <= :endDate
+                        group by
+                        	t.id),
+                        nbr_for as (
+                        select
+                        	r.id_tiers as id_tiers ,
+                        	sum(case when a.id_confrere is not null and a.id_confrere = :jssSpelConfrereId then 1 else 0 end) as announcementJssNbr,
+                        	sum(case when a.id_confrere is not null and a.id_confrere <> :jssSpelConfrereId then 1 else 0 end) as announcementConfrereNbr,
+                        	sum(case when a.id_confrere is not null then 1 else 0 end) as announcementNbr,
+                        	sum(case when p.id_formalite is not null or p.id_simple_provision is not null then 1 else 0 end ) as formalityNbr,
+                                min(co.created_date) as firstOrderDay,
+                                max(co.created_date) as lastOrderDay
+                        from
+                        	asso_affaire_order aao
+                        left join service on
+                        	service.id_asso_affaire_order = aao.id
+                        left join provision p on
+                        	p.id_service = service.id
+                        left join announcement a on
+                        	a.id = p.id_announcement
+                        join customer_order co on
+                        	co.id = aao.id_customer_order
+                        left join responsable r on
+                        	r.id = co.id_responsable
+                        where
+                        	aao.id_customer_order is not null
+                        group by
+                        	r.id_tiers)
+                        select
+                        	coalesce(t.denomination,
+                        	concat(t.firstname,
+                         	' ',
+                        	t.lastname)) tiersLabel,
+                        	tc.label as tiersCategory,
+                        	concat(t.address, ' ', city.label) as address,
+                        	tc.label as tiersCategory,
+                        	t.id as tiersId,
+                        	tt.label as tiersTypeLabel,
+                        	concat(e1.firstname,
+                            ' ',
+                            e1.lastname) as salesEmployeeLabel,
+                        	e1.id as salesEmployeeId,
+                        	nbr_for.announcementJssNbr as announcementJssNbr,
+                        	nbr_for.announcementConfrereNbr as announcementConfrereNbr,
+                        	nbr_for.announcementNbr as announcementNbr,
+                        	nbr_for.formalityNbr as formalityNbr,
+                        	concat(e2.firstname, ' ', e2.lastname) as formalisteLabel,
+                        	e2.id as formalisteId,
+                        	t.is_new_tiers as isNewTiers,
+                        	t.is_to_take_care as isToTakeCare,
+                        	blt.label as billingLabelType,
+                                nbr_for.firstOrderDay as firstOrderDay,
+                                nbr_for.lastOrderDay as lastOrderDay,
+                                rt.createdDateDay as createdDateDay,
+                        	rt.turnover_without_tax_with_debour as turnoverAmountWithoutTax,
+                        	rt.turnover_with_tax_with_debour as turnoverAmountWithTax,
+                        	rt.turnover_without_tax_without_debour as turnoverAmountWithoutDebourWithoutTax,
+                        	rt.turnover_with_tax_without_debour as turnoverAmountWithoutDebourWithTax
+                        from
+                        	tiers t
+                        left join city on
+                        	city.id = t.id_city
+                        left join tiers_category tc on
+                        	tc.id = t.id_tiers_category
+                        left join employee e2 on
+                        	e2.id = t.id_formaliste
+                        left join employee e1 on
+                        	e1.id = t.id_commercial
+                        left join document d on
+                        	d.id_tiers = t.id
+                        	and d.id_document_type = :documentTypeBillingId
+                        left join billing_label_type blt on
+                        	blt.id = d.id_billing_label_type
+                        left join rt on
+                        	rt.id_tiers = t.id
+                        left join nbr_for on
+                        	nbr_for.id_tiers = t.id
+                        left join tiers_type tt on
+                        	tt.id = t.id_tiers_type
+                        where
+                        	(:tiersId = 0
+                        		or t.id = :tiersId)
+                        	and ( :isNewTiers = false
+                        		or coalesce(t.is_new_tiers, false) = true)
+                        	and ( :isToTakeCare = false
+                        		or coalesce(t.is_to_take_care, false) = true)
+                        	and ( :salesEmployeeId = 0
+                        		or e1.id = :salesEmployeeId)
+                        	and (:mail = ''
+                        		or exists (
+                        		select
+                        			1
+                        		from
+                        			asso_tiers_mail a
+                        		join mail m on
+                        			m.id = a.id_mail
+                        		where
+                        			t.id = a.id_tiers
+                        			and lower(m.mail) like '%' || lower(trim(:mail)) || '%'))
+                        	and (cast(:label as text) = ''
+                        		or upper(t.denomination) like '%' || trim(upper(cast(:label as text))) || '%'
+                        			or upper(concat(t.firstname, ' ', t.lastname)) like '%' || trim(upper(cast(:label as text))) || '%' )
+                        	and (:withNonNullTurnover = false
+                        		or coalesce(rt.turnover_without_tax_with_debour, 0) > 0)
+                        """)
         List<ITiersSearchResult> searchTiers(@Param("tiersId") Integer tiersId,
                         @Param("salesEmployeeId") Integer salesEmployeeId,
                         @Param("mail") String mail,
                         @Param("startDate") LocalDateTime startDate,
                         @Param("endDate") LocalDateTime endDate, @Param("label") String label,
                         @Param("jssSpelConfrereId") Integer jssSpelConfrereId,
-                        @Param("invoiceStatusIds") List<Integer> invoiceStatusIds,
                         @Param("documentTypeBillingId") Integer documentTypeBillingId,
                         @Param("withNonNullTurnover") Boolean withNonNullTurnover,
                         @Param("isNewTiers") Boolean isNewTiers,

@@ -67,6 +67,7 @@ import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.FormaliteGuic
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.Partenaire;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.PiecesJointe;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.Rate;
+import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.RegularizationObject;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.RegularizationRequest;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.ValidationRequest;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.FormaliteGuichetUniqueStatus;
@@ -409,6 +410,7 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
 
             // update regularization items
             if (apiRegularizationRequests != null) {
+                savedFormaliteGuichetUnique.setRegularizationRequests(apiRegularizationRequests);
                 if (savedFormaliteGuichetUnique.getRegularizationRequests() != null)
                     for (RegularizationRequest regularizationRequest : savedFormaliteGuichetUnique
                             .getRegularizationRequests()) {
@@ -418,6 +420,12 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                                 regularizationRequestApi.setRejectionCause(regularizationRequest.getRejectionCause());
                             }
                         }
+
+                        if (regularizationRequest.getRegularizationObjects() != null
+                                && regularizationRequest.getRegularizationObjects().size() > 0)
+                            for (RegularizationObject regularizationObject : regularizationRequest
+                                    .getRegularizationObjects())
+                                regularizationObject.setRegularizationRequest(regularizationRequest);
                     }
             }
 

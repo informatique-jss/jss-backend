@@ -178,13 +178,19 @@
 
           <!-- Si type = particulier -->
           <div class="row mb-3" *ngIf="affaireTypes[indexAsso] && affaireTypes[indexAsso].id == individual.id">
-            <div class="col-md-6">
+            <div class="col-md-2">
+              <select-civility [(model)]="quotation.assoAffaireOrders[indexAsso].affaire.civility" label="Civilité"
+                [form]="idenficationForm" [propertyName]="'Civilité'+indexAsso" [isMandatory]="true"
+                [isDisabled]="false">
+              </select-civility>
+            </div>
+            <div class="col-md-5">
               <generic-input [(model)]="quotation.assoAffaireOrders[indexAsso].affaire.firstname" label="Prénom"
                 [form]="idenficationForm" [propertyName]="'firstname'+indexAsso" [isMandatory]="true"
                 [isDisabled]="false" [maxLength]="50">
               </generic-input>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-5">
               <generic-input [(model)]="quotation.assoAffaireOrders[indexAsso].affaire.lastname" label="Nom"
                 [form]="idenficationForm" [propertyName]="'lastname'+indexAsso" [isMandatory]="true"
                 [isDisabled]="false" [maxLength]="50">

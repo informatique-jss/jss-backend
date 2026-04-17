@@ -14,6 +14,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -44,6 +45,7 @@ import com.jss.osiris.modules.osiris.invoicing.model.BankTransfertSearch;
 import com.jss.osiris.modules.osiris.invoicing.model.BankTransfertSearchResult;
 import com.jss.osiris.modules.osiris.invoicing.model.DirectDebitTransfertSearch;
 import com.jss.osiris.modules.osiris.invoicing.model.DirectDebitTransfertSearchResult;
+import com.jss.osiris.modules.osiris.invoicing.model.GuMatchingResultDto;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoiceLabelResult;
@@ -64,6 +66,7 @@ import com.jss.osiris.modules.osiris.invoicing.model.RefundSearchResult;
 import com.jss.osiris.modules.osiris.invoicing.service.AzureInvoiceService;
 import com.jss.osiris.modules.osiris.invoicing.service.AzureReceiptInvoiceService;
 import com.jss.osiris.modules.osiris.invoicing.service.AzureReceiptService;
+import com.jss.osiris.modules.osiris.invoicing.service.GuMatchingService;
 import com.jss.osiris.modules.osiris.invoicing.service.InvoiceHelper;
 import com.jss.osiris.modules.osiris.invoicing.service.InvoiceItemService;
 import com.jss.osiris.modules.osiris.invoicing.service.InvoiceService;
@@ -180,6 +183,9 @@ public class InvoicingController {
 
     @Autowired
     InvoicingFacade invoicingFacade;
+
+    @Autowired
+    GuMatchingService guMatchingService;
 
     @GetMapping(inputEntryPoint + "/rff/create")
     public ResponseEntity<Invoice> generateInvoiceForRff(@RequestParam Integer idRff)
@@ -1164,6 +1170,16 @@ public class InvoicingController {
     @GetMapping(inputEntryPoint + "/invoicing/statistics")
     public ResponseEntity<InvoicingStatistics> getInvoicingStatistics() throws OsirisException {
         return new ResponseEntity<InvoicingStatistics>(customerOrderService.getInvoicingStatistics(),
+                HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/gu-matching")
+    public ResponseEntity<List<GuMatchingResultDto>> getInpiExtractAndOsirisMatchingResult(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate)
+            throws OsirisException {
+        return new ResponseEntity<List<GuMatchingResultDto>>(
+                guMatchingService.getInpiMatchingResult(startDate, endDate),
                 HttpStatus.OK);
     }
 

@@ -9,6 +9,7 @@ import { AutocompleteSiretComponent } from '../../../miscellaneous/components/fo
 import { GenericInputComponent } from '../../../miscellaneous/components/forms/generic-input/generic-input.component';
 import { GenericToggleComponent } from '../../../miscellaneous/components/forms/generic-toggle/generic-toggle.component';
 import { RadioGroupAffaireTypeComponent } from '../../../miscellaneous/components/forms/radio-group-affaire-type/radio-group-affaire-type.component';
+import { SelectCivilityComponent } from "../../../miscellaneous/components/forms/select-civility/select-civility.component";
 import { SelectCountryComponent } from '../../../miscellaneous/components/forms/select-country/select-country.component';
 import { OsiTooltipComponent } from "../../../miscellaneous/components/osi-tooltip/osi-tooltip.component";
 import { Affaire } from '../../../my-account/model/Affaire';
@@ -36,7 +37,8 @@ import { ServiceFamilyGroupService } from '../../services/service.family.group.s
     SelectCountryComponent,
     GenericToggleComponent,
     AutocompleteCityComponent,
-    OsiTooltipComponent]
+    OsiTooltipComponent,
+    SelectCivilityComponent]
 })
 export class IdentificationComponent implements OnInit {
 
@@ -160,7 +162,6 @@ export class IdentificationComponent implements OnInit {
 
   }
 
-
   refreshIsRegisteredAffaire() {
     if (this.quotation)
       for (let i = 0; i < this.quotation.assoAffaireOrders.length; i++)
@@ -213,6 +214,7 @@ export class IdentificationComponent implements OnInit {
       let allAssoOk = true;
       for (let i = 0; i < this.quotation.assoAffaireOrders.length; i++) {
         let asso = this.quotation.assoAffaireOrders[i];
+        asso.affaire.isIndividual = this.affaireTypes[i].id == individual.id;
         if (!asso.affaire) {
           allAssoOk = false;
         } else if (!asso.affaire.id) {
