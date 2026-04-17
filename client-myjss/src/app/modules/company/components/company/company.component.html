@@ -6,7 +6,7 @@
       <li class="breadcrumb-item"><a routerLink="/company/about-us">La société</a></li>
       <li class="breadcrumb-item">
         @if (selectedTab) {
-          <span>{{ selectedTab.label }}</span>
+        <span>{{ selectedTab.label }}</span>
         }
       </li>
     </ol>
@@ -14,13 +14,13 @@
 
   <!-- Nav tabs -->
   <ul class="nav nav-tabs " role="tablist">
-    @for (item of companyItems; track item) {
-      <li class="nav-item">
-        <a class="nav-link" [class.active]="item == selectedTab" [routerLink]="item.route">
-          <i class="fi-home me-2 "></i>
-          {{ item.label }}
-        </a>
-      </li>
+    @for (item of companyItems; track item.id) {
+    <li class="nav-item">
+      <a class="nav-link" [class.active]="item == selectedTab" [routerLink]="item.route">
+        <i class="fi-home me-2 "></i>
+        {{ item.label }}
+      </a>
+    </li>
     }
   </ul>
 </section>

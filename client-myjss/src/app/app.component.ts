@@ -1,5 +1,5 @@
 
-import { Component, Inject, DOCUMENT } from '@angular/core';
+import { Component, DOCUMENT, Inject } from '@angular/core';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs';
 import { SHARED_IMPORTS } from './libs/SharedImports';

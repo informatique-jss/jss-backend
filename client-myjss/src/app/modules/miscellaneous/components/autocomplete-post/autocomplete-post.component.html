@@ -1,8 +1,7 @@
 <div class="position-relative ">
   <div [formGroup]="form!" class="needs-validation">
     @if (isDisplayLabel && label && label.length>0) {
-      <label [for]="'fl-text'+uniqueId"
-      class="form-label">{{label}}</label>
+    <label [for]="'fl-text'+uniqueId" class="form-label">{{label}}</label>
     }
 
     <div class="row d-flex align-items-center p-0 g-0">
@@ -18,7 +17,7 @@
       <div class="custom-input-group align-items-center col-3 justify-content-end ps-0">
         <select-myjss-category class="cursor-pointer ps-0" [(model)]="myJssCategory"
           (onFormChange)="changeMyJssCategory()" [additionnalType]="allMyJssCategory!" [form]="autocompletePostForm"
-        propertyName="selectedMyJssCategory" [isMandatory]="false" [isDisabled]="false"></select-myjss-category>
+          propertyName="selectedMyJssCategory" [isMandatory]="false" [isDisabled]="false"></select-myjss-category>
       </div>
     </div>
 
@@ -26,24 +25,24 @@
       <div class="overflow-x-hidden">
         <div class="d-flex align-items-center text-truncate mb-1">
           @if (item) {
-            <a class="h5 text-dark text-truncate-1 me-2 flex-shrink-1"><span
-            [innerHTML]="item.titleText | trustHtml"></span></a>
+          <a class="h5 text-dark text-truncate-1 me-2 flex-shrink-1"><span
+              [innerHTML]="item.titleText | trustHtml"></span></a>
           }
           @if (item && item.postTags) {
-            @for (tag of item.postTags.slice(0,3); track tag) {
-              <span class="badge bg-primary fs-xs flex-shrink-0 text-nowrap text-dark"
-                style="margin-top: -15px;margin-right: 3px;">
-                {{ tag.name }}
-              </span>
-            }
+          @for (tag of item.postTags.slice(0,3); track tag) {
+          <span class="badge bg-primary fs-xs flex-shrink-0 text-nowrap text-dark"
+            style="margin-top: -15px;margin-right: 3px;">
+            {{ tag.name }}
+          </span>
+          }
           }
         </div>
         <div class=" row">
           <div class="col">
             @if (item) {
-              <p class="text-truncate-1 text-dark mb-0 mx-3 pb-1">
-                <span [innerHTML]="item.excerptText | trustHtml"></span>
-              </p>
+            <p class="text-truncate-1 text-dark mb-0 mx-3 pb-1">
+              <span [innerHTML]="item.excerptText | trustHtml"></span>
+            </p>
             }
           </div>
         </div>

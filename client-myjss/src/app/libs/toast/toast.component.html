@@ -1,18 +1,18 @@
-@for (toast of toasts; track toast) {
-  <div>
-    <ngb-toast [delay]="toast.delay ? toast.delay : 5000">
-      <ng-template ngbToastHeader>
-        <div class="me-auto text-white">
-          @if (toast.isError) {
-            <i class="bi-x-octagon-fill me-2"></i>
-          }
-          @if (!toast.isError) {
-            <i class="bi-info-circle-fill me-2"></i>
-          }
-          {{toast.title}}
-        </div>
-      </ng-template>
-      <div>{{toast.message}}</div>
-    </ngb-toast>
-  </div>
+@for (toast of toasts; track toast.title) {
+<div>
+  <ngb-toast [delay]="toast.delay ? toast.delay : 5000">
+    <ng-template ngbToastHeader>
+      <div class="me-auto text-white">
+        @if (toast.isError) {
+        <i class="bi-x-octagon-fill me-2"></i>
+        }
+        @if (!toast.isError) {
+        <i class="bi-info-circle-fill me-2"></i>
+        }
+        {{toast.title}}
+      </div>
+    </ng-template>
+    <div>{{toast.message}}</div>
+  </ngb-toast>
+</div>
 }
