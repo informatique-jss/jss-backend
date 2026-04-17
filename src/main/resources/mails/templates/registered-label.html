@@ -16,15 +16,17 @@
             margin: 0;
             padding: 0;
             width: 595pt;
-            height: 842pt;
+            height: 841pt;
             overflow: hidden;
         }
 
         .page {
             position: relative;
             width: 595pt;
-            height: 842pt;
+            height: 841pt;
             overflow: hidden;
+            page-break-after: avoid;
+            page-break-before: avoid;
         }
 
 
@@ -39,6 +41,12 @@
             font-size: 12px;
             white-space: pre-line;
         }
+
+        * {
+            box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            -webkit-box-sizing: border-box;
+        }
     </style>
 </head>
 
@@ -47,7 +55,6 @@
     <div class="page">
 
         <!-- recipient -->
-
         <span class="label" style=" left:140px; top:140px; width:300px; height:60px; ">
             <span th:each="line : ${recipientLabel}" th:text="${line + ' '}">
             </span>
@@ -76,9 +83,9 @@
 
 
         <!-- sender -->
-        <span style="left:220px; top:660px;" th:text="${senderName}" class="label"></span>
-        <span style="left:220px; top:680px;" th:text="${senderStreet}" class="label"></span>
-        <span style="left:220px; top:700px;" th:text="${senderPostalAndCity}" class="label"></span>
+        <span style="left:220px; top:660px; width:300px;" th:text="${senderName}" class="label"></span>
+        <span style="left:220px; top:680px; width:300px;" th:text="${senderStreet}" class="label"></span>
+        <span style="left:220px; top:700px; width:300px;" th:text="${senderPostalAndCity}" class="label"></span>
 
 
         <!-- recipient -->
@@ -90,9 +97,9 @@
         </span>
 
         <!-- sender -->
-        <span style="left:220px; top:1000px;" th:text="${senderName}" class="label"></span>
-        <span style="left:220px; top:1020px;" th:text="${senderStreet}" class="label"></span>
-        <span style="left:220px; top:1040px;" th:text="${senderPostalAndCity}" class="label"></span>
+        <span style="left:220px; top:1000px; width:300px; " th:text="${senderName}" class="label"></span>
+        <span style="left:220px; top:1020px; width:300px;" th:text="${senderStreet}" class="label"></span>
+        <span style="left:220px; top:1040px; width:300px;" th:text="${senderPostalAndCity}" class="label"></span>
 
 
         <!-- customer order reference -->
