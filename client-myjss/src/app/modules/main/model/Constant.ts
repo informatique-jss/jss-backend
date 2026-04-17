@@ -34,6 +34,8 @@ export interface Constant {
   categoryExclusivity: Category;
   categoryArticle: Category;
   attachmentTypeApplicationCv: AttachmentType;
+  attachmentTypePublicationFlag: AttachmentType;
+  attachmentTypePublicationReceipt: AttachmentType;
   languageFrench: Language;
   mailRedirectionTypeOther: MailRedirectionType;
   domiciliationContractTypeRouteEmailAndMail: DomiciliationContractType;

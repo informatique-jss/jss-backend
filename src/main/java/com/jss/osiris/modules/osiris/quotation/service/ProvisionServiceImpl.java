@@ -24,6 +24,7 @@ import com.jss.osiris.modules.osiris.invoicing.service.InvoiceItemService;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Notification;
 import com.jss.osiris.modules.osiris.miscellaneous.service.AttachmentService;
+import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.NotificationService;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
@@ -79,6 +80,9 @@ public class ProvisionServiceImpl implements ProvisionService {
 
     @Autowired
     InfogreffeKbisService infogreffeKbisService;
+
+    @Autowired
+    ConstantService constantservice;
 
     @Override
     public Provision getProvision(Integer id) {
@@ -236,5 +240,11 @@ public class ProvisionServiceImpl implements ProvisionService {
         if (status instanceof DomiciliationStatus && provision.getDomiciliation() != null)
             provision.getDomiciliation().setDomiciliationStatus((DomiciliationStatus) status);
         assoAffaireOrderService.addOrUpdateAssoAffaireOrder(provision.getService().getAssoAffaireOrder());
+    }
+
+    @Override
+    @Transactional
+    public Attachment getLastAttachmentForProvisionAndAttachmentType(Provision provision, String attachmentTypeCode) {
+        return attachmentService.getLastAttachmentForAttachmentType(provision.getAttachments(), attachmentTypeCode);
     }
 }

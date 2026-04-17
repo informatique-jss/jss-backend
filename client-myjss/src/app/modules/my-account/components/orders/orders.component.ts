@@ -11,9 +11,9 @@ import { UserPreferenceService } from '../../../main/services/user.preference.se
 import { OsiTooltipComponent } from "../../../miscellaneous/components/osi-tooltip/osi-tooltip.component";
 import { Responsable } from '../../../profile/model/Responsable';
 import { ResponsableService } from '../../../profile/services/responsable.service';
-import { Announcement } from '../../model/Announcement';
 import { AssoAffaireOrder } from '../../model/AssoAffaireOrder';
 import { Attachment } from '../../model/Attachment';
+import { AttachmentType } from '../../model/AttachmentType';
 import { BillingLabelType } from '../../model/BillingLabelType';
 import { CustomerOrder } from '../../model/CustomerOrder';
 import { InvoiceLabelResult } from '../../model/InvoiceLabelResult';
@@ -21,7 +21,6 @@ import { InvoicingSummary } from '../../model/InvoicingSummary';
 import { MailComputeResult } from '../../model/MailComputeResult';
 import { Provision } from '../../model/Provision';
 import { Service } from '../../model/Service';
-import { AnnouncementService } from '../../services/announcement.service';
 import { AssoAffaireOrderService } from '../../services/asso.affaire.order.service';
 import { AttachmentService } from '../../services/attachment.service';
 import { CustomerOrderCommentService } from '../../services/customer.order.comment.service';
@@ -83,6 +82,12 @@ export class OrdersComponent implements OnInit {
   currentSearchRef: Subscription | undefined;
   invoiceSummary: InvoicingSummary | undefined;
 
+  attachmentTypePublicationReceipt!: AttachmentType;
+  attachmentTypePublicationFlag!: AttachmentType;
+
+  publicationFlagAttachmentForProvisions: Attachment[] = [];
+  publicationReceiptAttachmentForProvisions: Attachment[] = [];
+
   constructor(
     private customerOrderService: CustomerOrderService,
     private customerOrderCommentService: CustomerOrderCommentService,
@@ -97,7 +102,7 @@ export class OrdersComponent implements OnInit {
     private responsableService: ResponsableService,
     private attachementService: AttachmentService,
     private uploadAttachmentService: UploadAttachmentService,
-    private announcementService: AnnouncementService,
+    private attachmentService: AttachmentService,
     private invoicingSummaryService: InvoicingSummaryService,
     private constantService: ConstantService,
   ) { }
@@ -105,6 +110,8 @@ export class OrdersComponent implements OnInit {
   ngOnInit() {
     this.appService.showLoadingSpinner();
     this.billingLabelTypeCodeAffaire = this.constantService.getBillingLabelTypeCodeAffaire();
+    this.attachmentTypePublicationReceipt = this.constantService.getAttachmentTypePublicationReceipt();
+    this.attachmentTypePublicationFlag = this.constantService.getAttachmentTypePublicationFlag();
     this.responsableService.getResponsablesForCurrentUser().subscribe(response => {
       this.responsablesForCurrentUser = response;
       if (this.responsablesForCurrentUser)
@@ -231,6 +238,17 @@ export class OrdersComponent implements OnInit {
     if (!this.ordersAssoAffaireOrders[order.id]) {
       this.assoAffaireOrderService.getAssoAffaireOrdersForCustomerOrder(order).subscribe(response => {
         this.ordersAssoAffaireOrders[order.id] = response;
+        for (let asso of this.ordersAssoAffaireOrders[order.id])
+          for (let service of asso.services)
+            for (let provision of service.provisions)
+              if (provision.announcement) {
+                this.attachementService.getLastAttachmentForProvision(provision, this.attachmentTypePublicationFlag).subscribe(res => {
+                  this.publicationFlagAttachmentForProvisions[provision.id] = res;
+                });
+                this.attachementService.getLastAttachmentForProvision(provision, this.attachmentTypePublicationReceipt).subscribe(res => {
+                  this.publicationReceiptAttachmentForProvisions[provision.id] = res;
+                });
+              }
       });
       this.invoiceLabelResultService.getInvoiceLabelComputeResultForCustomerOrder(order.id).subscribe(response => {
         this.ordersInvoiceLabelResult[order.id] = response;
@@ -380,12 +398,19 @@ export class OrdersComponent implements OnInit {
       this.appService.openJssRoute(event, "announcement/" + service.jssAnnouncementId, true);
   }
 
-  downloadPublicationFlag(announcement: Announcement) {
-    this.announcementService.downloadPublicationFlag(announcement);
+  goToJssAnnouncementFromProvision(provision: Provision, event: any) {
+    if (provision && provision.announcement)
+      this.appService.openJssRoute(event, "announcement/" + provision.announcement.id, true);
   }
 
-  downloadPublicationReceipt(announcement: Announcement, provision: Provision) {
-    this.announcementService.downloadPublicationReceipt(announcement, provision);
+  downloadPublicationFlag(provision: Provision) {
+    if (this.publicationFlagAttachmentForProvisions[provision.id])
+      this.uploadAttachmentService.downloadAttachment(this.publicationFlagAttachmentForProvisions[provision.id]);
+  }
+
+  downloadPublicationReceipt(provision: Provision) {
+    if (this.publicationReceiptAttachmentForProvisions[provision.id])
+      this.uploadAttachmentService.downloadAttachment(this.publicationReceiptAttachmentForProvisions[provision.id]);
   }
 
   getPurchaseOrderAttachment(order: CustomerOrder) {
