@@ -206,10 +206,12 @@ public class Constant implements Serializable, IId {
 
 	@ManyToOne
 	@JoinColumn(name = "id_attachment_type_publication_flag")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private AttachmentType attachmentTypePublicationFlag;
 
 	@ManyToOne
 	@JoinColumn(name = "id_attachment_type_publication_receipt")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private AttachmentType attachmentTypePublicationReceipt;
 
 	@ManyToOne

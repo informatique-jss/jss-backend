@@ -3,6 +3,8 @@ import { Injectable } from "@angular/core";
 import { formatDateIso } from "../../../libs/FormatHelper";
 import { AppRestService } from "../../main/services/appRest.service";
 import { Attachment } from "../model/Attachment";
+import { AttachmentType } from "../model/AttachmentType";
+import { Provision } from "../model/Provision";
 import { Service } from "../model/Service";
 
 
@@ -17,6 +19,10 @@ export class AttachmentService extends AppRestService<Attachment> {
 
   getAttachmentsForProvisionOfService(service: Service) {
     return this.getList(new HttpParams().set("serviceId", service.id), "service/provision/attachments");
+  }
+
+  getLastAttachmentForProvision(provision: Provision, attachmentType: AttachmentType) {
+    return this.get(new HttpParams().set("provisionId", provision.id).set("attachmentTypeCode", attachmentType.code), "service/provision/attachment/last");
   }
 
   getAttachmentsForAffaire(idAffaire: number) {

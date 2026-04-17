@@ -161,6 +161,14 @@ export class ConstantService extends AppRestService<Constant> {
     return this.constant.attachmentTypeApplicationCv;
   }
 
+  getAttachmentTypePublicationFlag() {
+    return this.constant.attachmentTypePublicationFlag;
+  }
+
+  getAttachmentTypePublicationReceipt() {
+    return this.constant.attachmentTypePublicationReceipt;
+  }
+
   getLanguageFrench() {
     return this.constant.languageFrench;
   }
@@ -200,6 +208,7 @@ export class ConstantService extends AppRestService<Constant> {
   getProvisionTypeRbe() {
     return this.constant.provisionTypeRbe;
   }
+
 }
 
 @Injectable({ providedIn: 'root' })

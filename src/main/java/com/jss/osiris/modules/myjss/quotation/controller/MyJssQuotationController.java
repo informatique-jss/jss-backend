@@ -124,6 +124,7 @@ import com.jss.osiris.modules.osiris.quotation.service.MailRedirectionTypeServic
 import com.jss.osiris.modules.osiris.quotation.service.NoticeTypeFamilyService;
 import com.jss.osiris.modules.osiris.quotation.service.NoticeTypeService;
 import com.jss.osiris.modules.osiris.quotation.service.PricingHelper;
+import com.jss.osiris.modules.osiris.quotation.service.ProvisionService;
 import com.jss.osiris.modules.osiris.quotation.service.QuotationService;
 import com.jss.osiris.modules.osiris.quotation.service.ServiceFamilyGroupService;
 import com.jss.osiris.modules.osiris.quotation.service.ServiceFamilyService;
@@ -160,6 +161,9 @@ public class MyJssQuotationController {
 
   @Autowired
   ServiceService serviceService;
+
+  @Autowired
+  ProvisionService provisionService;
 
   @Autowired
   AttachmentService attachmentService;
@@ -555,6 +559,32 @@ public class MyJssQuotationController {
       return new ResponseEntity<List<Attachment>>(new ArrayList<Attachment>(), HttpStatus.OK);
 
     return new ResponseEntity<List<Attachment>>(serviceService.getAttachmentsForProvisionOfService(service),
+        HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/service/provision/attachment/last")
+  @JsonView(JacksonViews.MyJssListView.class)
+  public ResponseEntity<Attachment> getLastAttachmentForProvisionAndAttachmentType(
+      @RequestParam Integer provisionId,
+      @RequestParam String attachmentTypeCode, HttpServletRequest request)
+      throws OsirisException {
+
+    detectFlood(request);
+
+    if (attachmentTypeCode == null
+        || (!attachmentTypeCode.equals(constantService.getAttachmentTypePublicationFlag().getCode())
+            && !attachmentTypeCode.equals(constantService.getAttachmentTypePublicationReceipt().getCode())))
+      throw new OsirisValidationException("attachmentTypeCode");
+
+    Provision provision = provisionService.getProvision(provisionId);
+    IQuotation quotation = provision.getService().getAssoAffaireOrder().getCustomerOrder();
+    if (quotation == null)
+      quotation = provision.getService().getAssoAffaireOrder().getQuotation();
+    if (provision == null || quotation == null || !myJssQuotationValidationHelper.canSeeQuotation(quotation))
+      return new ResponseEntity<Attachment>(new Attachment(), HttpStatus.OK);
+
+    return new ResponseEntity<Attachment>(
+        provisionService.getLastAttachmentForProvisionAndAttachmentType(provision, attachmentTypeCode),
         HttpStatus.OK);
   }
 
