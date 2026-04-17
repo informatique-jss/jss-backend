@@ -182,7 +182,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
     this.searchModalInstance = this.modalService.open(content, {
       backdrop: 'static',
-      modalDialogClass: 'modal-fullscreen'
+      modalDialogClass: 'modal-fullscreen',
+      windowClass: 'no-scroll-modal'
     });
 
     this.searchModalInstance.shown.subscribe(() => {
