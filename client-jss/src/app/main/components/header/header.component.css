@@ -48,3 +48,19 @@
 .navbar-nav .nav-link.active {
   color: #CCE1FA !important;
 }
+
+.background-header {
+  /* background-image usage to add multiple SVG images */
+  background-image:
+    url('../../../../assets/images/Background-quotation.svg');
+
+  /* Positionning of both images */
+  background-position: top;
+  background-repeat: repeat-y;
+  background-size: 100% auto;
+  background-attachment: scroll;
+}
+
+.modal-body {
+  overflow-x: hidden;
+}

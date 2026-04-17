@@ -354,6 +354,8 @@ public class GeneratePdfDelegate {
         ctx.setVariable("publicationDate", publicationDate);
         ctx.setVariable("department",
                 announcement.getDepartment().getCode() + " - " + announcement.getDepartment().getLabel());
+        ctx.setVariable("noticeType", announcement.getNoticeTypeFamily().getLabel() + " - "
+                + announcement.getNoticeTypes().get(0).getLabel());
         ctx.setVariable("serviceLabel", provision.getService().getServiceLabelToDisplay());
 
         File tempFile;
