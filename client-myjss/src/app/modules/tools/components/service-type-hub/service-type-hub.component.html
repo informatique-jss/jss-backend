@@ -68,6 +68,84 @@
                 }
               </li>
             </div>
+            <hr *ngIf="hasNonMandatoryDocuments()">
+            <ng-container *ngIf="hasNonMandatoryDocuments()">
+              <h6 id="optionalDocuments">Documents optionnels</h6>
+              <ng-container *ngFor="let item of  serviceType.assoServiceTypeDocuments">
+                <div class="col-12 g-2" *ngIf="!item.isMandatory">
+                  <li class="d-flex pb-2 mb-1">
+                    <span class="bg-primary mt-2 checkbox-custom"></span>
+                    <span class="text-decoration-none text-gray">{{item.typeDocument.customLabel}}</span>
+                    <button type="button"
+                      class="ms-3 btn btn-outline-secondary btn-sm d-flex align-items-center btn-icon-only"
+                      *ngIf="item.typeDocument.attachments && item.typeDocument.attachments[0]"
+                      (click)="downloadAttachment(item.typeDocument.attachments[0])" ngbTooltip="Télécharger le modèle"
+                      tooltipClass="custom-tooltip" placement="top">
+                      <i class="bi bi-download"></i>
+                      <span class="d-none d-lg-inline ms-1">Télécharger le modèle</span>
+                    </button>
+                  </li>
+                </div>
+              </ng-container>
+            </ng-container>
+            <hr
+              *ngIf="serviceType && serviceType.assoServiceTypeFieldTypes&& serviceType.assoServiceTypeFieldTypes.length>0" />
+            <ng-container
+              *ngIf="serviceType && serviceType.assoServiceTypeFieldTypes && serviceType.assoServiceTypeFieldTypes.length>0">
+              <h6 id="information">Informations complémentaires</h6>
+              <div class="col-12 col-md-6 col- g-2" *ngFor="let item of  serviceType.assoServiceTypeFieldTypes">
+                <li class="d-flex pb-2 mb-1">
+                  <span class="bg-primary mt-2 checkbox-custom"></span>
+                  <span class="text-decoration-none text-gray">{{item.serviceFieldType.label}} <span
+                      *ngIf="item.serviceFieldType.dataType ==SERVICE_FIELD_TYPE_SELECT ">{{getPossibleFieldsValuesForSelect(item.serviceFieldType)}}</span></span>
+                </li>
+              </div>
+            </ng-container>
+            <div class="g-2 ms-4"
+              *ngIf="serviceType && (!serviceType.assoServiceTypeDocuments || serviceType.assoServiceTypeDocuments.length==0) &&  (!serviceType.assoServiceTypeFieldTypes || serviceType.assoServiceTypeFieldTypes.length==0)">
+              <li class="d-flex pb-2 mb-1">
+                <span class="text-decoration-none text-gray">Aucun document nécessaire, contactez notre service
+                  pour
+                  plus d'information</span>
+              </li>
+            </div>
+            <hr *ngIf="currentUser && serviceType.totalPreTaxPrice && serviceType.totalPreTaxPrice>0" />
+            <ng-container *ngIf="currentUser && serviceType.totalPreTaxPrice && serviceType.totalPreTaxPrice>0">
+              <h6 id="pricing">Tarifs</h6>
+              <div class="col-12 mb-2">
+                <span
+                  *ngIf="serviceType.serviceTypeLinked == null || (serviceType.serviceTypeLinked && serviceType.serviceTypeLinked.totalPreTaxPrice && serviceType.serviceTypeLinked.totalPreTaxPrice<=0)">Prix
+                  total estimé (HT) : {{serviceType.totalPreTaxPrice}} €<span
+                    *ngIf="serviceType.deboursAmount && serviceType.deboursAmount>0"> (dont débours
+                    {{serviceType.deboursAmount}}€) </span>
+                </span>
+                <div
+                  *ngIf="serviceType.serviceTypeLinked && serviceType.serviceTypeLinked.totalPreTaxPrice && serviceType.serviceTypeLinked.totalPreTaxPrice >0">
+                  <span>Prix
+                    estimé pour l’annonce légale seule (HT) : {{serviceType.serviceTypeLinked.totalPreTaxPrice}}
+                    €<span
+                      *ngIf="serviceType.serviceTypeLinked.deboursAmount && serviceType.serviceTypeLinked.deboursAmount>0">
+                      (dont débours
+                      {{serviceType.serviceTypeLinked.deboursAmount}}€) </span>
+                  </span> <br />
+                  <span>Prix
+                    estimé pour l’annonce légale et les formalités associées (HT) :
+                    {{serviceType.totalPreTaxPrice}} €<span
+                      *ngIf="serviceType.deboursAmount && serviceType.deboursAmount>0">
+                      (dont débours
+                      {{serviceType.deboursAmount}}€) </span>
+                  </span>
+                </div>
+              </div>
+            </ng-container>
+            <hr *ngIf="serviceType.descriptionText && serviceType.descriptionText.length>0" />
+            <ng-container *ngIf="serviceType.descriptionText && serviceType.descriptionText.length>0">
+              <h6>Description </h6>
+              <div id="description" class="col-12 g-2 mb-2">
+                <span>{{serviceType.descriptionText}}
+                </span>
+              </div>
+            </ng-container>
             }
             }
             }
@@ -96,11 +174,13 @@
             }
             }
             }
-            @if (serviceType && serviceType.assoServiceTypeFieldTypes&& serviceType.assoServiceTypeFieldTypes.length>0)
+            @if (serviceType && serviceType.assoServiceTypeFieldTypes&&
+            serviceType.assoServiceTypeFieldTypes.length>0)
             {
             <hr />
             }
-            @if (serviceType && serviceType.assoServiceTypeFieldTypes && serviceType.assoServiceTypeFieldTypes.length>0)
+            @if (serviceType && serviceType.assoServiceTypeFieldTypes &&
+            serviceType.assoServiceTypeFieldTypes.length>0)
             {
             <h6 id="information">Informations complémentaires</h6>
             @for (item of serviceType.assoServiceTypeFieldTypes; track item) {
@@ -120,7 +200,8 @@
             serviceType.assoServiceTypeFieldTypes.length==0)) {
             <div class="g-2 ms-4">
               <li class="d-flex pb-2 mb-1">
-                <span class="text-decoration-none text-gray">Aucun document nécessaire, contactez notre service pour
+                <span class="text-decoration-none text-gray">Aucun document nécessaire, contactez notre service
+                  pour
                   plus d'information</span>
               </li>
             </div>
@@ -132,8 +213,8 @@
             <h6 id="pricing">Tarifs</h6>
             <div class="col-12 col-md-4 mb-2">
               @if (serviceType.serviceTypeLinked == null || (serviceType.serviceTypeLinked &&
-              serviceType.serviceTypeLinked.totalPreTaxPrice && serviceType.serviceTypeLinked.totalPreTaxPrice<=0)) {
-                <span class="text-nowrap">Prix
+              serviceType.serviceTypeLinked.totalPreTaxPrice && serviceType.serviceTypeLinked.totalPreTaxPrice
+              <=0)) { <span class="text-nowrap">Prix
                 total
                 estimé (HT) : {{serviceType.totalPreTaxPrice}} €@if (serviceType.deboursAmount &&
                 serviceType.deboursAmount>0) {
@@ -147,7 +228,8 @@
                 <div>
                   <span class="text-nowrap">Prix
                     estimé pour l’annonce légale seule (HT) : {{serviceType.serviceTypeLinked.totalPreTaxPrice}}
-                    €@if (serviceType.serviceTypeLinked.deboursAmount && serviceType.serviceTypeLinked.deboursAmount>0)
+                    €@if (serviceType.serviceTypeLinked.deboursAmount &&
+                    serviceType.serviceTypeLinked.deboursAmount>0)
                     {
                     <span>
                       (dont débours
@@ -156,7 +238,8 @@
                   </span> <br />
                   <span class="text-nowrap">Prix
                     estimé pour l’annonce légale et les formalités associées (HT) :
-                    {{serviceType.totalPreTaxPrice}} €@if (serviceType.deboursAmount && serviceType.deboursAmount>0) {
+                    {{serviceType.totalPreTaxPrice}} €@if (serviceType.deboursAmount &&
+                    serviceType.deboursAmount>0) {
                     <span>
                       (dont débours
                       {{serviceType.deboursAmount}}€) </span>
@@ -190,7 +273,8 @@
         @if (hasMandatoryDocuments()) {
         <li class="border-bottom " [class.active]="activeSection === 'mandatoryDocuments'">
           <span class="h6 mb-0">
-            <a href="#mandatoryDocuments" (click)="scrollTo('mandatoryDocuments', $event)">Documents obligatoires</a>
+            <a href="#mandatoryDocuments" (click)="scrollTo('mandatoryDocuments', $event)">Documents
+              obligatoires</a>
           </span>
         </li>
         }
@@ -201,7 +285,8 @@
           </span>
         </li>
         }
-        @if (serviceType && serviceType.assoServiceTypeFieldTypes&& serviceType.assoServiceTypeFieldTypes.length>0) {
+        @if (serviceType && serviceType.assoServiceTypeFieldTypes&&
+        serviceType.assoServiceTypeFieldTypes.length>0) {
         <li class="border-bottom" [class.active]="activeSection === 'information'">
           <span class="h6 mb-0">
             <a href="#information" (click)="scrollTo('information', $event)">Informations complémentaires</a>

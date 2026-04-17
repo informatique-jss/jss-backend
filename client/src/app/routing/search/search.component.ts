@@ -11,6 +11,7 @@ import { IndexEntityService } from './index.entity.service';
 
 export const OFX_ENTITY_TYPE: EntityType = { entityType: 'Ofx', tabName: 'Ofx', entryPoint: 'ofx' };
 export const SAGE_ENTITY_TYPE: EntityType = { entityType: 'Sage', tabName: 'Sage', entryPoint: 'sage' };
+export const INPI_INVOICING_EXTRACT_ENTITY_TYPE: EntityType = { entityType: 'InpiInvoicingExtract', tabName: 'Extraction facturation INPI', entryPoint: 'invoicing' }; //TODO: check entry point
 export const TIERS_ENTITY_TYPE: EntityType = { entityType: 'Tiers', tabName: 'Tiers', entryPoint: 'tiers' };
 export const RESPONSABLE_ENTITY_TYPE: EntityType = { entityType: 'Responsable', tabName: 'Responsable', entryPoint: 'tiers/responsable' };
 export const CONFRERE_ENTITY_TYPE: EntityType = { entityType: 'Confrere', tabName: 'Confrère', entryPoint: 'confrere' };

@@ -534,12 +534,6 @@
                             <span class="placeholder placeholder-sm col-4"></span>
                           </p>
                         </div>
-                        }
-                        <button type="button" class="btn btn-link btn-sm px-2 mt-2 hover-bg-light mx-1"
-                          [routerLink]='"/account/orders/details/" + order.id'>
-                          <i class="ai-file-text me-2"></i>Détails de la commande
-                        </button>
-                        @if (order.customerOrderStatus.code==CUSTOMER_ORDER_STATUS_DRAFT) {
                         <button type="button" class="btn btn-link btn-sm px-2 mt-2 hover-bg-light "
                           (click)="cancelDraft(order); $event.stopPropagation();">
                           <i class="ai-file-text me-2"></i>Abandonner

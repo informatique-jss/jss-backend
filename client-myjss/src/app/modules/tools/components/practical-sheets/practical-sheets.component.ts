@@ -51,8 +51,6 @@ export class PracticalSheetsComponent implements OnInit {
 
   expandedCardIndex: number = -1;
   postsByMyJssCategory: { [key: number]: Array<Post> } = {};
-  allPostsForSeo: Post[] = [];
-  currentSeoPageNumber: number = 0;
   categoryArticle: Category | undefined;
 
   topPosts: Post[] = [];
@@ -61,6 +59,11 @@ export class PracticalSheetsComponent implements OnInit {
   page: number = 0;
   isServer = false;
   practicalSheetsForm!: FormGroup;
+
+  allPostsForSeo: Post[] = [];
+  currentSeoPageNumber: number = 0;
+  totalPages: number = 0;
+  readonly SEO_PAGE_SIZE = 30;
 
   @ViewChild('searchInput') searchInput: ElementRef | undefined;
   @ViewChild('autocomplePost') autocomplePost: AutocompletePostComponent | undefined;
@@ -77,7 +80,6 @@ export class PracticalSheetsComponent implements OnInit {
     private meta: Meta,
     private gtmService: GtmService,
     private constantService: ConstantService,
-    private activeRoute: ActivatedRoute,
     private platformService: PlatformService
   ) { }
 
@@ -108,14 +110,7 @@ export class PracticalSheetsComponent implements OnInit {
       }
     });
 
-    if (this.activeRoute.snapshot.params['seoPageForPosts'] >= 0) {
-      this.currentSeoPageNumber = Number(this.activeRoute.snapshot.params['seoPageForPosts']);
-    } else {
-      this.currentSeoPageNumber = 0;
-    }
-    this.postService.searchMyJssPostsByCategory("", this.categoryArticle, this.currentSeoPageNumber, 10).subscribe(res => {
-      this.allPostsForSeo = res.content;
-    });
+    this.manageSeo();
 
     let slug = this.activatedRoute.snapshot.params['slug'];
     if (slug)
@@ -283,5 +278,98 @@ export class PracticalSheetsComponent implements OnInit {
         this.mostSeenPosts.push(...response);
       }
     });
+  }
+
+
+  /** ========== FOR SEO  PURPOSE ONLY ==============*/
+  manageSeo() {
+    const pageParam = Number(this.activatedRoute.snapshot.params['seoPageForPosts']);
+
+    this.currentSeoPageNumber = pageParam >= 1 ? pageParam : 1;
+
+    if (pageParam === 0) {
+      this.appService.openRoute(null, '/tools/practical-sheets', null);
+      return;
+    }
+
+    const backendPage = this.currentSeoPageNumber - 1;
+
+    this.postService
+      .searchMyJssPostsByCategory("", this.categoryArticle!, backendPage, this.SEO_PAGE_SIZE)
+      .subscribe(res => {
+        this.allPostsForSeo = res.content;
+        this.totalPages = res.page.totalPages;
+
+        this.addPaginationLinkTags(this.currentSeoPageNumber, this.totalPages);
+        this.updateCanonicalTag(this.currentSeoPageNumber);
+      });
+  }
+
+  getVisiblePages(): number[] {
+    const pages: number[] = [];
+    const current = this.currentSeoPageNumber;
+    const total = this.totalPages;
+
+    const range = new Set([
+      1,
+      current - 1,
+      current,
+      current + 1,
+      total
+    ].filter(p => p >= 1 && p <= total));
+
+    const sorted = Array.from(range).sort((a, b) => a - b);
+
+    for (let i = 0; i < sorted.length; i++) {
+      if (i > 0 && sorted[i] - sorted[i - 1] > 1)
+        pages.push(-1); // ellipsis
+
+      pages.push(sorted[i]);
+    }
+    return pages;
+  }
+
+  private addPaginationLinkTags(currentPage: number, totalPages: number) {
+    if (this.isServer) return;
+
+    const baseUrl = 'https://my.jss.fr/tools/practical-sheets';
+
+    document.querySelector('link[rel="prev"]')?.remove();
+    document.querySelector('link[rel="next"]')?.remove();
+
+    if (currentPage > 1) {
+      const prevUrl = currentPage === 2
+        ? baseUrl
+        : `${baseUrl}/page/${currentPage - 1}`;
+
+      const linkPrev = document.createElement('link');
+      linkPrev.setAttribute('rel', 'prev');
+      linkPrev.setAttribute('href', prevUrl);
+      document.head.appendChild(linkPrev);
+    }
+
+    if (currentPage < totalPages) {
+      const linkNext = document.createElement('link');
+      linkNext.setAttribute('rel', 'next');
+      linkNext.setAttribute('href', `${baseUrl}/page/${currentPage + 1}`);
+      document.head.appendChild(linkNext);
+    }
+  }
+
+  private updateCanonicalTag(currentPage: number) {
+    if (this.isServer) return;
+
+    const baseUrl = 'https://my.jss.fr/tools/practical-sheets';
+    const canonicalUrl = currentPage === 1
+      ? baseUrl
+      : `${baseUrl}/page/${currentPage}`;
+
+    let canonical = document.querySelector('link[rel="canonical"]');
+    if (!canonical) {
+      canonical = document.createElement('link');
+      canonical.setAttribute('rel', 'canonical');
+      document.head.appendChild(canonical);
+    }
+    canonical.setAttribute('href', canonicalUrl);
   }
 }

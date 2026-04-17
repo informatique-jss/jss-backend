@@ -12,412 +12,457 @@
           label="Rechercher" [form]="practicalSheetsForm" propertyName="searchText" [isMandatory]="false"
           [isDisabled]="false" [isDisplayLabel]="false" (onFormChange)="searchForPosts()"
           (onOptionSelected)="openPostOnSelect($event.slug, $event)"
-        (onChangeMyJssCategory)="getTopPosts($event)"></autocomplete-post>
+          (onChangeMyJssCategory)="getTopPosts($event)"></autocomplete-post>
       </div>
     </div>
   </div>
 </section>
 
 @if (isServer) {
-  <div>
-    <div class="seo-fallback" aria-hidden="true">
-      @for (post of tendencyPosts; track post) {
-        <ul>
-          <li>
-            <a [routerLink]="'/post/' + post.slug">{{ post.titleText }}</a>
-          </li>
-        </ul>
-      }
-    </div>
-    <div class="seo-fallback" aria-hidden="true">
-      @for (post of topPosts; track post) {
-        <ul>
-          <li>
-            <a [routerLink]="'/post/' + post.slug">{{ post.titleText }}</a>
-          </li>
-        </ul>
-      }
-    </div>
-    <div class="seo-fallback" aria-hidden="true">
-      @for (post of mostSeenPosts; track post) {
-        <ul>
-          <li>
-            <a [routerLink]="'/post/' + post.slug">{{ post.titleText }}</a>
-          </li>
-        </ul>
-      }
-    </div>
+<div>
+  <div class="seo-fallback" aria-hidden="true">
+    @for (post of tendencyPosts; track post) {
+    <ul>
+      <li>
+        <a [routerLink]="'/post/' + post.slug">{{ post.titleText }}</a>
+      </li>
+    </ul>
+    }
   </div>
+  <div class="seo-fallback" aria-hidden="true">
+    @for (post of topPosts; track post) {
+    <ul>
+      <li>
+        <a [routerLink]="'/post/' + post.slug">{{ post.titleText }}</a>
+      </li>
+    </ul>
+    }
+  </div>
+  <div class="seo-fallback" aria-hidden="true">
+    @for (post of mostSeenPosts; track post) {
+    <ul>
+      <li>
+        <a [routerLink]="'/post/' + post.slug">{{ post.titleText }}</a>
+      </li>
+    </ul>
+    }
+  </div>
+</div>
 }
 
 @if (!isServer) {
-  <div>
-    <section class="background-opacity">
-      <div class="container overflow-hidden">
-        @if (!tendencyPosts || tendencyPosts.length == 0) {
-          <div class="row">
-            @for (_ of [].constructor(3); track _) {
-              <div class="card col m-3" aria-hidden="true">
-                <div class="position-relative placeholder-wave">
-                  <div class="card-img-top placeholder ratio ratio-16x9"></div>
-                  <i class="ai-image position-absolute top-50 start-50 translate-middle fs-1 opacity-50"></i>
-                </div>
-                <div class="card-body">
-                  <h5 class="card-title placeholder-glow">
-                    <span class="placeholder col-6"></span>
-                    <span class="visually-hidden">Heading</span>
-                  </h5>
-                  <p class="card-text placeholder-glow">
-                    <span class="placeholder placeholder-sm col-7 me-2"></span>
-                    <span class="placeholder placeholder-sm col-4"></span>
-                    <span class="placeholder placeholder-sm col-4 me-2"></span>
-                    <span class="placeholder placeholder-sm col-6"></span>
-                    <span class="placeholder placeholder-sm col-8"></span>
-                  </p>
-                  <p tabindex="-1" class="btn btn-primary disabled placeholder col-6 placeholder-wave"></p>
-                </div>
-              </div>
-            }
+<div>
+  <section class="background-opacity">
+    <div class="container overflow-hidden">
+      @if (!tendencyPosts || tendencyPosts.length == 0) {
+      <div class="row">
+        @for (_ of [].constructor(3); track _) {
+        <div class="card col m-3" aria-hidden="true">
+          <div class="position-relative placeholder-wave">
+            <div class="card-img-top placeholder ratio ratio-16x9"></div>
+            <i class="ai-image position-absolute top-50 start-50 translate-middle fs-1 opacity-50"></i>
           </div>
-        }
-        <!-- hiden post url to improve seo - do not use css 'display: none', less performance for seo google -->
-        @if (tendencyPosts && tendencyPosts.length>0) {
-          <generic-swiper [items]="tendencyPosts" title="Articles à la une">
-            <ng-template let-post>
-              <div class="h-100">
-                <div class="card border-0 bg-tertiary">
-                  @if (post.media) {
-                    <img class="card-img-top" [routerLink]="'/post/'+post.slug"
-                      [src]="post.media && post.media.urlMediumLarge ? post.media.urlMediumLarge : post.media.urlFull"
-                      alt="Post image">
-                  }
-                  <div class="card-body pb-4">
-                    <div class="d-flex align-items-center mb-4 mt-n1">
-                      <span class="fs-sm text-body-secondary">{{post.date | date:'dd/MM/yyyy'}}</span>
-                      <span class="fs-xs opacity-20 mx-3">|</span>
-                      @if (post.postTags[0]) {
-                        <a class="badge text-nav fs-xs border"
-                        (click)="openTagSearch(post.postTags[0].slug, $event)">{{post.postTags[0].name}}</a>
-                      }
-                    </div>
-                    <h3 class="h4 card-title card-title-truncate">
-                      <a [routerLink]="'/post/'+post.slug">{{post.titleText}}</a>
-                    </h3>
-                    <p class="card-text card-text-truncate">{{getRawTextFromHtml(post.excerptText)}}</p>
-                  </div>
-                  <div class="card-footer pt-3">
-                    <div class="d-flex align-items-center text-decoration-none pb-2">
-                      <img class="rounded-circle"
-                        [src]="post.fullAuthor.avatar_url_size_48 ? post.fullAuthor.avatar_url_size_48 : post.fullAuthor.avatar_url_size_24 ? post.fullAuthor.avatar_url_size_24 : post.fullAuthor.avatar_url_size_96 "
-                        width="48" alt="Post author">
-                        <h6 class="ps-3 mb-0">{{post.fullAuthor.name}}</h6>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </ng-template>
-            </generic-swiper>
-          }
+          <div class="card-body">
+            <h5 class="card-title placeholder-glow">
+              <span class="placeholder col-6"></span>
+              <span class="visually-hidden">Heading</span>
+            </h5>
+            <p class="card-text placeholder-glow">
+              <span class="placeholder placeholder-sm col-7 me-2"></span>
+              <span class="placeholder placeholder-sm col-4"></span>
+              <span class="placeholder placeholder-sm col-4 me-2"></span>
+              <span class="placeholder placeholder-sm col-6"></span>
+              <span class="placeholder placeholder-sm col-8"></span>
+            </p>
+            <p tabindex="-1" class="btn btn-primary disabled placeholder col-6 placeholder-wave"></p>
+          </div>
         </div>
-      </section>
-      <section class="container overflow-hidden">
-        @if (!topPosts || topPosts.length==0) {
-          <div class="row">
-            @for (_ of [].constructor(3); track _) {
-              <div class="card col m-3" aria-hidden="true">
-                <div class="position-relative placeholder-wave">
-                  <div class="card-img-top placeholder ratio ratio-16x9"></div>
-                  <i class="ai-image position-absolute top-50 start-50 translate-middle fs-1 opacity-50"></i>
+        }
+      </div>
+      }
+      <!-- hiden post url to improve seo - do not use css 'display: none', less performance for seo google -->
+      @if (tendencyPosts && tendencyPosts.length>0) {
+      <generic-swiper [items]="tendencyPosts" title="Articles à la une">
+        <ng-template let-post>
+          <div class="h-100">
+            <div class="card border-0 bg-tertiary">
+              @if (post.media) {
+              <img class="card-img-top" [routerLink]="'/post/'+post.slug"
+                [src]="post.media && post.media.urlMediumLarge ? post.media.urlMediumLarge : post.media.urlFull"
+                alt="Post image">
+              }
+              <div class="card-body pb-4">
+                <div class="d-flex align-items-center mb-4 mt-n1">
+                  <span class="fs-sm text-body-secondary">{{post.date | date:'dd/MM/yyyy'}}</span>
+                  <span class="fs-xs opacity-20 mx-3">|</span>
+                  @if (post.postTags[0]) {
+                  <a class="badge text-nav fs-xs border"
+                    (click)="openTagSearch(post.postTags[0].slug, $event)">{{post.postTags[0].name}}</a>
+                  }
                 </div>
-                <div class="card-body">
-                  <h5 class="card-title placeholder-glow">
-                    <span class="placeholder col-6"></span>
-                    <span class="visually-hidden">Heading</span>
-                  </h5>
-                  <p class="card-text placeholder-glow">
-                    <span class="placeholder placeholder-sm col-7 me-2"></span>
-                    <span class="placeholder placeholder-sm col-4"></span>
-                    <span class="placeholder placeholder-sm col-4 me-2"></span>
-                    <span class="placeholder placeholder-sm col-6"></span>
-                    <span class="placeholder placeholder-sm col-8"></span>
-                  </p>
-                  <p tabindex="-1" class="btn btn-primary disabled placeholder col-6 placeholder-wave"></p>
+                <h3 class="h4 card-title card-title-truncate">
+                  <a [routerLink]="'/post/'+post.slug">{{post.titleText}}</a>
+                </h3>
+                <p class="card-text card-text-truncate">{{getRawTextFromHtml(post.excerptText)}}</p>
+              </div>
+              <div class="card-footer pt-3">
+                <div class="d-flex align-items-center text-decoration-none pb-2">
+                  <img class="rounded-circle"
+                    [src]="post.fullAuthor.avatar_url_size_48 ? post.fullAuthor.avatar_url_size_48 : post.fullAuthor.avatar_url_size_24 ? post.fullAuthor.avatar_url_size_24 : post.fullAuthor.avatar_url_size_96 "
+                    width="48" alt="Post author">
+                  <h6 class="ps-3 mb-0">{{post.fullAuthor.name}}</h6>
                 </div>
               </div>
-            }
+            </div>
           </div>
-        }
-        @if (topPosts && topPosts.length>0) {
-          <generic-swiper [items]="topPosts" title="Nos derniers articles">
-            <ng-template let-post>
-              <div class="h-100">
-                <div class="card border-0 bg-tertiary">
-                  @if (post.media ) {
-                    <img class="card-img-top" [routerLink]="'/post/'+post.slug"
-                      [src]="post.media && post.media.urlLarge ? post.media.urlLarge : post.media.urlFull" alt="Post image">
-                  }
-                  <div class="card-body pb-4">
-                    <div class="d-flex align-items-center mb-4 mt-n1">
-                      <span class="fs-sm text-body-secondary">{{post.date | date:'dd/MM/yyyy'}}</span>
-                      <span class="fs-xs opacity-20 mx-3">|</span>
-                      @if (post.postTags[0]) {
-                        <a class="badge text-nav fs-xs border"
-                        (click)="openTagSearch(post.postTags[0].slug, $event)">{{post.postTags[0].name}}</a>
-                      }
-                    </div>
-                    <h3 class="h4 card-title card-title-truncate">
-                      <a [routerLink]="'/post/'+post.slug">{{post.titleText}}</a>
-                    </h3>
-                    <p class="card-text card-text-truncate">{{getRawTextFromHtml(post.excerptText)}}</p>
-                  </div>
-                  <div class="card-footer pt-3">
-                    <div class="d-flex align-items-center text-decoration-none pb-2">
-                      <img class="rounded-circle"
-                        [src]="post.fullAuthor.avatar_url_size_48 ? post.fullAuthor.avatar_url_size_48 : post.fullAuthor.avatar_url_size_24 ? post.fullAuthor.avatar_url_size_24 : post.fullAuthor.avatar_url_size_96 "
-                        width="48" alt="Post author">
-                        <h6 class="ps-3 mb-0">{{post.fullAuthor.name}}</h6>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </ng-template>
-            </generic-swiper>
-          }
-        </section>
-        <section class="background-opacity">
-          <div class="container overflow-hidden ">
-            @if (!mostSeenPosts || mostSeenPosts.length==0) {
-              <div class="row">
-                @for (_ of [].constructor(3); track _) {
-                  <div class="card col m-3" aria-hidden="true">
-                    <div class="position-relative placeholder-wave">
-                      <div class="card-img-top placeholder ratio ratio-16x9"></div>
-                      <i class="ai-image position-absolute top-50 start-50 translate-middle fs-1 opacity-50"></i>
-                    </div>
-                    <div class="card-body">
-                      <h5 class="card-title placeholder-glow">
-                        <span class="placeholder col-6"></span>
-                        <span class="visually-hidden">Heading</span>
-                      </h5>
-                      <p class="card-text placeholder-glow">
-                        <span class="placeholder placeholder-sm col-7 me-2"></span>
-                        <span class="placeholder placeholder-sm col-4"></span>
-                        <span class="placeholder placeholder-sm col-4 me-2"></span>
-                        <span class="placeholder placeholder-sm col-6"></span>
-                        <span class="placeholder placeholder-sm col-8"></span>
-                      </p>
-                      <p tabindex="-1" class="btn btn-primary disabled placeholder col-6 placeholder-wave"></p>
-                    </div>
-                  </div>
+        </ng-template>
+      </generic-swiper>
+      }
+    </div>
+  </section>
+  <section class="container overflow-hidden">
+    @if (!topPosts || topPosts.length==0) {
+    <div class="row">
+      @for (_ of [].constructor(3); track _) {
+      <div class="card col m-3" aria-hidden="true">
+        <div class="position-relative placeholder-wave">
+          <div class="card-img-top placeholder ratio ratio-16x9"></div>
+          <i class="ai-image position-absolute top-50 start-50 translate-middle fs-1 opacity-50"></i>
+        </div>
+        <div class="card-body">
+          <h5 class="card-title placeholder-glow">
+            <span class="placeholder col-6"></span>
+            <span class="visually-hidden">Heading</span>
+          </h5>
+          <p class="card-text placeholder-glow">
+            <span class="placeholder placeholder-sm col-7 me-2"></span>
+            <span class="placeholder placeholder-sm col-4"></span>
+            <span class="placeholder placeholder-sm col-4 me-2"></span>
+            <span class="placeholder placeholder-sm col-6"></span>
+            <span class="placeholder placeholder-sm col-8"></span>
+          </p>
+          <p tabindex="-1" class="btn btn-primary disabled placeholder col-6 placeholder-wave"></p>
+        </div>
+      </div>
+      }
+    </div>
+    }
+    @if (topPosts && topPosts.length>0) {
+    <generic-swiper [items]="topPosts" title="Nos derniers articles">
+      <ng-template let-post>
+        <div class="h-100">
+          <div class="card border-0 bg-tertiary">
+            @if (post.media ) {
+            <img class="card-img-top" [routerLink]="'/post/'+post.slug"
+              [src]="post.media && post.media.urlLarge ? post.media.urlLarge : post.media.urlFull" alt="Post image">
+            }
+            <div class="card-body pb-4">
+              <div class="d-flex align-items-center mb-4 mt-n1">
+                <span class="fs-sm text-body-secondary">{{post.date | date:'dd/MM/yyyy'}}</span>
+                <span class="fs-xs opacity-20 mx-3">|</span>
+                @if (post.postTags[0]) {
+                <a class="badge text-nav fs-xs border"
+                  (click)="openTagSearch(post.postTags[0].slug, $event)">{{post.postTags[0].name}}</a>
                 }
               </div>
-            }
-            @if (mostSeenPosts && mostSeenPosts.length>0) {
-              <generic-swiper [items]="mostSeenPosts"
-                title="Articles les plus vus">
-                <ng-template let-post>
-                  <div class="h-100">
-                    <div class="card border-0 bg-tertiary">
-                      @if (post.media) {
-                        <img class="card-img-top" [routerLink]="'/post/'+post.slug"
-                          [src]="post.media && post.media.urlLarge ? post.media.urlLarge : post.media.urlFull" alt="Post image">
-                      }
-                      <div class="card-body pb-4">
-                        <div class="d-flex align-items-center mb-4 mt-n1">
-                          <span class="fs-sm text-body-secondary">{{post.date | date:'dd/MM/yyyy'}}</span>
-                          <span class="fs-xs opacity-20 mx-3">|</span>
-                          @if (post.postTags[0]) {
-                            <a class="badge text-nav fs-xs border"
-                            (click)="openTagSearch(post.postTags[0].slug, $event)">{{post.postTags[0].name}}</a>
-                          }
-                        </div>
-                        <h3 class="h4 card-title">
-                          <a [routerLink]="'/post/'+post.slug">{{post.titleText}}</a>
-                        </h3>
-                        <p class="card-text card-text-truncate">{{getRawTextFromHtml(post.excerptText)}}</p>
-                      </div>
-                      <div class="card-footer pt-3">
-                        <div class="d-flex align-items-center text-decoration-none pb-2">
-                          <img class="rounded-circle"
-                            [src]="post.fullAuthor.avatar_url_size_48 ? post.fullAuthor.avatar_url_size_48 : post.fullAuthor.avatar_url_size_24 ? post.fullAuthor.avatar_url_size_24 : post.fullAuthor.avatar_url_size_96 "
-                            width="48" alt="Post author">
-                            <h6 class="ps-3 mb-0">{{post.fullAuthor.name}}</h6>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </ng-template>
-                </generic-swiper>
-              }
+              <h3 class="h4 card-title card-title-truncate">
+                <a [routerLink]="'/post/'+post.slug">{{post.titleText}}</a>
+              </h3>
+              <p class="card-text card-text-truncate">{{getRawTextFromHtml(post.excerptText)}}</p>
             </div>
-          </section>
-        </div>
-      }
-
-      <!-- Second search -->
-      <section class="container py-5">
-        <h2 class="m-4 text-center">Guides juridiques</h2>
-        <p class="text-center">Dirigeant, professionnel du droit ou du chiffre, vous avez des questions juridiques ? <br>
-          MyJSS vous propose ses articles rédigés par nos juristes formalistes experts et mis à jour en continu avec les
-        évolutions réglementaires.</p>
-        <div class="w-100 my-3 d-flex justify-content-between">
-          <div class="col-12">
-            <div class="input-group custom-input-group align-items-center py-0 rounded-1 row">
-              <div class="col">
-                <div class="row align-items-center">
-                  <generic-input style="flex-grow: 1;" [(model)]="secondSearchText" label="Rechercher"
-                    [form]="practicalSheetsForm" propertyName="secondSearchText" [isMandatory]="false" [isDisabled]="false"
-                    [isDisplayLabel]="false" (onFormChange)="searchForSecondPosts()" [icon]="'search'"
-                  class="btn-search col"></generic-input>
-
-                  @if (isLoading2) {
-                    <div class="col-1 d-flex spinner-border rounded-circle text-dark me-2" role="status">
-                      <span class="visually-hidden">chargement...</span>
-                    </div>
-                  }
-
-                  @if (secondSearchText) {
-                    <button class="col-1 btn btn-link btn-search" (click)="clearSecondSearch()">
-                      <i class="ai ai-cross-alt"></i>
-                    </button>
-                  }
-                </div>
-              </div>
-              <div class="col-3 justify-content-end">
-                <select-myjss-category class="cursor-pointer" [additionnalType]="this.myJssCategories[0]"
-                  [(model)]="secondSelectedMyJssCategory" [form]="practicalSheetsForm"
-                  propertyName="secondSelectedMyJssCategory" [isMandatory]="false" (onFormChange)="searchForSecondPosts()"
-                [isDisabled]="false"></select-myjss-category>
+            <div class="card-footer pt-3">
+              <div class="d-flex align-items-center text-decoration-none pb-2">
+                <img class="rounded-circle"
+                  [src]="post.fullAuthor.avatar_url_size_48 ? post.fullAuthor.avatar_url_size_48 : post.fullAuthor.avatar_url_size_24 ? post.fullAuthor.avatar_url_size_24 : post.fullAuthor.avatar_url_size_96 "
+                  width="48" alt="Post author">
+                <h6 class="ps-3 mb-0">{{post.fullAuthor.name}}</h6>
               </div>
             </div>
           </div>
         </div>
-
-        @if (!isServer && !secondSearchText) {
-          @for (myJssCategory of myJssCategories; track myJssCategory) {
-            @if (!myJssCategory.id || (myJssCategory.id>=0 && !postsByMyJssCategory[myJssCategory.id]==undefined)) {
-              <div class="accordion-item border-top mb-0"
-                >
-                <div class="accordion-header">
-                  <p class="card-text placeholder-glow">
-                    <span class="placeholder placeholder-sm col-7 me-2"></span>
-                    <span class="placeholder placeholder-sm col-4"></span>
-                    <span class="placeholder placeholder-sm col-4 me-2"></span>
-                    <span class="placeholder placeholder-sm col-6"></span>
-                    <span class="placeholder placeholder-sm col-8"></span>
-                  </p>
-                </div>
-              </div>
-            }
-            @if (myJssCategory.id && postsByMyJssCategory[myJssCategory.id] && !secondSearchText) {
-              <div class="card dark-blue-dropdown rounded-3 mt-3"
-                [ngClass]="{ 'expanded-card':  isExpanded(myJssCategory.id) }">
-                <div class="card-header d-flex justify-content-between align-items-center p-0 pt-3">
-                  <h5 class="card-title mb-0">{{ myJssCategory.name }}</h5>
-                  <button type="button" class="btn btn-link rounded-circle custom-btn" (click)="toggleCard(myJssCategory)">
-                    <span class="circle-icon">
-                      <i [ngClass]=" isExpanded(myJssCategory.id) ? 'ai-chevron-up' : 'ai-chevron-down'" class="fs-4"></i>
-                    </span>
-                  </button>
-                </div>
-                <div class="drop-down-body">
-                  <div class="row ps-4 pe-5 me-5">
-                    @for (post of (isExpanded(myJssCategory.id)  ? postsByMyJssCategory[myJssCategory.id] :  postsByMyJssCategory[myJssCategory.id].slice(0,3)); track post) {
-                      <div class="col-12 col-sm-6 col-md-4 g-2"
-                        >
-                        <li class="d-flex pb-2 mb-1">
-                          <span class="bg-primary mt-2 checkbox-custom"></span>
-                          <a class="text-decoration-none text-gray" [routerLink]="'/post/'+post.slug">{{post.titleText}}</a>
-                        </li>
-                      </div>
-                    }
-                  </div>
-                </div>
-              </div>
-            }
-          }
-        }
-
-        <!-- For SEO purpose only -->
-        @if (isServer) {
-          <div class="row">
-            @for (post of allPostsForSeo; track post) {
-              <div class="col-12">
-                <li>
-                  <a [routerLink]="'/post/'+post.slug">{{post.titleText}}</a>
-                </li>
-              </div>
-            }
+      </ng-template>
+    </generic-swiper>
+    }
+  </section>
+  <section class="background-opacity">
+    <div class="container overflow-hidden ">
+      @if (!mostSeenPosts || mostSeenPosts.length==0) {
+      <div class="row">
+        @for (_ of [].constructor(3); track _) {
+        <div class="card col m-3" aria-hidden="true">
+          <div class="position-relative placeholder-wave">
+            <div class="card-img-top placeholder ratio ratio-16x9"></div>
+            <i class="ai-image position-absolute top-50 start-50 translate-middle fs-1 opacity-50"></i>
           </div>
-          <div>
-            <a [href]="'/tools/practical-sheets/page/'+(currentSeoPageNumber - 1)">Page précédente</a>
-            <a [href]="'/tools/practical-sheets/page/'+(currentSeoPageNumber + 1)">Page suivante</a>
+          <div class="card-body">
+            <h5 class="card-title placeholder-glow">
+              <span class="placeholder col-6"></span>
+              <span class="visually-hidden">Heading</span>
+            </h5>
+            <p class="card-text placeholder-glow">
+              <span class="placeholder placeholder-sm col-7 me-2"></span>
+              <span class="placeholder placeholder-sm col-4"></span>
+              <span class="placeholder placeholder-sm col-4 me-2"></span>
+              <span class="placeholder placeholder-sm col-6"></span>
+              <span class="placeholder placeholder-sm col-8"></span>
+            </p>
+            <p tabindex="-1" class="btn btn-primary disabled placeholder col-6 placeholder-wave"></p>
           </div>
+        </div>
         }
-
-        @if (secondSearchText && secondSelectedMyJssCategory.id == allMyJssCategories.id && !isServer) {
-          @for (myJssCategory of myJssCategories; track myJssCategory) {
-            @if (myJssCategory.id && secondSearchResults[myJssCategory.id] && secondSearchResults[myJssCategory.id].length>0) {
-              <div class="card dark-blue-dropdown rounded-3 mt-3">
-                <div class="card-header d-flex justify-content-between align-items-center p-0  pt-3">
-                  <h5 class="card-title mb-0">{{ myJssCategory.name }}</h5>
-                  <button type="button" class="btn btn-link rounded-circle custom-btn" (click)="toggleCard(myJssCategory)">
-                    <span class="circle-icon">
-                      <i [ngClass]=" isExpanded(myJssCategory.id) ? 'ai-chevron-up' : 'ai-chevron-down'" class="fs-4"></i>
-                    </span>
-                  </button>
-                </div>
-                <div class="card-body">
-                  <div class=" row">
-                    @for (post of (isExpanded(myJssCategory.id)  ? secondSearchResults[myJssCategory.id] :  secondSearchResults[myJssCategory.id].slice(0,3)); track post) {
-                      <div class="col-12 col-sm-6 col-md-4 g-2"
-                        >
-                        <li class="d-flex pb-2 mb-1">
-                          <span class="bg-primary mt-2 checkbox-custom"></span>
-                          <a class="text-decoration-none text-gray text-truncate-custom"
-                          [routerLink]="'/post/'+post.slug">{{post.titleText}}</a>
-                        </li>
-                      </div>
-                    }
-                  </div>
-                </div>
-              </div>
-            }
-          }
-        }
-
-        @if (secondSearchText && secondSelectedMyJssCategory && !isServer) {
-          @if (secondSelectedMyJssCategory.id && secondSearchResults[secondSelectedMyJssCategory.id] && secondSearchResults[secondSelectedMyJssCategory.id].length>0) {
-            <div class="card dark-blue-dropdown rounded-3 mt-3">
-              <div class="card-header d-flex justify-content-between align-items-center p-0  pt-3">
-                <h5 class="card-title mb-0">{{ secondSelectedMyJssCategory.name }}</h5>
-                <button type="button" class="btn btn-link rounded-circle custom-btn"
-                  (click)="toggleCard(secondSelectedMyJssCategory)">
-                  <span class="circle-icon">
-                    <i [ngClass]=" isExpanded(secondSelectedMyJssCategory.id) ? 'ai-chevron-up' : 'ai-chevron-down'"
-                    class="fs-4"></i>
-                  </span>
-                </button>
-              </div>
-              <div class="card-body">
-                <div class=" row">
-                  @for (post of (isExpanded(secondSelectedMyJssCategory.id)  ? secondSearchResults[secondSelectedMyJssCategory.id] :  secondSearchResults[secondSelectedMyJssCategory.id].slice(0,3)); track post) {
-                    <div class="col-4"
-                      >
-                      <li class="d-flex pb-2 mb-1">
-                        <span class="bg-primary mt-2 checkbox-custom"></span>
-                        <a class="text-decoration-none text-gray text-truncate-custom"
-                        [routerLink]="'/post/'+post.slug">{{post.titleText}}</a>
-                      </li>
-                    </div>
-                  }
-                </div>
-              </div>
-            </div>
-          }
-        }
-      </section>
-
-      <div class="pb-5 mb-md-3 mb-lg-4 mb-xxl-5">
-        <newsletter></newsletter>
       </div>
+      }
+      @if (mostSeenPosts && mostSeenPosts.length>0) {
+      <generic-swiper [items]="mostSeenPosts" title="Articles les plus vus">
+        <ng-template let-post>
+          <div class="h-100">
+            <div class="card border-0 bg-tertiary">
+              @if (post.media) {
+              <img class="card-img-top" [routerLink]="'/post/'+post.slug"
+                [src]="post.media && post.media.urlLarge ? post.media.urlLarge : post.media.urlFull" alt="Post image">
+              }
+              <div class="card-body pb-4">
+                <div class="d-flex align-items-center mb-4 mt-n1">
+                  <span class="fs-sm text-body-secondary">{{post.date | date:'dd/MM/yyyy'}}</span>
+                  <span class="fs-xs opacity-20 mx-3">|</span>
+                  @if (post.postTags[0]) {
+                  <a class="badge text-nav fs-xs border"
+                    (click)="openTagSearch(post.postTags[0].slug, $event)">{{post.postTags[0].name}}</a>
+                  }
+                </div>
+                <h3 class="h4 card-title">
+                  <a [routerLink]="'/post/'+post.slug">{{post.titleText}}</a>
+                </h3>
+                <p class="card-text card-text-truncate">{{getRawTextFromHtml(post.excerptText)}}</p>
+              </div>
+              <div class="card-footer pt-3">
+                <div class="d-flex align-items-center text-decoration-none pb-2">
+                  <img class="rounded-circle"
+                    [src]="post.fullAuthor.avatar_url_size_48 ? post.fullAuthor.avatar_url_size_48 : post.fullAuthor.avatar_url_size_24 ? post.fullAuthor.avatar_url_size_24 : post.fullAuthor.avatar_url_size_96 "
+                    width="48" alt="Post author">
+                  <h6 class="ps-3 mb-0">{{post.fullAuthor.name}}</h6>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ng-template>
+      </generic-swiper>
+      }
+    </div>
+  </section>
+</div>
+}
+
+<!-- Second search -->
+<section class="container py-5">
+  <h2 class="m-4 text-center">Guides juridiques</h2>
+  <p class="text-center">Dirigeant, professionnel du droit ou du chiffre, vous avez des questions juridiques ? <br>
+    MyJSS vous propose ses articles rédigés par nos juristes formalistes experts et mis à jour en continu avec les
+    évolutions réglementaires.</p>
+  <div class="w-100 my-3 d-flex justify-content-between">
+    <div class="col-12">
+      <div class="input-group custom-input-group align-items-center py-0 rounded-1 row">
+        <div class="col">
+          <div class="row align-items-center">
+            <generic-input style="flex-grow: 1;" [(model)]="secondSearchText" label="Rechercher"
+              [form]="practicalSheetsForm" propertyName="secondSearchText" [isMandatory]="false" [isDisabled]="false"
+              [isDisplayLabel]="false" (onFormChange)="searchForSecondPosts()" [icon]="'search'"
+              class="btn-search col"></generic-input>
+
+            @if (isLoading2) {
+            <div class="col-1 d-flex spinner-border rounded-circle text-dark me-2" role="status">
+              <span class="visually-hidden">chargement...</span>
+            </div>
+            }
+
+            @if (secondSearchText) {
+            <button class="col-1 btn btn-link btn-search" (click)="clearSecondSearch()">
+              <i class="ai ai-cross-alt"></i>
+            </button>
+            }
+          </div>
+        </div>
+        <div class="col-3 justify-content-end">
+          <select-myjss-category class="cursor-pointer" [additionnalType]="this.myJssCategories[0]"
+            [(model)]="secondSelectedMyJssCategory" [form]="practicalSheetsForm"
+            propertyName="secondSelectedMyJssCategory" [isMandatory]="false" (onFormChange)="searchForSecondPosts()"
+            [isDisabled]="false"></select-myjss-category>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  @if (!isServer && !secondSearchText) {
+  @for (myJssCategory of myJssCategories; track myJssCategory) {
+  @if (!myJssCategory.id || (myJssCategory.id>=0 && !postsByMyJssCategory[myJssCategory.id]==undefined)) {
+  <div class="accordion-item border-top mb-0">
+    <div class="accordion-header">
+      <p class="card-text placeholder-glow">
+        <span class="placeholder placeholder-sm col-7 me-2"></span>
+        <span class="placeholder placeholder-sm col-4"></span>
+        <span class="placeholder placeholder-sm col-4 me-2"></span>
+        <span class="placeholder placeholder-sm col-6"></span>
+        <span class="placeholder placeholder-sm col-8"></span>
+      </p>
+    </div>
+  </div>
+  }
+  @if (myJssCategory.id && postsByMyJssCategory[myJssCategory.id] && !secondSearchText) {
+  <div class="card dark-blue-dropdown rounded-3 mt-3" [ngClass]="{ 'expanded-card':  isExpanded(myJssCategory.id) }">
+    <div class="card-header d-flex justify-content-between align-items-center p-0 pt-3">
+      <h5 class="card-title mb-0">{{ myJssCategory.name }}</h5>
+      <button type="button" class="btn btn-link rounded-circle custom-btn" (click)="toggleCard(myJssCategory)">
+        <span class="circle-icon">
+          <i [ngClass]=" isExpanded(myJssCategory.id) ? 'ai-chevron-up' : 'ai-chevron-down'" class="fs-4"></i>
+        </span>
+      </button>
+    </div>
+    <div class="drop-down-body">
+      <div class="row ps-4 pe-5 me-5">
+        @for (post of (isExpanded(myJssCategory.id) ? postsByMyJssCategory[myJssCategory.id] :
+        postsByMyJssCategory[myJssCategory.id].slice(0,3)); track post) {
+        <div class="col-12 col-sm-6 col-md-4 g-2">
+          <li class="d-flex pb-2 mb-1">
+            <span class="bg-primary mt-2 checkbox-custom"></span>
+            <a class="text-decoration-none text-gray" [routerLink]="'/post/'+post.slug">{{post.titleText}}</a>
+          </li>
+        </div>
+        }
+      </div>
+    </div>
+  </div>
+  }
+  }
+  }
+
+  <!-- For SEO purpose only -->
+  @if (isServer) {
+  <div class="row">
+    @for (post of allPostsForSeo; track post) {
+    <div class="col-12">
+      <li>
+        <a [routerLink]="'/post/'+post.slug">{{post.titleText}}</a>
+      </li>
+    </div>
+    }
+  </div>
+  <div class="d-flex justify-content-center align-items-center gap-2 mt-4" *ngIf="totalPages > 1">
+    <!-- Prev -->
+    <a *ngIf="currentSeoPageNumber > 1" [href]="currentSeoPageNumber === 2 
+        ? '/tools/practical-sheets' 
+        : '/tools/practical-sheets/page/' + (currentSeoPageNumber - 1)" class="btn btn-outline-secondary btn-sm">
+      ← Page précédente
+    </a>
+    <!-- Page 1 -->
+    <a href="/tools/practical-sheets" class="btn btn-sm"
+      [ngClass]="currentSeoPageNumber === 1 ? 'btn-primary fw-bold' : 'btn-outline-secondary'">
+      1
+    </a>
+    <!-- dynamic pages -->
+    <ng-container *ngFor="let page of getVisiblePages()">
+      <span *ngIf="page === -1" class="px-1">…</span>
+      <a *ngIf="page !== -1 && page !== 1 && page !== totalPages" [href]="'/tools/practical-sheets/page/' + page"
+        class="btn btn-sm" [ngClass]="currentSeoPageNumber === page ? 'btn-primary fw-bold' : 'btn-outline-secondary'">
+        {{ page }}
+      </a>
+    </ng-container>
+    <!-- Last page -->
+    <a *ngIf="totalPages > 1" [href]="'/tools/practical-sheets/page/' + totalPages" class="btn btn-sm"
+      [ngClass]="currentSeoPageNumber === totalPages ? 'btn-primary fw-bold' : 'btn-outline-secondary'">
+      {{ totalPages }}
+    </a>
+    <!-- Next -->
+    <a *ngIf="currentSeoPageNumber < totalPages" [href]="'/tools/practical-sheets/page/' + (currentSeoPageNumber + 1)"
+      class="btn btn-outline-secondary btn-sm">
+      Page suivante →
+    </a>
+  </div>
+  <!-- End of SEO purpose only -->
+
+  <ng-container *ngIf="secondSearchText && secondSelectedMyJssCategory.id == allMyJssCategories.id && !isServer">
+    <ng-container *ngFor="let myJssCategory of myJssCategories;">
+      <ng-container
+        *ngIf="myJssCategory.id && secondSearchResults[myJssCategory.id] && secondSearchResults[myJssCategory.id].length>0">
+        <div class="card dark-blue-dropdown rounded-3 mt-3">
+          <div class="card-header d-flex justify-content-between align-items-center p-0  pt-3">
+            <h5 class="card-title mb-0">{{ myJssCategory.name }}</h5>
+            <button type="button" class="btn btn-link rounded-circle custom-btn" (click)="toggleCard(myJssCategory)">
+              <span class="circle-icon">
+                <i [ngClass]=" isExpanded(myJssCategory.id) ? 'ai-chevron-up' : 'ai-chevron-down'" class="fs-4"></i>
+              </span>
+            </button>
+          </div>
+        </div>
+      </ng-container>
+    </ng-container>
+  </ng-container>
+  }
+
+  @if (secondSearchText && secondSelectedMyJssCategory.id == allMyJssCategories.id && !isServer) {
+  @for (myJssCategory of myJssCategories; track myJssCategory) {
+  @if (myJssCategory.id && secondSearchResults[myJssCategory.id] && secondSearchResults[myJssCategory.id].length>0) {
+  <div class="card dark-blue-dropdown rounded-3 mt-3">
+    <div class="card-header d-flex justify-content-between align-items-center p-0  pt-3">
+      <h5 class="card-title mb-0">{{ myJssCategory.name }}</h5>
+      <button type="button" class="btn btn-link rounded-circle custom-btn" (click)="toggleCard(myJssCategory)">
+        <span class="circle-icon">
+          <i [ngClass]=" isExpanded(myJssCategory.id) ? 'ai-chevron-up' : 'ai-chevron-down'" class="fs-4"></i>
+        </span>
+      </button>
+    </div>
+    <div class="card-body">
+      <div class=" row">
+        @for (post of (isExpanded(myJssCategory.id) ? secondSearchResults[myJssCategory.id] :
+        secondSearchResults[myJssCategory.id].slice(0,3)); track post) {
+        <div class="col-12 col-sm-6 col-md-4 g-2">
+          <li class="d-flex pb-2 mb-1">
+            <span class="bg-primary mt-2 checkbox-custom"></span>
+            <a class="text-decoration-none text-gray text-truncate-custom"
+              [routerLink]="'/post/'+post.slug">{{post.titleText}}</a>
+          </li>
+        </div>
+        }
+      </div>
+    </div>
+  </div>
+  }
+  }
+  }
+
+  @if (secondSearchText && secondSelectedMyJssCategory && !isServer) {
+  @if (secondSelectedMyJssCategory.id && secondSearchResults[secondSelectedMyJssCategory.id] &&
+  secondSearchResults[secondSelectedMyJssCategory.id].length>0) {
+  <div class="card dark-blue-dropdown rounded-3 mt-3">
+    <div class="card-header d-flex justify-content-between align-items-center p-0  pt-3">
+      <h5 class="card-title mb-0">{{ secondSelectedMyJssCategory.name }}</h5>
+      <button type="button" class="btn btn-link rounded-circle custom-btn"
+        (click)="toggleCard(secondSelectedMyJssCategory)">
+        <span class="circle-icon">
+          <i [ngClass]=" isExpanded(secondSelectedMyJssCategory.id) ? 'ai-chevron-up' : 'ai-chevron-down'"
+            class="fs-4"></i>
+        </span>
+      </button>
+    </div>
+    <div class="card-body">
+      <div class=" row">
+        @for (post of (isExpanded(secondSelectedMyJssCategory.id) ?
+        secondSearchResults[secondSelectedMyJssCategory.id] :
+        secondSearchResults[secondSelectedMyJssCategory.id].slice(0,3)); track post) {
+        <div class="col-4">
+          <li class="d-flex pb-2 mb-1">
+            <span class="bg-primary mt-2 checkbox-custom"></span>
+            <a class="text-decoration-none text-gray text-truncate-custom"
+              [routerLink]="'/post/'+post.slug">{{post.titleText}}</a>
+          </li>
+        </div>
+        }
+      </div>
+    </div>
+  </div>
+  }
+  }
+</section>
+
+<div class="pb-5 mb-md-3 mb-lg-4 mb-xxl-5">
+  <newsletter></newsletter>
+</div>

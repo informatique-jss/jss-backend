@@ -5,6 +5,7 @@ import { MatTabChangeEvent } from '@angular/material/tabs';
 import { Subject } from 'rxjs';
 import { FORMALITE_STATUS_WAITING_DOCUMENT_AUTHORITY, GUICHET_UNIQUE_BASE_URL, GUICHET_UNIQUE_STATUS_AMENDMENT_PENDING, GUICHET_UNIQUE_STATUS_AMENDMENT_SIGNATURE_PENDING, INFOGREFFE_BASE_URL } from 'src/app/libs/Constants';
 import { Dictionnary } from 'src/app/libs/Dictionnary';
+import { formatDateTimeFrance } from 'src/app/libs/FormatHelper';
 import { instanceOfCustomerOrder, instanceOfFormaliteGuichetUnique } from 'src/app/libs/TypeHelper';
 import { ConfirmDialogComponent } from 'src/app/modules/miscellaneous/components/confirm-dialog/confirm-dialog.component';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
@@ -25,6 +26,7 @@ import { FormaliteInfogreffe } from '../../model/infogreffe/FormaliteInfogreffe'
 import { IQuotation } from '../../model/IQuotation';
 import { Provision } from '../../model/Provision';
 import { FormaliteStatusService } from '../../services/formalite.status.service';
+import { ChooseRejectionCauseDialogComponent } from '../choose-rejection-cause-dialog/choose-rejection-cause-dialog.component';
 import { FormaliteAssociateDialog } from '../formalite-associate-dialog/formalite-associate-dialog';
 
 @Component({
@@ -68,6 +70,7 @@ export class FormaliteComponent implements OnInit {
     private formaliteStatusService: FormaliteStatusService,
     private userPreferenceService: UserPreferenceService,
     public associateFormaliteLiasseDialog: MatDialog,
+    public chooseCompetentAuthorityDialog: MatDialog,
     private confirmationDialog: MatDialog,
     private formaliteGuichetUniqueService: FormaliteGuichetUniqueService
   ) { }
@@ -94,7 +97,29 @@ export class FormaliteComponent implements OnInit {
             for (let formalite of this.formalite.formalitesGuichetUnique)
               if (formalite.id == element.id) {
                 formalite.isAuthorizedToSign = true;
-                this.switchToWaitingAc();
+
+                if (formalite.regularizationRequests) {
+                  for (let regularization of formalite.regularizationRequests) {
+                    if (!regularization.rejectionCause) {
+                      const dialogRef = this.chooseCompetentAuthorityDialog.open(ChooseRejectionCauseDialogComponent, {
+                        width: "800px",
+                      });
+
+                      let created = new Date(regularization.created);
+                      dialogRef.componentInstance.title = "Description du rejet";
+                      dialogRef.componentInstance.label = "Quel est la cause du rejet du " + formatDateTimeFrance(created) + " ?";
+                      dialogRef.componentInstance.formaliteGuichetUnique = formalite;
+                      dialogRef.componentInstance.regularizationRequest = regularization;
+                      dialogRef.afterClosed().subscribe(dialogResult => {
+                        this.switchToWaitingAc();
+                      });
+                      return;
+                    } else
+                      this.switchToWaitingAc();
+                  }
+                } else
+                  this.switchToWaitingAc();
+
                 break;
               }
         this.refreshFormalityTable;

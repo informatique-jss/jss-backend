@@ -138,8 +138,10 @@ export class MultipleUploadComponent implements OnInit {
               if (res instanceof HttpResponse && res.body && res.body.length > last.length)
                 last = res.body;
           }
+
           this.endOfUpload.next(last);
           this.resetForm();
+
         })
       }
     }
