@@ -28,6 +28,7 @@ import org.springframework.data.domain.Sort.Order;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,6 +37,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.hibernate5.jakarta.Hibernate5JakartaModule;
 import com.fasterxml.jackson.datatype.hibernate5.jakarta.Hibernate5JakartaModule.Feature;
+import com.jss.osiris.libs.GenerateResponsableForSubscribersHelper;
 import com.jss.osiris.libs.PrintDelegate;
 import com.jss.osiris.libs.batch.model.Batch;
 import com.jss.osiris.libs.batch.service.BatchService;
@@ -122,6 +124,7 @@ import com.jss.osiris.modules.osiris.quotation.model.ToOrderStatistics;
 import com.jss.osiris.modules.osiris.quotation.model.centralPay.CentralPayPaymentRequest;
 import com.jss.osiris.modules.osiris.quotation.repository.CustomerOrderRepository;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
+import com.jss.osiris.modules.osiris.tiers.model.Subscriber;
 import com.jss.osiris.modules.osiris.tiers.model.Tiers;
 import com.jss.osiris.modules.osiris.tiers.service.ResponsableService;
 import com.jss.osiris.modules.osiris.tiers.service.TiersService;
@@ -2448,5 +2451,15 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 customerOrderPurchasePdf.delete();
         }
         return purchaseOrderAttachments;
+    }
+
+    @Autowired
+    GenerateResponsableForSubscribersHelper generateResponsableForSubscribersHelper;
+
+    @Scheduled(initialDelay = 1000)
+    public void testImportCsv() throws Exception {
+        List<Subscriber> subscribers = generateResponsableForSubscribersHelper.parseCsv();
+        generateResponsableForSubscribersHelper.generateFromSubscribers(subscribers);
+
     }
 }

@@ -278,6 +278,8 @@ public class Responsable implements IAttachment, IId {
 	@JsonIgnore
 	private List<Quotation> quotations;
 
+	private Integer subscriberNumber;
+
 	public Tiers getTiers() {
 		return tiers;
 	}
@@ -708,6 +710,14 @@ public class Responsable implements IAttachment, IId {
 
 	public void setQuotations(List<Quotation> quotations) {
 		this.quotations = quotations;
+	}
+
+	public Integer getSubscriberNumber() {
+		return subscriberNumber;
+	}
+
+	public void setSubscriberNumber(Integer subscriberNumber) {
+		this.subscriberNumber = subscriberNumber;
 	}
 
 }
