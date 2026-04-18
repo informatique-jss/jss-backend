@@ -54,6 +54,9 @@ import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 import com.jss.osiris.modules.osiris.tiers.model.Tiers;
 import com.jss.osiris.modules.osiris.tiers.service.TiersService;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+
 @Service
 public class InvoiceServiceImpl implements InvoiceService {
 
@@ -119,6 +122,12 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Autowired
     BatchService batchService;
+
+    @Autowired
+    InvoiceSequenceService invoiceSequenceService;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Override
     public List<Invoice> getAllInvoices() {
@@ -208,6 +217,11 @@ public class InvoiceServiceImpl implements InvoiceService {
             invoice.setInvoiceStatus(constantService.getInvoiceStatusSend());
 
         // Save before to have an ID on invoice
+
+        // Avoid sequence gap for customer invoice
+        if (invoice.getResponsable() != null) {
+            invoice.setId(invoiceSequenceService.getNextInvoiceNumber());
+        }
         addOrUpdateInvoice(invoice);
 
         // Associate invoice to invoice item
@@ -520,6 +534,9 @@ public class InvoiceServiceImpl implements InvoiceService {
     public Invoice addOrUpdateInvoice(Invoice invoice) throws OsirisException {
         if (invoice.getIsCreditNote() == null)
             invoice.setIsCreditNote(false);
+
+        if (invoice.getResponsable() != null && invoice.getId() == null)
+            throw new OsirisValidationException("No ID found on customer invoice");
 
         invoiceRepository.save(invoice);
         batchService.declareNewBatch(Batch.REINDEX_INVOICE, invoice.getId());

@@ -12,10 +12,9 @@ public class InvoiceKeyGenerator implements IdentifierGenerator {
     public Serializable generate(SharedSessionContractImplementor session, Object obj) throws HibernateException {
         Invoice invoice = (Invoice) obj;
         String seqName = "";
-        if (invoice.getProvider() != null || invoice.getRff() != null) {
-            seqName = "hibernate_sequence";
-        } else {
-            seqName = "invoice_sequence";
+
+        if (invoice.getId() != null && invoice.getId() > 0) {
+            return invoice.getId();
         }
         return ((Long) session.createNativeQuery("SELECT nextval('" + seqName + "')").getSingleResult())
                 .intValue();
