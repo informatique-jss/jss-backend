@@ -337,7 +337,7 @@ export class OrderDetailsComponent implements OnInit {
           business: {
             type: 'order',
             order_id: this.order.id,
-            documentType: assoServiceDocument.typeDocument.label
+            documentType: assoServiceDocument.attachmentType.label
           },
           page: {
             type: 'my-account',

@@ -62,7 +62,7 @@ public class DomiciliationServiceImpl implements DomiciliationService {
                             Provision.class.getSimpleName(),
                             constantService.getAttachmentTypeContract(),
                             "Domiciliation_contract_" + formatter.format(LocalDateTime.now()) + ".pdf",
-                            false, "Contrat de domiciliation n°" + provision.getId(), null, null, null));
+                            false, "Contrat de domiciliation n°" + provision.getId(), null, null));
         } catch (FileNotFoundException e) {
             throw new OsirisException(e, "Impossible to read invoice PDF temp file");
         } finally {

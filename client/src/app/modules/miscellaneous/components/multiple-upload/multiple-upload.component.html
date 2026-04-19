@@ -16,9 +16,11 @@
     </div>
     <table class="full-width" style="min-width: 600px;" *ngIf="!isDirectUpload">
       <tr>
-        <td colspan="2"><select-attachment-type *ngIf="files && files.length>0" [(model)]="attachmentType"
+        <td colspan="2">
+          <autocomplete-attachment-type *ngIf="files && files.length>0" [(model)]="attachmentType"
             label="Type de fichier" [form]="attachmentForm" propertyName="attachmentType" [isMandatory]="true"
-            [isDisabled]="forcedAttachmentType!=undefined"></select-attachment-type></td>
+            [isDisabled]="forcedAttachmentType!=undefined"></autocomplete-attachment-type>
+        </td>
       </tr>
       <tr>
         <td>

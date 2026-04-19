@@ -8,7 +8,7 @@ import { AppService } from 'src/app/services/app.service';
 import { CustomerOrder } from '../../model/CustomerOrder';
 import { MissingAttachmentQuery } from '../../model/MissingAttachmentQuery';
 import { MissingAttachmentQueryService } from '../../services/missing-attachment-query.service';
-import { MissingAttachmentMailDialogComponent } from '../select-attachment-type-dialog/missing-attachment-mail-dialog.component';
+import { MissingAttachmentMailDialogComponent } from '../missing-attachment-mail-dialog/missing-attachment-mail-dialog.component';
 
 @Component({
   selector: 'missing-attachment-queries',

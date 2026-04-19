@@ -330,7 +330,7 @@ public class OrderMailIndexationDelegate {
         attachmentService.addAttachment(is, order.getId(), null,
                 CustomerOrder.class.getSimpleName() + "Pending",
                 constantService.getAttachmentTypeClientCommunication(), filename, false,
-                filename, null, null, null);
+                filename, null, null);
     }
 
     private List<NamedInputStream> extractZipStreams(InputStream zipStream) throws IOException {
@@ -444,7 +444,7 @@ public class OrderMailIndexationDelegate {
                 constantService.getAttachmentTypeClientCommunication(),
                 ("Mail client - " + subject.replace(":", " ")
                         + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd HHmm")) + ".html"),
-                false, null, null, null, null);
+                false, null, null, null);
     }
 
     private String extractEmail(String adresses) {

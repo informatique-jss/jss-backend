@@ -68,7 +68,7 @@ public class IndexationMailServiceImpl implements IndexationMailService {
                     constantService.getAttachmentTypeClientCommunication(),
                     ("Mail client - " + currentExportedMail.getSubject().replace(":", " ")
                             + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd HHmm")) + ".html"),
-                    false, null, null, null, null);
+                    false, null, null, null);
         }
     }
 

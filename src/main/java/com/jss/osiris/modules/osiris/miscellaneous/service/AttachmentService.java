@@ -14,7 +14,6 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.miscellaneous.model.AttachmentType;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.PiecesJointe;
-import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.TypeDocument;
 import com.jss.osiris.modules.osiris.quotation.model.infoGreffe.DocumentAssocieInfogreffe;
 
 public interface AttachmentService {
@@ -25,13 +24,13 @@ public interface AttachmentService {
         public List<Attachment> addAttachment(MultipartFile file, Integer idEntity, String codeEntity,
                         String entityType,
                         AttachmentType attachmentType, String filename, Boolean replaceExistingAttachementType,
-                        String pageSelection, TypeDocument typeDocument)
+                        String pageSelection)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException,
                         OsirisDuplicateException;
 
         public List<Attachment> addAttachment(InputStream file, Integer idEntity, String codeEntity, String entityType,
                         AttachmentType attachmentType, String filename, Boolean replaceExistingAttachementType,
-                        String description, PiecesJointe piecesJointe, String pageSelection, TypeDocument typeDocument)
+                        String description, PiecesJointe piecesJointe, String pageSelection)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException,
                         OsirisDuplicateException;
 

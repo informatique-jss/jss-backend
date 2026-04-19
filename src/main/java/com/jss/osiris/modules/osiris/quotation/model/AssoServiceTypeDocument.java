@@ -5,8 +5,8 @@ import java.io.Serializable;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.libs.search.model.IndexedField;
+import com.jss.osiris.modules.osiris.miscellaneous.model.AttachmentType;
 import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
-import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.TypeDocument;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -35,10 +35,10 @@ public class AssoServiceTypeDocument implements Serializable, IId {
 	private ServiceType serviceType;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_type_document")
+	@JoinColumn(name = "id_attachment_type")
 	@IndexedField
 	@JsonView(JacksonViews.MyJssDetailedView.class)
-	private TypeDocument typeDocument;
+	private AttachmentType attachmentType;
 
 	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private Boolean isMandatory;
@@ -49,14 +49,6 @@ public class AssoServiceTypeDocument implements Serializable, IId {
 
 	public void setId(Integer id) {
 		this.id = id;
-	}
-
-	public TypeDocument getTypeDocument() {
-		return typeDocument;
-	}
-
-	public void setTypeDocument(TypeDocument typeDocument) {
-		this.typeDocument = typeDocument;
 	}
 
 	public Boolean getIsMandatory() {
@@ -73,6 +65,14 @@ public class AssoServiceTypeDocument implements Serializable, IId {
 
 	public void setServiceType(ServiceType serviceType) {
 		this.serviceType = serviceType;
+	}
+
+	public AttachmentType getAttachmentType() {
+		return attachmentType;
+	}
+
+	public void setAttachmentType(AttachmentType attachmentType) {
+		this.attachmentType = attachmentType;
 	}
 
 }

@@ -73,7 +73,9 @@
             <td>
           <tr>
             <td *ngIf="selectedEntity && selectedEntity.id">
-
+              <single-attachment [entity]="selectedEntity" [entityType]="ATTACHMENT_TYPE_ATTACHMENT_TYPE.entityType"
+                [editMode]="true" [attachmentTypeToDisplay]="attachmentTypeTemplate"
+                (onUploadedFile)="updateAttachments($event)"></single-attachment>
             </td>
           </tr>
         </table>

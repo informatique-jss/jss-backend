@@ -249,7 +249,7 @@ public class InfogreffeKbisServiceImpl implements InfogreffeKbisService {
             try (InputStream is = new ByteArrayInputStream(response.getBody())) {
                 List<Attachment> attachments = attachmentService.addAttachment(is,
                         kbisRequest.getProvision().getId(), null, Provision.class.getSimpleName(),
-                        constantService.getAttachmentTypeKbis(), name, false, name, null, null, null);
+                        constantService.getAttachmentTypeKbis(), name, false, name, null, null);
 
                 for (Attachment attachment : attachments) {
                     if (name.equals(attachment.getDescription())) {

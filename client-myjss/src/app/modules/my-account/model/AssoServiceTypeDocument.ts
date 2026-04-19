@@ -1,7 +1,7 @@
-import { TypeDocument } from "./TypeDocument";
+import { AttachmentType } from "./AttachmentType";
 
 export interface AssoServiceTypeDocument {
   id: number;
-  typeDocument: TypeDocument;
+  attachmentType: AttachmentType;
   isMandatory: boolean;
 }

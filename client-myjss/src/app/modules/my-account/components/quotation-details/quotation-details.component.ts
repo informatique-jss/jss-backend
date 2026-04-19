@@ -270,7 +270,7 @@ export class QuotationDetailsComponent implements OnInit {
           business: {
             type: 'quotation',
             order_id: this.quotation.id,
-            documentType: assoServiceDocument.typeDocument.label
+            documentType: assoServiceDocument.attachmentType.label
           },
           page: {
             type: 'my-account',

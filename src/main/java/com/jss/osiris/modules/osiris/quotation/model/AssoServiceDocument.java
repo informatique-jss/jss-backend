@@ -8,8 +8,8 @@ import com.fasterxml.jackson.annotation.JsonView;
 import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
+import com.jss.osiris.modules.osiris.miscellaneous.model.AttachmentType;
 import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
-import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.TypeDocument;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -40,10 +40,10 @@ public class AssoServiceDocument implements Serializable, IId {
 	private Service service;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_type_document")
+	@JoinColumn(name = "id_attachment_type")
 	@IndexedField
 	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisDetailedView.class })
-	private TypeDocument typeDocument;
+	private AttachmentType attachmentType;
 
 	@OneToMany(mappedBy = "assoServiceDocument", fetch = FetchType.LAZY)
 	@JsonIgnoreProperties(value = { "assoServiceDocument" }, allowSetters = true)
@@ -74,14 +74,6 @@ public class AssoServiceDocument implements Serializable, IId {
 		this.service = service;
 	}
 
-	public TypeDocument getTypeDocument() {
-		return typeDocument;
-	}
-
-	public void setTypeDocument(TypeDocument typeDocument) {
-		this.typeDocument = typeDocument;
-	}
-
 	public Boolean getIsMandatory() {
 		return isMandatory;
 	}
@@ -104,6 +96,14 @@ public class AssoServiceDocument implements Serializable, IId {
 
 	public void setFormalisteComment(String formalisteComment) {
 		this.formalisteComment = formalisteComment;
+	}
+
+	public AttachmentType getAttachmentType() {
+		return attachmentType;
+	}
+
+	public void setAttachmentType(AttachmentType attachmentType) {
+		this.attachmentType = attachmentType;
 	}
 
 }

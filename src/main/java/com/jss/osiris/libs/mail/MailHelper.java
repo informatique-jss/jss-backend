@@ -1717,10 +1717,10 @@ public class MailHelper {
                 && mail.getMissingAttachmentQuery().getAssoServiceDocument() != null
                 && mail.getMissingAttachmentQuery().getAssoServiceDocument().size() > 0) {
             for (AssoServiceDocument asso : mail.getMissingAttachmentQuery().getAssoServiceDocument())
-                if (asso.getTypeDocument() != null)
-                    if (asso.getTypeDocument().getAttachments() != null
-                            && asso.getTypeDocument().getAttachments().size() > 0)
-                        for (Attachment attachment : asso.getTypeDocument().getAttachments()) {
+                if (asso.getAttachmentType() != null)
+                    if (asso.getAttachmentType().getAttachments() != null
+                            && asso.getAttachmentType().getAttachments().size() > 0)
+                        for (Attachment attachment : asso.getAttachmentType().getAttachments()) {
                             Attachment newAttachment = attachmentService.cloneAttachment(attachment);
                             newAttachment.setAssoServiceDocument(null);
                             newAttachment.setMissingAttachmentQuery(null);

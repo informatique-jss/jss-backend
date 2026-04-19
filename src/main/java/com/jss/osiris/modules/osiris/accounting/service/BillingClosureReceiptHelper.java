@@ -585,7 +585,7 @@ public class BillingClosureReceiptHelper {
                     tiers != null ? Tiers.class.getSimpleName() : Responsable.class.getSimpleName(),
                     constantService.getAttachmentTypeBillingClosure(),
                     "Relevé de compte du " + LocalDateTime.now().format(formatter) + ".pdf", false,
-                    "Relevé de compte du " + LocalDateTime.now().format(formatter), null, null, null);
+                    "Relevé de compte du " + LocalDateTime.now().format(formatter), null, null);
 
             for (Attachment attachment : attachmentsList)
                 if (attachment.getUploadedFile().getFilename()

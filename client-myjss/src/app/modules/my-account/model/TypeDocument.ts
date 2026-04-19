@@ -1,7 +1,6 @@
 import { AttachmentType } from "./AttachmentType";
-import { IAttachment } from "./IAttachment";
 
-export interface TypeDocument extends IAttachment {
+export interface TypeDocument {
   label: string;
   code: string;
   customLabel: string;

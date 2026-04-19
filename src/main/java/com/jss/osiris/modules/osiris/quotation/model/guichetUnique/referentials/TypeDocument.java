@@ -1,13 +1,8 @@
 package com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials;
 
-import java.util.List;
-
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.jss.osiris.libs.jackson.JacksonViews;
-import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.miscellaneous.model.AttachmentType;
-import com.jss.osiris.modules.osiris.miscellaneous.model.IAttachment;
 import com.jss.osiris.modules.osiris.miscellaneous.model.ICode;
 
 import jakarta.persistence.Column;
@@ -16,10 +11,9 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 
 @Entity
-public class TypeDocument implements ICode, IAttachment {
+public class TypeDocument implements ICode {
 
     public TypeDocument() {
     }
@@ -54,12 +48,6 @@ public class TypeDocument implements ICode, IAttachment {
             JacksonViews.OsirisDetailedView.class })
     private String customLabel;
 
-    @OneToMany(mappedBy = "typeDocumentAttachment", fetch = FetchType.LAZY)
-    @JsonIgnoreProperties(value = { "typeDocumentAttachment" }, allowSetters = true)
-    @JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class,
-            JacksonViews.OsirisDetailedView.class })
-    private List<Attachment> attachments;
-
     public String getCode() {
         return code;
     }
@@ -90,14 +78,6 @@ public class TypeDocument implements ICode, IAttachment {
 
     public void setAttachmentType(AttachmentType attachmentType) {
         this.attachmentType = attachmentType;
-    }
-
-    public List<Attachment> getAttachments() {
-        return attachments;
-    }
-
-    public void setAttachments(List<Attachment> attachments) {
-        this.attachments = attachments;
     }
 
     public static String getUNSIGNED_SYNTHESES_DOCUMENT_CODE() {

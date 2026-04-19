@@ -57,6 +57,7 @@ import { InfogreffeStatusComponent } from '../infogreffe-status/infogreffe-statu
 import { InvoiceManagementComponent } from '../invoice-management/invoice-management.component';
 import { JoListComponent } from '../jo-list/jo-list.component';
 import { KanbanOrderComponent } from '../kanban-order/kanban-order.component';
+import { MissingAttachmentMailDialogComponent } from '../missing-attachment-mail-dialog/missing-attachment-mail-dialog.component';
 import { MissingAttachmentQueriesComponent } from '../missing-attachment-queries/missing-attachment-queries.component';
 import { OrderSidePanelDetailsComponent } from '../order-side-panel-details/order-side-panel-details.component';
 import { OrderSimilaritiesDialogComponent } from '../order-similarities-dialog/order-similarities-dialog.component';
@@ -82,9 +83,8 @@ import { RecurringOrderingListComponent } from '../recurring-ordering-list/recur
 import { RecurringParentOrderingListComponent } from '../recurring-parent-ordering-list/recurring-parent-ordering-list.component';
 import { RefundPaymentDialogComponent } from '../refund-payment-dialog/refund-payment-dialog.component';
 import { SelectAccountingAccountDialogComponent } from '../select-accounting-account-dialog/select-accounting-account-dialog.component';
-import { MissingAttachmentMailDialogComponent } from '../select-attachment-type-dialog/missing-attachment-mail-dialog.component';
+import { SelectAttachmentTypeDialogComponent } from '../select-attachment-type-dialog/select-attachment-type-dialog.component';
 import { SelectAttachmentsDialogComponent } from '../select-attachments-dialog/select-attachment-dialog.component';
-import { SelectDocumentTypeDialogComponent } from '../select-document-type-dialog/select-document-type-dialog.component';
 import { SelectMultiServiceTypeDialogComponent } from '../select-multi-service-type-dialog/select-multi-service-type-dialog.component';
 import { SelectPaperSetTypeDialogComponent } from '../select-paper-set-type-dialog/select-paper-set-type-dialog.component';
 import { SelectServiceDialogComponent } from '../select-service-dialog/select-service-dialog.component';
@@ -182,7 +182,7 @@ const routes: Routes = [
     ActeDepositComponent,
     ServiceComponent,
     SelectServiceDialogComponent,
-    SelectDocumentTypeDialogComponent,
+    SelectAttachmentTypeDialogComponent,
     MissingAttachmentQueriesComponent,
     RecurringOrderingListComponent,
     RecurringParentOrderingListComponent,

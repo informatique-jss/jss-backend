@@ -411,7 +411,7 @@ export class RequiredInformationComponent implements OnInit {
         {
           business: {
             type: this.quotation.isQuotation ? 'quotation' : 'order',
-            order_id: this.quotation.id, documentType: assoServiceDocument.typeDocument.label
+            order_id: this.quotation.id, documentType: assoServiceDocument.attachmentType.label
           },
           page: {
             type: 'quotation',

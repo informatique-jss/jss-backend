@@ -303,12 +303,9 @@ public class ServiceServiceImpl implements ServiceService {
                 for (AssoServiceTypeDocument assoServiceTypeDocument : serviceType.getAssoServiceTypeDocuments()) {
                     AssoServiceDocument newAssoServiceDocument = getAssoServiceDocumentFromAssoServiceTypeDocument(
                             assoServiceTypeDocument, service);
-                    String docLabel = assoServiceTypeDocument.getTypeDocument().getCustomLabel() != null
-                            ? assoServiceTypeDocument.getTypeDocument().getCustomLabel()
-                            : assoServiceTypeDocument.getTypeDocument().getCode();
-                    if (newAssoServiceDocument.getTypeDocument() != null
-                            && !typeDocumentCodes.contains(docLabel)) {
-                        typeDocumentCodes.add(docLabel);
+                    if (newAssoServiceDocument.getAttachmentType() != null
+                            && !typeDocumentCodes.contains(assoServiceTypeDocument.getAttachmentType().getCode())) {
+                        typeDocumentCodes.add(assoServiceTypeDocument.getAttachmentType().getCode());
                         assoServiceDocuments.add(newAssoServiceDocument);
                     }
                 }
@@ -574,7 +571,7 @@ public class ServiceServiceImpl implements ServiceService {
         AssoServiceDocument assoServiceDocument = new AssoServiceDocument();
         assoServiceDocument.setIsMandatory(assoServiceTypeDocument.getIsMandatory());
         assoServiceDocument.setService(service);
-        assoServiceDocument.setTypeDocument(assoServiceTypeDocument.getTypeDocument());
+        assoServiceDocument.setAttachmentType(assoServiceTypeDocument.getAttachmentType());
         return assoServiceDocument;
     }
 
@@ -697,7 +694,7 @@ public class ServiceServiceImpl implements ServiceService {
                 for (AssoServiceTypeDocument assoType : serviceType.getAssoServiceTypeDocuments()) {
                     Boolean found = false;
                     for (AssoServiceDocument assoService : finalAssos) {
-                        if (assoService.getTypeDocument().getCode().equals(assoType.getTypeDocument().getCode())) {
+                        if (assoService.getAttachmentType().getCode().equals(assoType.getAttachmentType().getCode())) {
                             found = true;
                             break;
                         }
@@ -917,8 +914,8 @@ public class ServiceServiceImpl implements ServiceService {
 
             if (asAnnouncement && service.getAssoServiceDocuments() != null) {
                 for (AssoServiceDocument assoServiceDocument : service.getAssoServiceDocuments()) {
-                    if (assoServiceDocument.getTypeDocument().getAttachmentType() != null
-                            && assoServiceDocument.getTypeDocument().getAttachmentType().getId()
+                    if (assoServiceDocument.getAttachmentType() != null
+                            && assoServiceDocument.getAttachmentType().getId()
                                     .equals(constantService.getAttachmentTypePublicationFlag().getId())) {
                         assoServiceDocument.setIsMandatory(false);
                     }

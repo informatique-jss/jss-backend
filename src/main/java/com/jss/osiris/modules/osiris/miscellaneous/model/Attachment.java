@@ -25,7 +25,6 @@ import com.jss.osiris.modules.osiris.quotation.model.MissingAttachmentQuery;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
 import com.jss.osiris.modules.osiris.quotation.model.Quotation;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.PiecesJointe;
-import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.TypeDocument;
 import com.jss.osiris.modules.osiris.quotation.model.infoGreffe.DocumentAssocieInfogreffe;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 import com.jss.osiris.modules.osiris.tiers.model.Tiers;
@@ -164,15 +163,9 @@ public class Attachment implements Serializable, IId {
 	private AttachmentType attachmentType;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_type_document")
-	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class,
-			JacksonViews.OsirisDetailedView.class })
-	private TypeDocument typeDocument;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_type_document_attachment")
+	@JoinColumn(name = "id_attachment_type_attachment")
 	@JsonIgnoreProperties(value = { "attachments" }, allowSetters = true)
-	private TypeDocument typeDocumentAttachment;
+	private AttachmentType attachmentTypeAttachment;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_uploaded_file")
@@ -414,28 +407,12 @@ public class Attachment implements Serializable, IId {
 		this.affaire = affaire;
 	}
 
-	public TypeDocument getTypeDocument() {
-		return typeDocument;
-	}
-
-	public void setTypeDocument(TypeDocument typeDocument) {
-		this.typeDocument = typeDocument;
-	}
-
 	public AssoServiceDocument getAssoServiceDocument() {
 		return assoServiceDocument;
 	}
 
 	public void setAssoServiceDocument(AssoServiceDocument assoServiceDocument) {
 		this.assoServiceDocument = assoServiceDocument;
-	}
-
-	public TypeDocument getTypeDocumentAttachment() {
-		return typeDocumentAttachment;
-	}
-
-	public void setTypeDocumentAttachment(TypeDocument typeDocumentAttachment) {
-		this.typeDocumentAttachment = typeDocumentAttachment;
 	}
 
 	public DocumentAssocieInfogreffe getDocumentAssocieInfogreffe() {
@@ -484,5 +461,13 @@ public class Attachment implements Serializable, IId {
 
 	public void setIsValidated(Boolean isValidated) {
 		this.isValidated = isValidated;
+	}
+
+	public AttachmentType getAttachmentTypeAttachment() {
+		return attachmentTypeAttachment;
+	}
+
+	public void setAttachmentTypeAttachment(AttachmentType attachmentTypeAttachment) {
+		this.attachmentTypeAttachment = attachmentTypeAttachment;
 	}
 }

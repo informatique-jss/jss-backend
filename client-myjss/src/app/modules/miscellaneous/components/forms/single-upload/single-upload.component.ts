@@ -8,7 +8,6 @@ import { SHARED_IMPORTS } from '../../../../../libs/SharedImports';
 import { AppService } from '../../../../main/services/app.service';
 import { AttachmentType } from '../../../../my-account/model/AttachmentType';
 import { IAttachment } from '../../../../my-account/model/IAttachment';
-import { TypeDocument } from '../../../../my-account/model/TypeDocument';
 import { UploadAttachmentService } from '../../../../my-account/services/upload.attachment.service';
 
 @Component({
@@ -46,8 +45,6 @@ export class SingleUploadComponent implements OnInit {
 
   @Input() attachmentType: AttachmentType | null = null;
   filename: string = "";
-  @Input() typeDocument: TypeDocument | null = null;
-
   formatBytes = formatBytes;
 
   constructor(private formBuilder: UntypedFormBuilder,
@@ -127,8 +124,7 @@ export class SingleUploadComponent implements OnInit {
             this.entity,
             this.entityType,
             this.attachmentType!,
-            this.files.length === 1 ? this.filename : file.name,
-            this.typeDocument
+            this.files.length === 1 ? this.filename : file.name
           ).pipe(
             tap(event => {
               if (event.type === HttpEventType.DownloadProgress) {

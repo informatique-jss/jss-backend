@@ -1,8 +1,11 @@
 import { Component, OnInit, SimpleChanges } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Observable } from 'rxjs';
+import { Attachment } from 'src/app/modules/miscellaneous/model/Attachment';
 import { AttachmentType } from 'src/app/modules/miscellaneous/model/AttachmentType';
 import { AttachmentTypeService } from 'src/app/modules/miscellaneous/services/attachment.type.service';
+import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
+import { ATTACHMENT_TYPE_ATTACHMENT_TYPE } from 'src/app/routing/search/search.component';
 import { AppService } from 'src/app/services/app.service';
 import { GenericReferentialComponent } from '../generic-referential/generic-referential-component';
 
@@ -13,7 +16,11 @@ import { GenericReferentialComponent } from '../generic-referential/generic-refe
 })
 export class ReferentialAttachmentTypeComponent extends GenericReferentialComponent<AttachmentType> implements OnInit {
 
+  ATTACHMENT_TYPE_ATTACHMENT_TYPE = ATTACHMENT_TYPE_ATTACHMENT_TYPE;
+  attachmentTypeTemplate: AttachmentType = this.constantService.getAttachmentTypeTemplate();
+
   constructor(private attachmentTypeService: AttachmentTypeService,
+    private constantService: ConstantService,
     private formBuilder2: FormBuilder,
     private appService2: AppService,) {
     super(formBuilder2, appService2);
@@ -37,7 +44,9 @@ export class ReferentialAttachmentTypeComponent extends GenericReferentialCompon
     return this.attachmentTypeService.getAttachmentTypes();
   }
 
-  updateAttachments($event: import("../../../../miscellaneous/model/AttachmentType").AttachmentType) {
-    throw new Error('Method not implemented.');
+  updateAttachments(attachments: Attachment[]) {
+    if (attachments && this.selectedEntity) {
+      this.selectedEntity.attachments = attachments;
+    }
   }
 }

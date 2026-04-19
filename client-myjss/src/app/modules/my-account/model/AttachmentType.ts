@@ -1,6 +1,7 @@
+import { IAttachment } from "./IAttachment";
 
 
-export interface AttachmentType {
+export interface AttachmentType extends IAttachment {
   id: number;
   label: string;
   code: string;

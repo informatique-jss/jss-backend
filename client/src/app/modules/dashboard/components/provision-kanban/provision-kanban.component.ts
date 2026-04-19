@@ -13,8 +13,8 @@ import { ConstantService } from 'src/app/modules/miscellaneous/services/constant
 import { Employee } from 'src/app/modules/profile/model/Employee';
 import { EmployeeService } from 'src/app/modules/profile/services/employee.service';
 import { ChooseCompetentAuthorityDialogComponent } from 'src/app/modules/quotation/components/choose-competent-authority-dialog/choose-competent-authority-dialog.component';
+import { MissingAttachmentMailDialogComponent } from 'src/app/modules/quotation/components/missing-attachment-mail-dialog/missing-attachment-mail-dialog.component';
 import { ProvisionComponent } from 'src/app/modules/quotation/components/provision/provision.component';
-import { MissingAttachmentMailDialogComponent } from 'src/app/modules/quotation/components/select-attachment-type-dialog/missing-attachment-mail-dialog.component';
 import { SelectAttachmentsDialogComponent } from 'src/app/modules/quotation/components/select-attachments-dialog/select-attachment-dialog.component';
 import { Announcement } from 'src/app/modules/quotation/model/Announcement';
 import { AnnouncementStatus } from 'src/app/modules/quotation/model/AnnouncementStatus';

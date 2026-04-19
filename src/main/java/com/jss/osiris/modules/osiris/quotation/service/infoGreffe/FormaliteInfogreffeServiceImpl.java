@@ -180,7 +180,7 @@ public class FormaliteInfogreffeServiceImpl implements FormaliteInfogreffeServic
                                                 getAttachmentTypeDocumentAssocieInfogreffe(documentAssocieInfogreffe),
                                                 filename,
                                                 false, null,
-                                                null, null, null);
+                                                null, null);
 
                                         for (Attachment attachment : attachments) {
                                             if (attachment.getUploadedFile().getFilename().equals(filename)) {

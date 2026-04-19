@@ -251,7 +251,7 @@
         <table class="full-width">
           <tr *ngFor="let assoServiceTypeDocument of selectedEntity.assoServiceTypeDocuments ; let index = index">
             <td>
-              <autocomplete-type-document [(model)]="assoServiceTypeDocument.typeDocument" [form]="entityForm"
+              <autocomplete-type-document [(model)]="assoServiceTypeDocument.attachmentType" [form]="entityForm"
                 [propertyName]="'typeDocument'+index+deleteIndex" [isMandatory]="true" [isDisabled]="!editMode"
                 matTooltip="Seuls les types attachés à un Type de pièce jointe sont affichés"
                 [onlyDisplayWithAttachmentType]="true"></autocomplete-type-document>

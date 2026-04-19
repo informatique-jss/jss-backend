@@ -2432,7 +2432,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                         constantService.getAttachmentTypePurchaseOrder(),
                         "Purchase_Order_" + customerOrder.getId() + "_" + formatter.format(LocalDateTime.now())
                                 + ".pdf",
-                        false, "Bon de commande n°" + customerOrder.getId(), null, null, null);
+                        false, "Bon de commande n°" + customerOrder.getId(), null, null);
 
             for (Attachment attachment : purchaseOrderAttachments)
                 if (customerOrder != null && attachment.getDescription() != null

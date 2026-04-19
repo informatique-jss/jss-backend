@@ -4,11 +4,8 @@ import { Observable } from 'rxjs';
 import { TypeDocumentService } from 'src/app/modules/miscellaneous/services/guichet-unique/type.document.service';
 import { TypeDocument } from 'src/app/modules/quotation/model/guichet-unique/referentials/TypeDocument';
 import { AppService } from 'src/app/services/app.service';
-import { GenericReferentialComponent } from '../generic-referential/generic-referential-component';
-import { TYPE_DOCUMENT_ATTACHMENT_TYPE } from 'src/app/routing/search/search.component';
-import { Attachment } from 'src/app/modules/miscellaneous/model/Attachment';
 import { ConstantService } from '../../../../miscellaneous/services/constant.service';
-import { AttachmentType } from 'src/app/modules/miscellaneous/model/AttachmentType';
+import { GenericReferentialComponent } from '../generic-referential/generic-referential-component';
 
 @Component({
   selector: 'referential-type-document',
@@ -23,9 +20,6 @@ export class ReferentialTypeDocumentComponent extends GenericReferentialComponen
     super(formBuilder2, appService2);
   }
 
-  TYPE_DOCUMENT_ATTACHMENT_TYPE = TYPE_DOCUMENT_ATTACHMENT_TYPE;
-  attachmentTypeTemplate: AttachmentType = this.constantService.getAttachmentTypeTemplate();
-
   ngOnChanges(changes: SimpleChanges) {
     if (this.selectedEntity) {
       if (!this.selectedEntity.isToDownloadOnProvision)
@@ -38,11 +32,5 @@ export class ReferentialTypeDocumentComponent extends GenericReferentialComponen
   }
   getGetObservable(): Observable<TypeDocument[]> {
     return this.typeDocumentService.getTypeDocument();
-  }
-
-  updateAttachments(attachments: Attachment[]) {
-    if (attachments && this.selectedEntity) {
-      this.selectedEntity.attachments = attachments;
-    }
   }
 }

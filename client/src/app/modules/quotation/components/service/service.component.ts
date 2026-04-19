@@ -6,6 +6,7 @@ import { instanceOfQuotation } from 'src/app/libs/TypeHelper';
 import { ConfirmDialogComponent } from 'src/app/modules/miscellaneous/components/confirm-dialog/confirm-dialog.component';
 import { EditCommentDialogComponent } from 'src/app/modules/miscellaneous/components/edit-comment-dialog.component/edit-comment-dialog-component.component';
 import { Attachment } from 'src/app/modules/miscellaneous/model/Attachment';
+import { AttachmentType } from 'src/app/modules/miscellaneous/model/AttachmentType';
 import { IAttachment } from 'src/app/modules/miscellaneous/model/IAttachment';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { UploadAttachmentService } from 'src/app/modules/miscellaneous/services/upload.attachment.service';
@@ -19,8 +20,7 @@ import { AssoServiceFieldType } from '../../model/AssoServiceFieldType';
 import { IQuotation } from '../../model/IQuotation';
 import { Service } from '../../model/Service';
 import { ServiceType } from '../../model/ServiceType';
-import { TypeDocument } from '../../model/guichet-unique/referentials/TypeDocument';
-import { SelectDocumentTypeDialogComponent } from '../select-document-type-dialog/select-document-type-dialog.component';
+import { SelectAttachmentTypeDialogComponent } from '../select-attachment-type-dialog/select-attachment-type-dialog.component';
 
 @Component({
   selector: 'service',
@@ -68,7 +68,7 @@ export class ServiceComponent implements OnInit {
     if (changes.service && this.service) {
       if (this.service.assoServiceDocuments && this.service.assoServiceDocuments.length > 0) {
         this.service.assoServiceDocuments.sort((a: AssoServiceDocument, b: AssoServiceDocument) => {
-          return a.typeDocument.customLabel.localeCompare(b.typeDocument.customLabel)
+          return a.attachmentType.label.localeCompare(b.attachmentType.label)
         });
         this.serviceAttachments = { id: 1, attachments: [] as Attachment[] } as IAttachment;
         for (let doc of this.service.assoServiceDocuments)
@@ -107,7 +107,7 @@ export class ServiceComponent implements OnInit {
       maxWidth: "400px",
       data: {
         title: "Supprimer le type de document",
-        content: "Êtes-vous sûr de vouloir supprimer le type de document " + document.typeDocument.customLabel + " ? Cela effacera toutes les pièces jointes associées.",
+        content: "Êtes-vous sûr de vouloir supprimer le type de document " + document.attachmentType.label + " ? Cela effacera toutes les pièces jointes associées.",
         closeActionText: "Annuler",
         validationActionText: "Supprimer"
       }
@@ -161,23 +161,23 @@ export class ServiceComponent implements OnInit {
   }
 
   addNewDocumentType(service: Service) {
-    const dialogRef = this.selectedDocumentTypeDialog.open(SelectDocumentTypeDialogComponent, {
+    const dialogRef = this.selectedDocumentTypeDialog.open(SelectAttachmentTypeDialogComponent, {
       maxWidth: "400px",
     });
 
-    dialogRef.afterClosed().subscribe((dialogResult: TypeDocument) => {
+    dialogRef.afterClosed().subscribe((dialogResult: AttachmentType) => {
       if (dialogResult && service) {
         if (!service.assoServiceDocuments)
           service.assoServiceDocuments = [];
         for (let asso of service.assoServiceDocuments) {
-          if (asso.typeDocument.code == dialogResult.code) {
+          if (asso.attachmentType.code == dialogResult.code) {
             this.appService.displaySnackBar("Type de document déjà présent", true, 10);
             return;
           }
         }
         let asso = {} as AssoServiceDocument;
         asso.isMandatory = false;
-        asso.typeDocument = dialogResult;
+        asso.attachmentType = dialogResult;
         service.assoServiceDocuments.push(asso);
       }
     });
@@ -186,7 +186,7 @@ export class ServiceComponent implements OnInit {
   documentContainsSearch(document: AssoServiceDocument) {
     let found = false;
     if (this.searchText && document) {
-      found = document.typeDocument.customLabel.toLocaleLowerCase().trim().indexOf(this.searchText.trim().toLocaleLowerCase()) >= 0;
+      found = document.attachmentType.label.toLocaleLowerCase().trim().indexOf(this.searchText.trim().toLocaleLowerCase()) >= 0;
       if (!found && document.attachments && document.attachments.length > 0) {
         for (let attachment of document.attachments)
           if (attachment.uploadedFile.filename.toLocaleLowerCase().trim().indexOf(this.searchText.trim().toLocaleLowerCase()) >= 0) {
@@ -216,7 +216,7 @@ export class ServiceComponent implements OnInit {
 
   uploadFileFromPending(attachement: Attachment, assoServiceDocument: AssoServiceDocument) {
     this.uploadAttachmentService.uploadAttachmentFromAttachment(attachement, assoServiceDocument, ASSO_SERVICE_DOCUMENT_ENTITY_TYPE.entityType,
-      assoServiceDocument.typeDocument.attachmentType).subscribe(response => {
+      assoServiceDocument.attachmentType).subscribe(response => {
         assoServiceDocument.attachments = response;
         this.selectedPendingAttachments = [];
       })

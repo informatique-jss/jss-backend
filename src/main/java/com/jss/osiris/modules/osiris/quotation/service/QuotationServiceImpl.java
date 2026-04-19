@@ -333,7 +333,7 @@ public class QuotationServiceImpl implements QuotationService {
                         Quotation.class.getSimpleName(),
                         constantService.getAttachmentTypeQuotation(),
                         "Quotation_" + quotation.getId() + "_" + formatter.format(LocalDateTime.now()) + ".pdf",
-                        false, "Devis n°" + quotation.getId(), null, null, null);
+                        false, "Devis n°" + quotation.getId(), null, null);
 
             for (Attachment attachment : attachments)
                 if (quotation != null && ((attachment.getUploadedFile() != null

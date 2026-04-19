@@ -77,7 +77,7 @@ export class ReferentialServiceTypeComponent extends GenericReferentialComponent
     this.deleteIndex++;
     if (this.selectedEntity && this.selectedEntity.assoServiceTypeDocuments)
       for (let i = 0; i < this.selectedEntity.assoServiceTypeDocuments.length; i++)
-        if (this.selectedEntity.assoServiceTypeDocuments[i].typeDocument.code == assoServiceTypeDocument.typeDocument.code)
+        if (this.selectedEntity.assoServiceTypeDocuments[i].attachmentType.code == assoServiceTypeDocument.attachmentType.code)
           this.selectedEntity.assoServiceTypeDocuments.splice(i, 1);
   }
 

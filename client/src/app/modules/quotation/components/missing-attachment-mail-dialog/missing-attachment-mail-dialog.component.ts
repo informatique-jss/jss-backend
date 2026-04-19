@@ -148,7 +148,7 @@ export class MissingAttachmentMailDialogComponent implements OnInit {
         for (let serviceAsso of this.service.assoServiceDocuments) {
           let found = false;
           for (let selectedAsso of this.selectedAssoServiceDocument) {
-            if (selectedAsso.typeDocument.code == serviceAsso.typeDocument.code) {
+            if (selectedAsso.attachmentType.code == serviceAsso.attachmentType.code) {
               found = true;
               break;
             }

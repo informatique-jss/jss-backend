@@ -181,7 +181,7 @@
                         [ngClass]="{'border-top-1':index>0}" style="border-width: 2px;"
                         *ngIf="assoServiceDocument.isMandatory">
                         <div class="d-flex flex-wrap w-100 justify-content-between">
-                          <h6>{{assoServiceDocument.typeDocument.customLabel}}</h6>
+                          <h6>{{assoServiceDocument.attachmentType.label}}</h6>
                         </div>
                         <p class="fs-sm  "
                           *ngIf="assoServiceDocument.formalisteComment && assoServiceDocument.formalisteComment.length>0">
@@ -191,8 +191,7 @@
                             <single-upload [entity]="assoServiceDocument" forcedFileExtension="PDF"
                               (endOfUpload)="updateAssoServiceDocument(assoServiceDocument)"
                               [entityType]="ASSO_SERVICE_DOCUMENT_ENTITY_TYPE.entityType" [isDirectUpload]="true"
-                              [attachmentType]="assoServiceDocument.typeDocument.attachmentType"
-                              [typeDocument]="assoServiceDocument.typeDocument"></single-upload>
+                              [attachmentType]="assoServiceDocument.attachmentType"></single-upload>
                           </div>
                         </div>
                         <div class="table-responsive"
@@ -244,7 +243,7 @@
                         [ngClass]="{'border-top-1':index>0}" style="border-width: 2px;"
                         *ngIf="!assoServiceDocument.isMandatory">
                         <div class="d-flex flex-wrap w-100 justify-content-between">
-                          <h6>{{assoServiceDocument.typeDocument.customLabel}}</h6>
+                          <h6>{{assoServiceDocument.attachmentType.label}}</h6>
                         </div>
                         <p class="fs-sm  "
                           *ngIf="assoServiceDocument.formalisteComment && assoServiceDocument.formalisteComment.length>0">
@@ -254,8 +253,7 @@
                             <single-upload [entity]="assoServiceDocument" forcedFileExtension="PDF"
                               (endOfUpload)="updateAssoServiceDocument(assoServiceDocument)"
                               [entityType]="ASSO_SERVICE_DOCUMENT_ENTITY_TYPE.entityType" [isDirectUpload]="true"
-                              [attachmentType]="assoServiceDocument.typeDocument.attachmentType"
-                              [typeDocument]="assoServiceDocument.typeDocument"></single-upload>
+                              [attachmentType]="assoServiceDocument.attachmentType"></single-upload>
                           </div>
                         </div>
                         <div class="table-responsive"

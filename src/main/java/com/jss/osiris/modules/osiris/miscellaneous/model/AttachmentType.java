@@ -1,15 +1,19 @@
 package com.jss.osiris.modules.osiris.miscellaneous.model;
 
 import java.io.Serializable;
+import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.jss.osiris.libs.jackson.JacksonViews;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 
 @Entity
@@ -42,6 +46,12 @@ public class AttachmentType implements Serializable, IId {
 
 	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class })
 	private Boolean isDocumentDateRequired;
+
+	@OneToMany(mappedBy = "attachmentTypeAttachment", fetch = FetchType.LAZY)
+	@JsonIgnoreProperties(value = { "attachmentTypeAttachment" }, allowSetters = true)
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class,
+			JacksonViews.OsirisDetailedView.class })
+	private List<Attachment> attachments;
 
 	public Integer getId() {
 		return id;
@@ -105,6 +115,14 @@ public class AttachmentType implements Serializable, IId {
 
 	public void setIsDocumentDateRequired(Boolean isDocumentDateRequired) {
 		this.isDocumentDateRequired = isDocumentDateRequired;
+	}
+
+	public List<Attachment> getAttachments() {
+		return attachments;
+	}
+
+	public void setAttachments(List<Attachment> attachments) {
+		this.attachments = attachments;
 	}
 
 }

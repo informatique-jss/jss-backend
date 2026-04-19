@@ -237,8 +237,8 @@ public class MissingAttachmentQueryServiceImpl implements MissingAttachmentQuery
                             .getAssoServiceDocuments())
                         for (AssoServiceDocument assoServiceDocumentMissingQuery : missingAttachmentQuery
                                 .getAssoServiceDocument()) {
-                            if (assoServiceDocumentService.getTypeDocument().getCode()
-                                    .equals(assoServiceDocumentMissingQuery.getTypeDocument().getCode())) {
+                            if (assoServiceDocumentService.getAttachmentType().getCode()
+                                    .equals(assoServiceDocumentMissingQuery.getAttachmentType().getCode())) {
                                 if (assoServiceDocumentMissingQuery.getAttachments() != null
                                         && assoServiceDocumentMissingQuery.getAttachments().size() > 0) {
                                     boolean isAtLeastOneAttachmentAvailable = false;
@@ -249,11 +249,11 @@ public class MissingAttachmentQueryServiceImpl implements MissingAttachmentQuery
                                             break;
                                         }
                                     }
-                                    if (!isAtLeastOneAttachmentAvailable && !attachment.getTypeDocument().getCode()
-                                            .equals(assoServiceDocumentMissingQuery.getTypeDocument().getCode()))
+                                    if (!isAtLeastOneAttachmentAvailable && !attachment.getAttachmentType().getCode()
+                                            .equals(assoServiceDocumentMissingQuery.getAttachmentType().getCode()))
                                         return;
-                                } else if (!attachment.getTypeDocument().getCode()
-                                        .equals(assoServiceDocumentMissingQuery.getTypeDocument().getCode()))
+                                } else if (!attachment.getAttachmentType().getCode()
+                                        .equals(assoServiceDocumentMissingQuery.getAttachmentType().getCode()))
                                     return;
                             }
                         }

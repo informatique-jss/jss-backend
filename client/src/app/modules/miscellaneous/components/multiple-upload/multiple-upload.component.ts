@@ -5,7 +5,6 @@ import { forkJoin, tap } from 'rxjs';
 import { MAX_SIZE_UPLOAD_FILES } from 'src/app/libs/Constants';
 import { formatBytes } from 'src/app/libs/FormatHelper';
 import { instanceOfIAttachmentCode } from 'src/app/libs/TypeHelper';
-import { TypeDocument } from 'src/app/modules/quotation/model/guichet-unique/referentials/TypeDocument';
 import { AppService } from 'src/app/services/app.service';
 import { AttachmentType } from '../../model/AttachmentType';
 import { IAttachment } from '../../model/IAttachment';
@@ -39,7 +38,6 @@ export class MultipleUploadComponent implements OnInit {
 
   @Input() attachmentType: AttachmentType | null = null;
   filename: string = "";
-  @Input() typeDocument: TypeDocument | null = null;
 
   instanceOfIAttachmentCode = instanceOfIAttachmentCode;
 
@@ -116,7 +114,7 @@ export class MultipleUploadComponent implements OnInit {
         this.isSending = true;
         let promises = [];
         for (let file of this.files) {
-          promises.push(this.uploadAttachmentService.uploadAttachment(file, this.entity, this.entityType, this.attachmentType, this.files.length == 1 ? this.filename : file.name, this.replaceExistingAttachementType, this.pageSelection, this.typeDocument));
+          promises.push(this.uploadAttachmentService.uploadAttachment(file, this.entity, this.entityType, this.attachmentType, this.files.length == 1 ? this.filename : file.name, this.replaceExistingAttachementType, this.pageSelection));
         }
 
         forkJoin(

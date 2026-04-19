@@ -320,14 +320,14 @@ public class InvoiceServiceImpl implements InvoiceService {
                         CustomerOrder.class.getSimpleName(),
                         constantService.getAttachmentTypeInvoice(),
                         "Invoice_" + invoice.getId() + "_" + formatter.format(LocalDateTime.now()) + ".pdf",
-                        false, "Facture n°" + invoice.getId(), null, null, null);
+                        false, "Facture n°" + invoice.getId(), null, null);
             else
                 attachments = attachmentService.addAttachment(new FileInputStream(invoicePdf),
                         invoice.getId(), null,
                         Invoice.class.getSimpleName(),
                         constantService.getAttachmentTypeInvoice(),
                         "Invoice_" + invoice.getId() + "_" + formatter.format(LocalDateTime.now()) + ".pdf",
-                        false, "Facture n°" + invoice.getId(), null, null, null);
+                        false, "Facture n°" + invoice.getId(), null, null);
 
             for (Attachment attachment : attachments)
                 if (attachment.getDescription() != null && attachment.getDescription().contains(invoice.getId() + "")) {
@@ -452,7 +452,7 @@ public class InvoiceServiceImpl implements InvoiceService {
                         CustomerOrder.class.getSimpleName(),
                         constantService.getAttachmentTypeCreditNote(),
                         "Credit_note_" + creditNote.getId() + "_" + formatter.format(LocalDateTime.now()) + ".pdf",
-                        false, "Avoir n°" + creditNote.getId(), null, null, null);
+                        false, "Avoir n°" + creditNote.getId(), null, null);
 
                 for (Attachment attachment : attachments)
                     if (attachment.getDescription() != null

@@ -57,7 +57,6 @@ import com.jss.osiris.modules.osiris.quotation.model.MissingAttachmentQuery;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
 import com.jss.osiris.modules.osiris.quotation.model.Quotation;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.PiecesJointe;
-import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.TypeDocument;
 import com.jss.osiris.modules.osiris.quotation.model.infoGreffe.DocumentAssocieInfogreffe;
 import com.jss.osiris.modules.osiris.quotation.service.AffaireService;
 import com.jss.osiris.modules.osiris.quotation.service.AssoServiceDocumentService;
@@ -65,7 +64,6 @@ import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.osiris.quotation.service.MissingAttachmentQueryService;
 import com.jss.osiris.modules.osiris.quotation.service.ProvisionService;
 import com.jss.osiris.modules.osiris.quotation.service.QuotationService;
-import com.jss.osiris.modules.osiris.quotation.service.guichetUnique.referentials.TypeDocumentService;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 import com.jss.osiris.modules.osiris.tiers.model.Tiers;
 import com.jss.osiris.modules.osiris.tiers.service.ResponsableService;
@@ -138,9 +136,6 @@ public class AttachmentServiceImpl implements AttachmentService {
     AssoServiceDocumentService assoServiceDocumentService;
 
     @Autowired
-    TypeDocumentService typeDocumentService;
-
-    @Autowired
     PdfTools pdfTools;
 
     @Autowired
@@ -151,6 +146,9 @@ public class AttachmentServiceImpl implements AttachmentService {
 
     @Autowired
     CandidacyService candidacyService;
+
+    @Autowired
+    AttachmentTypeService attachmentTypeService;
 
     @Autowired
     InpiInvoicingExtractService inpiInvoicingExtractService;
@@ -172,11 +170,11 @@ public class AttachmentServiceImpl implements AttachmentService {
     @Transactional(rollbackFor = Exception.class)
     public List<Attachment> addAttachment(MultipartFile file, Integer idEntity, String codeEntity, String entityType,
             AttachmentType attachmentType, String filename, Boolean replaceExistingAttachementType,
-            String pageSelection, TypeDocument typeDocument)
+            String pageSelection)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         try {
             return addAttachment(file.getInputStream(), idEntity, codeEntity, entityType, attachmentType, filename,
-                    replaceExistingAttachementType, filename, null, pageSelection, typeDocument);
+                    replaceExistingAttachementType, filename, null, pageSelection);
         } catch (IOException e) {
             throw new OsirisException(e, "Error when reading file");
         }
@@ -204,7 +202,7 @@ public class AttachmentServiceImpl implements AttachmentService {
     @Override
     public List<Attachment> addAttachment(InputStream file, Integer idEntity, String codeEntity, String entityType,
             AttachmentType attachmentType, String filename, Boolean replaceExistingAttachementType, String description,
-            PiecesJointe piecesJointe, String pageSelection, TypeDocument typeDocument)
+            PiecesJointe piecesJointe, String pageSelection)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
 
         if (entityType.equals("Ofx"))
@@ -252,7 +250,6 @@ public class AttachmentServiceImpl implements AttachmentService {
         Attachment attachment = new Attachment();
         attachment.setCreatDateTime(LocalDateTime.now());
         attachment.setAttachmentType(attachmentType);
-        attachment.setTypeDocument(typeDocument);
         attachment.setIsDisabled(false);
         attachment.setDescription(description);
         attachment.setUploadedFile(uploadedFileService.createUploadedFile(filename, absoluteFilePath));
@@ -321,11 +318,11 @@ public class AttachmentServiceImpl implements AttachmentService {
             if (candidacy == null)
                 return;
             attachment.setCandidacy(candidacy);
-        } else if (entityType.equals(TypeDocument.class.getSimpleName())) {
-            TypeDocument typeDocumentAttachment = typeDocumentService.getTypeDocumentByCode(codeEntity);
-            if (typeDocumentAttachment == null)
+        } else if (entityType.equals(AttachmentType.class.getSimpleName())) {
+            AttachmentType attachmentTypeAttachment = attachmentTypeService.getAttachmentType(idEntity);
+            if (attachmentTypeAttachment == null)
                 return;
-            attachment.setTypeDocumentAttachment(typeDocumentAttachment);
+            attachment.setAttachmentTypeAttachment(attachmentTypeAttachment);
         } else if (entityType.equals(AssoServiceDocument.class.getSimpleName())) {
             AssoServiceDocument assoServiceDocument = assoServiceDocumentService.getAssoServiceDocument(idEntity);
             missingAttachmentQueryService.checkCompleteAttachmentListAndComment(assoServiceDocument, attachment);
@@ -358,8 +355,8 @@ public class AttachmentServiceImpl implements AttachmentService {
                 if (provision.getService().getAssoServiceDocuments() != null
                         && provision.getService().getAssoServiceDocuments().size() > 0) {
                     for (AssoServiceDocument assoServiceDocument : provision.getService().getAssoServiceDocuments()) {
-                        if (assoServiceDocument.getTypeDocument().getAttachmentType() != null
-                                && assoServiceDocument.getTypeDocument().getAttachmentType().getId()
+                        if (assoServiceDocument.getAttachmentType() != null
+                                && assoServiceDocument.getAttachmentType().getId()
                                         .equals(constantService.getAttachmentTypePublicationFlag().getId())) {
                             attachment.setAssoServiceDocument(assoServiceDocument);
                         }
@@ -496,8 +493,8 @@ public class AttachmentServiceImpl implements AttachmentService {
             attachments = attachmentRepository.findByProviderId(idEntity);
         } else if (entityType.equals(CompetentAuthority.class.getSimpleName())) {
             attachments = attachmentRepository.findByCompetentAuthorityId(idEntity);
-        } else if (entityType.equals(TypeDocument.class.getSimpleName())) {
-            attachments = attachmentRepository.findByTypeDocumentCode(codeEntity);
+        } else if (entityType.equals(AttachmentType.class.getSimpleName())) {
+            attachments = attachmentRepository.findByAttachmentTypeId(idEntity);
         } else if (entityType.equals(MissingAttachmentQuery.class.getSimpleName())) {
             attachments = attachmentRepository.findByMissingAttachmentQuery(idEntity);
         } else if (entityType.equals(Candidacy.class.getSimpleName())) {

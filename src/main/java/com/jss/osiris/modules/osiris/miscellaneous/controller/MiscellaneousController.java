@@ -121,7 +121,6 @@ import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.MissingAttachmentQuery;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
 import com.jss.osiris.modules.osiris.quotation.model.Quotation;
-import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.TypeDocument;
 import com.jss.osiris.modules.osiris.quotation.service.AffaireService;
 import com.jss.osiris.modules.osiris.quotation.service.AssoAffaireOrderService;
 import com.jss.osiris.modules.osiris.quotation.service.BankTransfertService;
@@ -1308,8 +1307,7 @@ public class MiscellaneousController {
             @RequestParam String entityType,
             @RequestParam Integer idAttachmentType,
             @RequestParam String filename, @RequestParam Boolean replaceExistingAttachementType,
-            @RequestParam(name = "pageSelection", required = false) String pageSelection,
-            @RequestParam(name = "typeDocumentCode", required = false) String typeDocumentCode)
+            @RequestParam(name = "pageSelection", required = false) String pageSelection)
             throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
         if (idAttachmentType == null)
             throw new OsirisValidationException("idAttachmentType");
@@ -1328,13 +1326,6 @@ public class MiscellaneousController {
         if (entityType == null)
             throw new OsirisValidationException("entityType");
 
-        TypeDocument typeDocument = null;
-        if (typeDocumentCode != null) {
-            typeDocument = typeDocumentService.getTypeDocumentByCode(typeDocumentCode);
-            if (typeDocument == null)
-                throw new OsirisValidationException("typeDocument");
-        }
-
         if (!entityType.equals(Tiers.class.getSimpleName())
                 && !entityType.equals("Ofx")
                 && !entityType.equals("InpiInvoicingExtract")
@@ -1348,14 +1339,14 @@ public class MiscellaneousController {
                 && !entityType.equals(Provision.class.getSimpleName())
                 && !entityType.equals(Affaire.class.getSimpleName())
                 && !entityType.equals(AssoServiceDocument.class.getSimpleName())
-                && !entityType.equals(TypeDocument.class.getSimpleName())
+                && !entityType.equals(AttachmentType.class.getSimpleName())
                 && !entityType.equals(Invoice.class.getSimpleName()))
 
             throw new OsirisValidationException("entityType");
 
         return new ResponseEntity<List<Attachment>>(
                 attachmentService.addAttachment(file, idEntity, codeEntity, entityType, attachmentType, filename,
-                        replaceExistingAttachementType, pageSelection, typeDocument),
+                        replaceExistingAttachementType, pageSelection),
                 HttpStatus.OK);
     }
 
@@ -1395,7 +1386,6 @@ public class MiscellaneousController {
                 && !entityType.equals(Provision.class.getSimpleName())
                 && !entityType.equals(Affaire.class.getSimpleName())
                 && !entityType.equals(AssoServiceDocument.class.getSimpleName())
-                && !entityType.equals(TypeDocument.class.getSimpleName())
                 && !entityType.equals(Invoice.class.getSimpleName()))
 
             throw new OsirisValidationException("entityType");

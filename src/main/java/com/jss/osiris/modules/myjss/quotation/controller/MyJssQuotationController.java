@@ -110,7 +110,6 @@ import com.jss.osiris.modules.osiris.quotation.model.ServiceFamilyGroup;
 import com.jss.osiris.modules.osiris.quotation.model.ServiceFieldType;
 import com.jss.osiris.modules.osiris.quotation.model.ServiceType;
 import com.jss.osiris.modules.osiris.quotation.model.ServiceTypeFieldTypePossibleValue;
-import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.TypeDocument;
 import com.jss.osiris.modules.osiris.quotation.service.AffaireService;
 import com.jss.osiris.modules.osiris.quotation.service.AnnouncementService;
 import com.jss.osiris.modules.osiris.quotation.service.AssoAffaireOrderService;
@@ -696,10 +695,10 @@ public class MyJssQuotationController {
 
     boolean canDownload = true;
     if (attachment.getProvision() == null && attachment.getAssoServiceDocument() == null
-        && attachment.getCustomerOrder() == null && attachment.getTypeDocumentAttachment() == null)
+        && attachment.getCustomerOrder() == null && attachment.getAttachmentTypeAttachment() == null)
       canDownload = false;
 
-    if (attachment.getTypeDocumentAttachment() == null && employeeService.getCurrentMyJssUser() == null)
+    if (attachment.getAttachmentTypeAttachment() == null && employeeService.getCurrentMyJssUser() == null)
       canDownload = false;
 
     // Can only download invoice
@@ -924,8 +923,7 @@ public class MyJssQuotationController {
       @RequestParam(required = false) Integer idEntity,
       @RequestParam String entityType,
       @RequestParam Integer idAttachmentType,
-      @RequestParam String filename,
-      @RequestParam(name = "typeDocumentCode", required = false) String typeDocumentCode)
+      @RequestParam String filename)
       throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
     if (idAttachmentType == null)
       throw new OsirisValidationException("idAttachmentType");
@@ -943,13 +941,6 @@ public class MyJssQuotationController {
 
     if (entityType == null)
       throw new OsirisValidationException("entityType");
-
-    TypeDocument typeDocument = null;
-    if (typeDocumentCode != null) {
-      typeDocument = typeDocumentService.getTypeDocumentByCode(typeDocumentCode);
-      if (typeDocument == null)
-        throw new OsirisValidationException("typeDocument");
-    }
 
     boolean canUpload = true;
     AssoServiceDocument assoServiceDocument = assoServiceDocumentService.getAssoServiceDocument(idEntity);
@@ -993,7 +984,7 @@ public class MyJssQuotationController {
 
     List<Attachment> createdAttachments = attachmentService.addAttachment(file, idEntity, null, entityType,
         attachmentType, filename,
-        false, null, typeDocument);
+        false, null);
 
     return new ResponseEntity<List<Integer>>(createdAttachments.stream().map(Attachment::getId).toList(),
         HttpStatus.OK);

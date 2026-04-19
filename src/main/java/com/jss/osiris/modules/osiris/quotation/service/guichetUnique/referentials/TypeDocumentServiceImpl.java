@@ -6,6 +6,7 @@ import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.jss.osiris.modules.osiris.miscellaneous.model.AttachmentType;
 import com.jss.osiris.modules.osiris.quotation.model.AssoServiceTypeDocument;
 import com.jss.osiris.modules.osiris.quotation.model.ServiceType;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.TypeDocument;
@@ -37,8 +38,8 @@ public class TypeDocumentServiceImpl implements TypeDocumentService {
     }
 
     @Override
-    public List<TypeDocument> getTypeDocumentMandatoryByServiceType(ServiceType serviceType) {
+    public List<AttachmentType> getAttachmentTypeMandatoryByServiceType(ServiceType serviceType) {
         return assoServiceTypeDocumentService.getAssoServiceTypeDocumentMandatoryByServiceType(serviceType).stream()
-                .map(AssoServiceTypeDocument::getTypeDocument).toList();
+                .map(AssoServiceTypeDocument::getAttachmentType).toList();
     }
 }

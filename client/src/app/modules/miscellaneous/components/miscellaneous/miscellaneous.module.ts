@@ -45,6 +45,7 @@ import { EditCommentDialogComponent } from '../edit-comment-dialog.component/edi
 import { EmployeeDialogComponent } from '../employee-dialog/employee-dialog.component';
 import { AutocompleteAccountingAccountComponent } from '../forms/autocomplete-accounting-account/autocomplete-accounting-account.component';
 import { AutocompleteAffaireComponent } from '../forms/autocomplete-affaire/autocomplete-affaire.component';
+import { AutocompleteAttachmentTypeComponent } from '../forms/autocomplete-attachment-type/autocomplete-attachment-type.component';
 import { AutocompleteAzureInvoiceComponent } from '../forms/autocomplete-azure-invoice/autocomplete-azure-invoice';
 import { AutocompleteBillingItemComponent } from '../forms/autocomplete-billing-item/autocomplete-billing-item.component';
 import { AutocompleteBillingTypeComponent } from '../forms/autocomplete-billing-type/autocomplete-billing-type.component';
@@ -446,6 +447,7 @@ const routes: Routes = [
     SelectBusinessSectorComponent,
     SelectCompanySizeComponent,
     SelectRejectionCauseComponent,
+    AutocompleteAttachmentTypeComponent,
   ],
   exports: [
     HistoryComponent,
@@ -634,7 +636,8 @@ const routes: Routes = [
     SelectBusinessSectorComponent,
     SelectCompanySizeComponent,
     SelectRejectionCauseComponent,
-    ChipsTiersGroupComponent
+    ChipsTiersGroupComponent,
+    AutocompleteAttachmentTypeComponent,
   ], providers: [
     { provide: DateAdapter, useClass: CustomDateAdapter }
     , SortTableComponent

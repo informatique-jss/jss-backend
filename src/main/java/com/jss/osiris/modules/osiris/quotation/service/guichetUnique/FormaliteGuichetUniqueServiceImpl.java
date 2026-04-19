@@ -742,7 +742,7 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                                 LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")) + "-"
                                         + piecesJointe.getNomDocument(),
                                 false,
-                                piecesJointe.getNomDocument(), piecesJointe, null, piecesJointe.getTypeDocument());
+                                piecesJointe.getNomDocument(), piecesJointe, null);
                         file.delete();
                     } catch (FileNotFoundException e) {
                         throw new OsirisException(e, "erreur when reading file");

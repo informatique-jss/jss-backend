@@ -1,9 +1,9 @@
+import { AttachmentType } from "./AttachmentType";
 import { IAttachment } from "./IAttachment";
-import { TypeDocument } from "./TypeDocument";
 
 export interface AssoServiceDocument extends IAttachment {
   id: number;
-  typeDocument: TypeDocument;
+  attachmentType: AttachmentType;
   isMandatory: boolean;
   formalisteComment: string;
 }
