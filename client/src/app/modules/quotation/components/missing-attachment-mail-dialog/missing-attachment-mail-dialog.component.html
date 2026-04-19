@@ -35,8 +35,7 @@ selectedAssoServiceFieldType) {
       @for (assoServiceDocument of selectedAssoServiceDocument ; track assoServiceDocument) {
       <tr>
         <td style="width: 300px;">
-          {{assoServiceDocument.typeDocument.customLabel}} - {{assoServiceDocument.typeDocument.attachmentType.label}}
-          {{assoServiceDocument.isMandatory? " - Obligatoire":""}}
+          {{assoServiceDocument.attachmentType.label}}{{assoServiceDocument.isMandatory? " - Obligatoire":""}}
         </td>
         <td colspan="3">
           <generic-textarea [(model)]="assoServiceDocument.formalisteComment" label="Commentaire du formaliste"

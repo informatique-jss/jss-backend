@@ -9,7 +9,7 @@ scp build/libs/*-*.jar osiris@app-rec2.osiris.jss.fr:/appli/osiris/osiris.jar
 ssh -t osiris@app-rec2.osiris.jss.fr 'sudo  /usr/bin/systemctl start osiris.service;exit' 
 
 cd client
-npm install  --legacy-peer-deps
+npm install 
 ng build --configuration recette
 ssh -t osiris@rec.osiris.jss.fr 'rm -R /appli/osiris/*;exit'
 scp -r dist/osiris/* osiris@rec.osiris.jss.fr:/appli/osiris/.

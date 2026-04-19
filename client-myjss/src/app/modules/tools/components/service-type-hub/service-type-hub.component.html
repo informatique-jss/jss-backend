@@ -56,11 +56,11 @@
             <div class="col-12 g-2">
               <li class="d-flex pb-2 mb-1">
                 <span class="bg-primary mt-2 checkbox-custom"></span>
-                <span class="text-decoration-none text-gray">{{item.typeDocument.customLabel}}</span>
-                @if (item.typeDocument.attachments && item.typeDocument.attachments[0]) {
+                <span class="text-decoration-none text-gray">{{item.attachmentType.label}}</span>
+                @if (item.attachmentType.attachments && item.attachmentType.attachments[0]) {
                 <button type="button"
                   class="ms-3 btn btn-outline-secondary btn-sm d-flex align-items-center btn-icon-only"
-                  (click)="downloadAttachment(item.typeDocument.attachments[0])" ngbTooltip="Télécharger le modèle"
+                  (click)="downloadAttachment(item.attachmentType.attachments[0])" ngbTooltip="Télécharger le modèle"
                   tooltipClass="custom-tooltip" placement="top">
                   <i class="bi bi-download"></i>
                   <span class="d-none d-lg-inline ms-1">Télécharger le modèle</span>
@@ -75,12 +75,12 @@
                 <div class="col-12 g-2" *ngIf="!item.isMandatory">
                   <li class="d-flex pb-2 mb-1">
                     <span class="bg-primary mt-2 checkbox-custom"></span>
-                    <span class="text-decoration-none text-gray">{{item.typeDocument.customLabel}}</span>
+                    <span class="text-decoration-none text-gray">{{item.attachmentType.label}}</span>
                     <button type="button"
                       class="ms-3 btn btn-outline-secondary btn-sm d-flex align-items-center btn-icon-only"
-                      *ngIf="item.typeDocument.attachments && item.typeDocument.attachments[0]"
-                      (click)="downloadAttachment(item.typeDocument.attachments[0])" ngbTooltip="Télécharger le modèle"
-                      tooltipClass="custom-tooltip" placement="top">
+                      *ngIf="item.attachmentType.attachments && item.attachmentType.attachments[0]"
+                      (click)="downloadAttachment(item.attachmentType.attachments[0])"
+                      ngbTooltip="Télécharger le modèle" tooltipClass="custom-tooltip" placement="top">
                       <i class="bi bi-download"></i>
                       <span class="d-none d-lg-inline ms-1">Télécharger le modèle</span>
                     </button>
@@ -159,11 +159,11 @@
             <div class="col-12 g-2">
               <li class="d-flex pb-2 mb-1">
                 <span class="bg-primary mt-2 checkbox-custom"></span>
-                <span class="text-decoration-none text-gray">{{item.typeDocument.customLabel}}</span>
-                @if (item.typeDocument.attachments && item.typeDocument.attachments[0]) {
+                <span class="text-decoration-none text-gray">{{item.attachmentType.label}}</span>
+                @if (item.attachmentType.attachments && item.attachmentType.attachments[0]) {
                 <button type="button"
                   class="ms-3 btn btn-outline-secondary btn-sm d-flex align-items-center btn-icon-only"
-                  (click)="downloadAttachment(item.typeDocument.attachments[0])" ngbTooltip="Télécharger le modèle"
+                  (click)="downloadAttachment(item.attachmentType.attachments[0])" ngbTooltip="Télécharger le modèle"
                   tooltipClass="custom-tooltip" placement="top">
                   <i class="bi bi-download"></i>
                   <span class="d-none d-lg-inline ms-1">Télécharger le modèle</span>

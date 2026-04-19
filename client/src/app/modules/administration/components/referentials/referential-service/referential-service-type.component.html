@@ -272,10 +272,9 @@
           index = $index) {
           <tr>
             <td>
-              <autocomplete-type-document [(model)]="assoServiceTypeDocument.typeDocument" [form]="entityForm"
-                [propertyName]="'typeDocument'+index+deleteIndex" [isMandatory]="true" [isDisabled]="!editMode"
-                matTooltip="Seuls les types attachés à un Type de pièce jointe sont affichés"
-                [onlyDisplayWithAttachmentType]="true"></autocomplete-type-document>
+              <autocomplete-attachment-type [(model)]="assoServiceTypeDocument.attachmentType" [form]="entityForm"
+                [propertyName]="'attachmentType'+index+deleteIndex" [isMandatory]="true"
+                [isDisabled]="!editMode"></autocomplete-attachment-type>
             </td>
             <td>
               <generic-toggle [(model)]="assoServiceTypeDocument.isMandatory" label="Est obligatoire ?"

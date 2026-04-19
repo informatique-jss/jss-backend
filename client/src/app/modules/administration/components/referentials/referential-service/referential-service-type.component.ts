@@ -16,10 +16,10 @@ import { AssoServiceTypeFieldType } from '../../../../quotation/model/AssoServic
 import { GenericReferentialComponent } from '../generic-referential/generic-referential-component';
 
 @Component({
-    selector: 'referential-service-type',
-    templateUrl: './referential-service-type.component.html',
-    styleUrls: ['./../generic-referential/generic-referential.component.css'],
-    standalone: false
+  selector: 'referential-service-type',
+  templateUrl: './referential-service-type.component.html',
+  styleUrls: ['./../generic-referential/generic-referential.component.css'],
+  standalone: false
 })
 export class ReferentialServiceTypeComponent extends GenericReferentialComponent<ServiceType> implements OnInit {
   constructor(private serviceService: ServiceTypeService,

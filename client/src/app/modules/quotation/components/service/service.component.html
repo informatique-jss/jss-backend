@@ -21,7 +21,7 @@
   <mat-card class="document-card">
     <div class="document-row">
       <div class="doc-info">
-        <div class="doc-type">{{ document.typeDocument.customLabel }}</div>
+        <div class="doc-type">{{ document.attachmentType.label }}</div>
         @if (document.formalisteComment) {
         <div class="doc-comment" matTooltip="Commentaire du formaliste">
           {{ document.formalisteComment }}
@@ -32,8 +32,7 @@
         <multiple-upload [entity]="document" [editMode]="isValidatedStatusForUploadFile()"
           [entityType]="ASSO_SERVICE_DOCUMENT_ENTITY_TYPE.entityType"
           (endOfUpload)="completeDocumentAttachment($event, document)" [isDirectUpload]="false"
-          [attachmentType]="document.typeDocument.attachmentType"
-          [forcedAttachmentType]="document.typeDocument.attachmentType" [typeDocument]="document.typeDocument"
+          [attachmentType]="document.attachmentType" [forcedAttachmentType]="document.attachmentType"
           [smallSize]="true">
         </multiple-upload>
       </div>

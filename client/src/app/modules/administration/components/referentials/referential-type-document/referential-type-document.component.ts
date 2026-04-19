@@ -8,10 +8,10 @@ import { ConstantService } from '../../../../miscellaneous/services/constant.ser
 import { GenericReferentialComponent } from '../generic-referential/generic-referential-component';
 
 @Component({
-    selector: 'referential-type-document',
-    templateUrl: './referential-type-document.component.html',
-    styleUrls: ['./../generic-referential/generic-referential.component.css'],
-    standalone: false
+  selector: 'referential-type-document',
+  templateUrl: './referential-type-document.component.html',
+  styleUrls: ['./../generic-referential/generic-referential.component.css'],
+  standalone: false
 })
 export class ReferentialTypeDocumentComponent extends GenericReferentialComponent<TypeDocument> implements OnInit {
   constructor(private typeDocumentService: TypeDocumentService,
@@ -31,6 +31,7 @@ export class ReferentialTypeDocumentComponent extends GenericReferentialComponen
   getAddOrUpdateObservable(): Observable<TypeDocument> {
     return this.typeDocumentService.addOrUpdateTypeDocument(this.selectedEntity!);
   }
+
   getGetObservable(): Observable<TypeDocument[]> {
     return this.typeDocumentService.getTypeDocument();
   }

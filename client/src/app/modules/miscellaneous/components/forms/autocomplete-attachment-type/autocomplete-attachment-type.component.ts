@@ -10,6 +10,7 @@ import { GenericLocalAutocompleteComponent } from '../generic-local-autocomplete
   selector: 'autocomplete-attachment-type',
   templateUrl: '../generic-local-autocomplete/generic-local-autocomplete.component.html',
   styleUrls: ['../generic-local-autocomplete/generic-local-autocomplete.component.css'],
+  standalone: false
 })
 export class AutocompleteAttachmentTypeComponent extends GenericLocalAutocompleteComponent<AttachmentType> implements OnInit {
 

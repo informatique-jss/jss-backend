@@ -319,11 +319,11 @@
                       [ngClass]="{'border-top-1':index>0}" style="border-width: 2px;">
                       <div class="row">
                         <div class="row d-flex flex-wrap w-100 align-items-center mb-3">
-                          <h6 class="col-auto m-0">{{assoServiceDocument.typeDocument.customLabel}}</h6>
-                          @if (assoServiceDocument.typeDocument.attachments &&
-                          assoServiceDocument.typeDocument.attachments[0]) {
+                          <h6 class="col-auto m-0">{{assoServiceDocument.attachmentType.label}}</h6>
+                          @if (assoServiceDocument.attachmentType.attachments &&
+                          assoServiceDocument.attachmentType.attachments[0]) {
                           <button type="button" class="col-auto btn btn-outline-secondary btn-sm"
-                            (click)="downloadAttachment(assoServiceDocument.typeDocument.attachments[0])">Télécharger
+                            (click)="downloadAttachment(assoServiceDocument.attachmentType.attachments[0])">Télécharger
                             le modèle</button>
                           }
                         </div>
@@ -338,8 +338,7 @@
                               <single-upload [entity]="assoServiceDocument" forcedFileExtension="PDF"
                                 (endOfUpload)="updateAssoServiceDocument(assoServiceDocument)"
                                 [entityType]="ASSO_SERVICE_DOCUMENT_ENTITY_TYPE.entityType" [isDirectUpload]="true"
-                                [attachmentType]="assoServiceDocument.typeDocument.attachmentType"
-                                [typeDocument]="assoServiceDocument.typeDocument"></single-upload>
+                                [attachmentType]="assoServiceDocument.attachmentType"></single-upload>
                             </div>
                           </div>
                         </div>
@@ -390,11 +389,11 @@
                       [ngClass]="{'border-top-1':index>0}" style="border-width: 2px;">
                       <div class="row">
                         <div class="row d-flex flex-wrap w-100 align-items-center mb-3">
-                          <h6 class="col-auto m-0">{{assoServiceDocument.typeDocument.customLabel}}</h6>
-                          @if (assoServiceDocument.typeDocument.attachments &&
-                          assoServiceDocument.typeDocument.attachments[0]) {
+                          <h6 class="col-auto m-0">{{assoServiceDocument.attachmentType.label}}</h6>
+                          @if (assoServiceDocument.attachmentType.attachments &&
+                          assoServiceDocument.attachmentType.attachments[0]) {
                           <button type="button" class="col-auto btn btn-outline-secondary btn-sm"
-                            (click)="downloadAttachment(assoServiceDocument.typeDocument.attachments[0])">Télécharger
+                            (click)="downloadAttachment(assoServiceDocument.attachmentType.attachments[0])">Télécharger
                             le modèle</button>
                           }
                         </div>
@@ -409,8 +408,7 @@
                               <single-upload [entity]="assoServiceDocument" forcedFileExtension="PDF"
                                 (endOfUpload)="updateAssoServiceDocument(assoServiceDocument)"
                                 [entityType]="ASSO_SERVICE_DOCUMENT_ENTITY_TYPE.entityType" [isDirectUpload]="true"
-                                [attachmentType]="assoServiceDocument.typeDocument.attachmentType"
-                                [typeDocument]="assoServiceDocument.typeDocument"></single-upload>
+                                [attachmentType]="assoServiceDocument.attachmentType"></single-upload>
                             </div>
                           </div>
                         </div>

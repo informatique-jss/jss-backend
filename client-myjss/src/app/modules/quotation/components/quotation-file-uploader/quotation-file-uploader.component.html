@@ -5,11 +5,10 @@
       <div>
         <ul class="mb-0">
           <li>
-            {{ entity.typeDocument.customLabel ? entity.typeDocument.customLabel:
-            entity.typeDocument.label }} {{ entity.isMandatory ? '*':''}}
-            @if (entity.typeDocument.attachments && entity.typeDocument.attachments[0]) {
+            {{ entity.attachmentType.label }} {{ entity.isMandatory ? '*':''}}
+            @if (entity.attachmentType.attachments && entity.attachmentType.attachments[0]) {
             <button type="button" class="ms-3 btn btn-outline-secondary btn-sm"
-              (click)="downloadAttachment(entity.typeDocument.attachments[0])">Télécharger
+              (click)="downloadAttachment(entity.attachmentType.attachments[0])">Télécharger
               le modèle</button>
             }
           </li>
@@ -71,7 +70,7 @@
                 </div>
               </div>
               <!-- Date of document -->
-              @if (entity.typeDocument.attachmentType.isDocumentDateRequired ) {
+              @if (entity.attachmentType.isDocumentDateRequired ) {
               <div class="row align-items-center mb-3">
                 <div class="col-4">Date du document*</div>
                 <div class="col-8">
@@ -94,9 +93,8 @@
   <!-- Right column : files drop -->
   <div class="col-12 col-md-6">
     <single-upload [entity]="entity" [entityType]="ASSO_SERVICE_DOCUMENT_ENTITY_TYPE.entityType" [isDirectUpload]="true"
-      [attachmentType]="entity.typeDocument.attachmentType" [typeDocument]="entity.typeDocument"
-      (endOfUpload)="onUploadComplete($event)" (progressChange)="updateUploadProgress($event)"
-      (isErrorChange)="handleErrorChange($event)">>
+      [attachmentType]="entity.attachmentType" (endOfUpload)="onUploadComplete($event)"
+      (progressChange)="updateUploadProgress($event)" (isErrorChange)="handleErrorChange($event)">>
     </single-upload>
   </div>
 </div>

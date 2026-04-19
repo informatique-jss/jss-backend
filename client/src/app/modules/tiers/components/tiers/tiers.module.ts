@@ -70,7 +70,6 @@ const routes: Routes = [
     MatBadgeModule,
     ReportingModule,
     CrmModule,
-    QuotationModule,
   ],
   declarations: [TiersComponent,
     PrincipalComponent,

@@ -19,7 +19,7 @@ interface CacheEntry {
 }
 
 const ssrCache: Record<string, CacheEntry> = {};
-const CACHE_TTL = 300_000;
+const CACHE_TTL = 3_600_000_000;
 
 /**
  * Serve static files from /browser

@@ -226,7 +226,7 @@ isDepositPaymentMandatoryForQuotation) {
                     <div class="list-group-item list-group-item-action flex-column align-items-start py-3 "
                       [ngClass]="{'border-top-1':index>0}" style="border-width: 2px;">
                       <div class="d-flex flex-wrap w-100 justify-content-between">
-                        <h6>{{assoServiceDocument.typeDocument.customLabel}}</h6>
+                        <h6>{{assoServiceDocument.attachmentType.label}}</h6>
                       </div>
                       @if (assoServiceDocument.formalisteComment && assoServiceDocument.formalisteComment.length>0) {
                       <p class="fs-sm  ">
@@ -238,8 +238,7 @@ isDepositPaymentMandatoryForQuotation) {
                           <single-upload [entity]="assoServiceDocument" forcedFileExtension="PDF"
                             (endOfUpload)="updateAssoServiceDocument(assoServiceDocument)"
                             [entityType]="ASSO_SERVICE_DOCUMENT_ENTITY_TYPE.entityType" [isDirectUpload]="true"
-                            [attachmentType]="assoServiceDocument.typeDocument.attachmentType"
-                            [typeDocument]="assoServiceDocument.typeDocument"></single-upload>
+                            [attachmentType]="assoServiceDocument.attachmentType"></single-upload>
                         </div>
                       </div>
                       }
@@ -300,7 +299,7 @@ isDepositPaymentMandatoryForQuotation) {
                     <div class="list-group-item list-group-item-action flex-column align-items-start py-3 "
                       [ngClass]="{'border-top-1':index>0}" style="border-width: 2px;">
                       <div class="d-flex flex-wrap w-100 justify-content-between">
-                        <h6>{{assoServiceDocument.typeDocument.customLabel}}</h6>
+                        <h6>{{assoServiceDocument.attachmentType.label}}</h6>
                       </div>
                       @if (assoServiceDocument.formalisteComment && assoServiceDocument.formalisteComment.length>0) {
                       <p class="fs-sm  ">
@@ -312,8 +311,7 @@ isDepositPaymentMandatoryForQuotation) {
                           <single-upload [entity]="assoServiceDocument" forcedFileExtension="PDF"
                             (endOfUpload)="updateAssoServiceDocument(assoServiceDocument)"
                             [entityType]="ASSO_SERVICE_DOCUMENT_ENTITY_TYPE.entityType" [isDirectUpload]="true"
-                            [attachmentType]="assoServiceDocument.typeDocument.attachmentType"
-                            [typeDocument]="assoServiceDocument.typeDocument"></single-upload>
+                            [attachmentType]="assoServiceDocument.attachmentType"></single-upload>
                         </div>
                       </div>
                       }
