@@ -26,7 +26,6 @@ import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule, Routes } from '@angular/router';
-import { MatTableExporterModule } from 'mat-table-exporter';
 import { NgxEchartsModule } from 'ngx-echarts';
 import { TrustHtmlPipe } from 'src/app/libs/TrustHtmlPipe';
 import { AdministrationComponent } from '../../../administration/components/administration/administration.component';
@@ -243,7 +242,6 @@ const routes: Routes = [
     MatFormFieldModule,
     MatTooltipModule,
     MatMenuModule,
-    MatTableExporterModule,
     MatRadioModule,
     MatCardModule,
     MatBadgeModule,

@@ -4,9 +4,10 @@ import { GenericFormComponent } from '../generic-form.components';
 import { AppService } from 'src/app/services/app.service';
 
 @Component({
-  selector: 'generic-checkbox',
-  templateUrl: './generic-checkbox.component.html',
-  styleUrls: ['./generic-checkbox.component.css']
+    selector: 'generic-checkbox',
+    templateUrl: './generic-checkbox.component.html',
+    styleUrls: ['./generic-checkbox.component.css'],
+    standalone: false
 })
 export class GenericCheckboxComponent extends GenericFormComponent implements OnInit {
   constructor(

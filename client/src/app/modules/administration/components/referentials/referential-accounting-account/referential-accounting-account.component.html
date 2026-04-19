@@ -11,49 +11,53 @@
     </sort-table>
   </div>
 </div>
-<div class="mat-elevation-z2 form-div" *ngIf="selectedEntity ">
-  <form [formGroup]="entityForm">
-    <div class="full-width">
-      <fieldset [disabled]="editMode==false" class="fieldset-no-border">
-        <table class="full-width">
-          <tr *ngIf="selectedEntity.id">
-            <td>
-              <generic-input [(model)]="selectedEntity.id" label="Identifiant technique" [form]="entityForm"
-                propertyName="id" [isMandatory]="true" [isDisabled]="true"></generic-input>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <generic-input [(model)]="selectedEntity.label" label="Nom fonctionnel" [maxLength]="200"
+@if (selectedEntity ) {
+  <div class="mat-elevation-z2 form-div">
+    <form [formGroup]="entityForm">
+      <div class="full-width">
+        <fieldset [disabled]="editMode==false" class="fieldset-no-border">
+          <table class="full-width">
+            @if (selectedEntity.id) {
+              <tr>
+                <td>
+                  <generic-input [(model)]="selectedEntity.id" label="Identifiant technique" [form]="entityForm"
+                  propertyName="id" [isMandatory]="true" [isDisabled]="true"></generic-input>
+                </td>
+              </tr>
+            }
+            <tr>
+              <td>
+                <generic-input [(model)]="selectedEntity.label" label="Nom fonctionnel" [maxLength]="200"
                 [form]="entityForm" propertyName="label" [isMandatory]="true" [isDisabled]="!editMode"></generic-input>
-            </td>
-            <td>
-              <generic-toggle [(model)]="selectedEntity.isViewRestricted" label="Est à visibilité restreinte ?"
+              </td>
+              <td>
+                <generic-toggle [(model)]="selectedEntity.isViewRestricted" label="Est à visibilité restreinte ?"
                 [form]="entityForm" propertyName="isViewRestricted"></generic-toggle>
-            </td>
-            <td>
-              <generic-toggle [(model)]="selectedEntity.isAllowedToPutIntoAccount"
-                label="Mise en compte comptable possible ?" [form]="entityForm"
+              </td>
+              <td>
+                <generic-toggle [(model)]="selectedEntity.isAllowedToPutIntoAccount"
+                  label="Mise en compte comptable possible ?" [form]="entityForm"
                 propertyName="isAllowedToPutIntoAccount"></generic-toggle>
-            </td>
-          </tr>
-        </table>
-        <table class="full-width">
-          <tr>
-            <td>
-              <autocomplete-principal-accounting-account [(model)]="selectedEntity.principalAccountingAccount"
-                [form]="entityForm" propertyName="principalAccountingAccount" [isMandatory]="true"
-                [isDisabled]="!editMode"
+              </td>
+            </tr>
+          </table>
+          <table class="full-width">
+            <tr>
+              <td>
+                <autocomplete-principal-accounting-account [(model)]="selectedEntity.principalAccountingAccount"
+                  [form]="entityForm" propertyName="principalAccountingAccount" [isMandatory]="true"
+                  [isDisabled]="!editMode"
                 label="Compte compatable principal"></autocomplete-principal-accounting-account>
-            </td>
-            <td>
-              <generic-input [(model)]="selectedEntity.accountingAccountSubNumber" label="N° de sous-compte comptable"
-                [form]="entityForm" propertyName="accountingAccountSubNumber" [isMandatory]="true"
+              </td>
+              <td>
+                <generic-input [(model)]="selectedEntity.accountingAccountSubNumber" label="N° de sous-compte comptable"
+                  [form]="entityForm" propertyName="accountingAccountSubNumber" [isMandatory]="true"
                 [isDisabled]="!editMode" [maxLength]="20"></generic-input>
-            </td>
-          </tr>
-        </table>
-      </fieldset>
-    </div>
-  </form>
-</div>
+              </td>
+            </tr>
+          </table>
+        </fieldset>
+      </div>
+    </form>
+  </div>
+}

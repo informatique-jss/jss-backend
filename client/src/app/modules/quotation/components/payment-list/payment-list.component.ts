@@ -25,9 +25,10 @@ import { RefundPaymentDialogComponent } from "../refund-payment-dialog/refund-pa
 import { SelectAccountingAccountDialogComponent } from "../select-accounting-account-dialog/select-accounting-account-dialog.component";
 
 @Component({
-  selector: 'payment-list',
-  templateUrl: './payment-list.component.html',
-  styleUrls: ['./payment-list.component.css']
+    selector: 'payment-list',
+    templateUrl: './payment-list.component.html',
+    styleUrls: ['./payment-list.component.css'],
+    standalone: false
 })
 export class PaymentListComponent implements OnInit, AfterContentChecked {
   @Input() paymentSearch: PaymentSearch = {} as PaymentSearch;

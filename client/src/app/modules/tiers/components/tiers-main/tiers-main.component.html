@@ -1,237 +1,250 @@
-<div class="mat-elevation-z2 form-div" *ngIf="tiers">
-  <form [formGroup]="principalForm">
-    <div class="full-width">
-      <fieldset [disabled]="editMode==false" class="fieldset-no-border">
-        <table class="full-width">
-          <tr>
-            <td>
-              <select-tiers-type [(model)]="tiers.tiersType" label="Type" [isDisabled]="!editMode"
-                [form]="principalForm" propertyName="tiersType" [isMandatory]="true">
-              </select-tiers-type>
-            </td>
-            <td>
-              <generic-input [(model)]="tiers.id" label="N° client/prospect" [form]="principalForm"
+@if (tiers) {
+  <div class="mat-elevation-z2 form-div">
+    <form [formGroup]="principalForm">
+      <div class="full-width">
+        <fieldset [disabled]="editMode==false" class="fieldset-no-border">
+          <table class="full-width">
+            <tr>
+              <td>
+                <select-tiers-type [(model)]="tiers.tiersType" label="Type" [isDisabled]="!editMode"
+                  [form]="principalForm" propertyName="tiersType" [isMandatory]="true">
+                </select-tiers-type>
+              </td>
+              <td>
+                <generic-input [(model)]="tiers.id" label="N° client/prospect" [form]="principalForm"
                 propertyName="tiersId" [isDisabled]="true"></generic-input>
-            </td>
-            <td *ngIf="tiers.isIndividual==false">
-              <generic-input [(model)]="tiers.denomination" label="Dénomination" [form]="principalForm"
-                propertyName="denomination" [isMandatory]="true" [isDisabled]="!editMode"
-                [conditionnalRequired]="!tiers.isIndividual" [maxLength]="80">
-              </generic-input>
-            </td>
-            <td>
-              <generic-input [(model)]="tiers.siret" label="SIRET" [form]="principalForm" propertyName="siret"
+              </td>
+              @if (tiers.isIndividual==false) {
+                <td>
+                  <generic-input [(model)]="tiers.denomination" label="Dénomination" [form]="principalForm"
+                    propertyName="denomination" [isMandatory]="true" [isDisabled]="!editMode"
+                    [conditionnalRequired]="!tiers.isIndividual" [maxLength]="80">
+                  </generic-input>
+                </td>
+              }
+              <td>
+                <generic-input [(model)]="tiers.siret" label="SIRET" [form]="principalForm" propertyName="siret"
                 [isDisabled]="false"></generic-input>
-            </td>
-            <td>
-              <generic-toggle [(model)]="tiers.isNewTiers" label="Nouveau client ?" [form]="principalForm"
+              </td>
+              <td>
+                <generic-toggle [(model)]="tiers.isNewTiers" label="Nouveau client ?" [form]="principalForm"
                 propertyName="isNewTiers" [isDisabled]="!editMode"></generic-toggle>
-            </td>
-          </tr>
-        </table>
-        <table class="full-width">
-          <tr>
-            <td>
-              <generic-toggle [(model)]="tiers.isIndividual" label="Particulier ?" [form]="principalForm"
+              </td>
+            </tr>
+          </table>
+          <table class="full-width">
+            <tr>
+              <td>
+                <generic-toggle [(model)]="tiers.isIndividual" label="Particulier ?" [form]="principalForm"
                 color="primary" propertyName="isIndividual"></generic-toggle>
-            </td>
-            <td [hidden]="tiers.isIndividual==false">
-              <radio-group-civility [conditionnalRequired]="tiers.isIndividual" [(model)]="tiers.civility"
-                [isDisabled]="!editMode" [form]="principalForm" propertyName="civility">
-              </radio-group-civility>
-            </td>
-            <td [hidden]="tiers.isIndividual==false">
-              <generic-input [(model)]="tiers.lastname" label="Nom" [isDisabled]="!editMode" [form]="principalForm"
-                propertyName="lastname" [isMandatory]="true" [conditionnalRequired]="tiers.isIndividual"
+              </td>
+              <td [hidden]="tiers.isIndividual==false">
+                <radio-group-civility [conditionnalRequired]="tiers.isIndividual" [(model)]="tiers.civility"
+                  [isDisabled]="!editMode" [form]="principalForm" propertyName="civility">
+                </radio-group-civility>
+              </td>
+              <td [hidden]="tiers.isIndividual==false">
+                <generic-input [(model)]="tiers.lastname" label="Nom" [isDisabled]="!editMode" [form]="principalForm"
+                  propertyName="lastname" [isMandatory]="true" [conditionnalRequired]="tiers.isIndividual"
                 [maxLength]="40"></generic-input>
-            </td>
-            <td [hidden]="tiers.isIndividual==false">
-              <generic-input [(model)]="tiers.firstname" label="Prénom" [isDisabled]="!editMode" [form]="principalForm"
-                propertyName="firstname" [isMandatory]="true" [conditionnalRequired]="tiers.isIndividual"
+              </td>
+              <td [hidden]="tiers.isIndividual==false">
+                <generic-input [(model)]="tiers.firstname" label="Prénom" [isDisabled]="!editMode" [form]="principalForm"
+                  propertyName="firstname" [isMandatory]="true" [conditionnalRequired]="tiers.isIndividual"
                 [maxLength]="40"></generic-input>
-            </td>
-          </tr>
-        </table>
-
-        <table class="full-width">
-          <tr>
-            <td>
-              <select-tiers-category [(model)]="tiers.tiersCategory" label="Catégorie" [form]="principalForm"
+              </td>
+            </tr>
+          </table>
+          <table class="full-width">
+            <tr>
+              <td>
+                <select-tiers-category [(model)]="tiers.tiersCategory" label="Catégorie" [form]="principalForm"
                 [isDisabled]="!editMode" [isMandatory]="true" propertyName="tiersCategory"></select-tiers-category>
-            </td>
-            <td>
-              <chips-tiers-group [(model)]="tiers.tiersGroups" [form]="principalForm" propertyName="tiersGroups"
+              </td>
+              <td>
+                <chips-tiers-group [(model)]="tiers.tiersGroups" [form]="principalForm" propertyName="tiersGroups"
                 [isMandatory]="false" [isDisabled]="!editMode" label="Groupes"></chips-tiers-group>
-            </td>
-            <td>
-              <autocomplete-employee [(model)]="tiers.salesEmployee" [isDisabled]="!editMode" label="Commercial"
+              </td>
+              <td>
+                <autocomplete-employee [(model)]="tiers.salesEmployee" [isDisabled]="!editMode" label="Commercial"
                 [form]="principalForm" propertyName="salesEmployee" [isMandatory]="true"></autocomplete-employee>
-            </td>
-            <td>
-              <autocomplete-employee *ngIf="!editMode || canChooseProductionEmployeeOnITiers()"
-                [(model)]="tiers.formalisteEmployee" [isDisabled]="!editMode" label="Formaliste"
-                [isDisabled]="!editMode " [form]="principalForm" propertyName="formalisteEmployee">
-              </autocomplete-employee>
-            </td>
-            <td>
-              <autocomplete-employee *ngIf="!editMode || canChooseProductionEmployeeOnITiers()"
-                [(model)]="tiers.insertionEmployee" [isDisabled]="!editMode" label="Publiciste"
-                [isDisabled]="!editMode  " [form]="principalForm" propertyName="insertionEmployee">
-              </autocomplete-employee>
-            </td>
-          </tr>
-        </table>
-        <table class="full-width">
-          <tr>
-            <td>
-              <generic-textarea [(model)]="tiers.mailRecipient" label="Destinataires(s) courrier" [form]="principalForm"
-                propertyName="mailRecipient" (filterInput)="limitTextareaSize(3)" [isDisabled]="!editMode">
-              </generic-textarea>
-            </td>
-            <td style="vertical-align: baseline;">
-              <generic-toggle [(model)]="tiers.isToTakeCare" label="Est à prendre soin ?" [form]="principalForm"
+              </td>
+              <td>
+                @if (!editMode || canChooseProductionEmployeeOnITiers()) {
+                  <autocomplete-employee
+                    [(model)]="tiers.formalisteEmployee" [isDisabled]="!editMode" label="Formaliste"
+                    [isDisabled]="!editMode " [form]="principalForm" propertyName="formalisteEmployee">
+                  </autocomplete-employee>
+                }
+              </td>
+              <td>
+                @if (!editMode || canChooseProductionEmployeeOnITiers()) {
+                  <autocomplete-employee
+                    [(model)]="tiers.insertionEmployee" [isDisabled]="!editMode" label="Publiciste"
+                    [isDisabled]="!editMode  " [form]="principalForm" propertyName="insertionEmployee">
+                  </autocomplete-employee>
+                }
+              </td>
+            </tr>
+          </table>
+          <table class="full-width">
+            <tr>
+              <td>
+                <generic-textarea [(model)]="tiers.mailRecipient" label="Destinataires(s) courrier" [form]="principalForm"
+                  propertyName="mailRecipient" (filterInput)="limitTextareaSize(3)" [isDisabled]="!editMode">
+                </generic-textarea>
+              </td>
+              <td style="vertical-align: baseline;">
+                <generic-toggle [(model)]="tiers.isToTakeCare" label="Est à prendre soin ?" [form]="principalForm"
                 propertyName="isToTakeCare" [isDisabled]="!editMode"></generic-toggle>
-            </td>
-            <td>
-              <select-delivery-service [(model)]="tiers.deliveryService" label="Service de livraison"
-                [form]="principalForm" propertyName="deliveryService" [isMandatory]="true" [isDisabled]="!editMode">
-              </select-delivery-service>
-            </td>
-          </tr>
-        </table>
-        <table class="full-width">
-          <tr>
-            <td>
-              <generic-input [(model)]="tiers.address" [isDisabled]="!editMode" [isDisabled]="!editMode" label="Adresse"
+              </td>
+              <td>
+                <select-delivery-service [(model)]="tiers.deliveryService" label="Service de livraison"
+                  [form]="principalForm" propertyName="deliveryService" [isMandatory]="true" [isDisabled]="!editMode">
+                </select-delivery-service>
+              </td>
+            </tr>
+          </table>
+          <table class="full-width">
+            <tr>
+              <td>
+                <generic-input [(model)]="tiers.address" [isDisabled]="!editMode" [isDisabled]="!editMode" label="Adresse"
                 [form]="principalForm" propertyName="address" [isMandatory]="true" [maxLength]="60"></generic-input>
-            </td>
-            <td>
-              <autocomplete-postal-code [(model)]="tiers.postalCode" [form]="principalForm" propertyName="postalCode"
-                [isMandatory]="true" label="Code postal" [isDisabled]="!editMode" [byPassAutocompletValidator]="true"
-                [conditionnalRequired]="tiers.country != null && tiers.country.id == countryFrance.id"
+              </td>
+              <td>
+                <autocomplete-postal-code [(model)]="tiers.postalCode" [form]="principalForm" propertyName="postalCode"
+                  [isMandatory]="true" label="Code postal" [isDisabled]="!editMode" [byPassAutocompletValidator]="true"
+                  [conditionnalRequired]="tiers.country != null && tiers.country.id == countryFrance.id"
                 (onOptionSelected)="fillCity($event)"></autocomplete-postal-code>
-            </td>
-            <td>
-              <generic-input [(model)]="tiers.cedexComplement" label="Complément CEDEX" [form]="principalForm"
-                propertyName="cedexComplement" [isMandatory]="false" [isDisabled]="!editMode"
+              </td>
+              <td>
+                <generic-input [(model)]="tiers.cedexComplement" label="Complément CEDEX" [form]="principalForm"
+                  propertyName="cedexComplement" [isMandatory]="false" [isDisabled]="!editMode"
                 [maxLength]="20"></generic-input>
-            </td>
-            <td>
-              <autocomplete-city [(model)]="tiers.city" [modelCountry]="tiers.country" [form]="principalForm"
-                propertyName="city" [isMandatory]="true" [isDisabled]="!editMode" label="Ville" [isDisabled]="!editMode"
-                [preFilterPostalCode]="tiers.postalCode" label="Ville" (onOptionSelected)="fillPostalCode($event)">
-              </autocomplete-city>
-            </td>
-            <td>
-              <autocomplete-country [(model)]="tiers.country" [form]="principalForm" propertyName="country" label="Pays"
+              </td>
+              <td>
+                <autocomplete-city [(model)]="tiers.city" [modelCountry]="tiers.country" [form]="principalForm"
+                  propertyName="city" [isMandatory]="true" [isDisabled]="!editMode" label="Ville" [isDisabled]="!editMode"
+                  [preFilterPostalCode]="tiers.postalCode" label="Ville" (onOptionSelected)="fillPostalCode($event)">
+                </autocomplete-city>
+              </td>
+              <td>
+                <autocomplete-country [(model)]="tiers.country" [form]="principalForm" propertyName="country" label="Pays"
                 [isDisabled]="!editMode" [isMandatory]="true"></autocomplete-country>
-            </td>
-            <td>
-              <generic-input [(model)]="tiers.intercom" label="Code porte" [isDisabled]="!editMode"
-                [isDisabled]="!editMode" [form]="principalForm" propertyName="intercom" [maxLength]="12">
-              </generic-input>
-            </td>
-          </tr>
-        </table>
-
-        <table class="full-width">
-          <tr>
-            <td *ngIf="tiers.isIndividual==false">
-              <generic-input [(model)]="tiers.intercommunityVat" [isDisabled]="!editMode" label="TVA intercommunaitaire"
-                [form]="principalForm" propertyName="intercommunityVat" [isMandatory]="false" [conditionnalRequired]=""
-                [customValidators]="[checkVAT('intercommunityVat')]">
-              </generic-input>
-            </td>
-            <td>
-              <chips-special-offers [(model)]="tiers.specialOffers" [form]="principalForm" propertyName="specialOffers"
+              </td>
+              <td>
+                <generic-input [(model)]="tiers.intercom" label="Code porte" [isDisabled]="!editMode"
+                  [isDisabled]="!editMode" [form]="principalForm" propertyName="intercom" [maxLength]="12">
+                </generic-input>
+              </td>
+            </tr>
+          </table>
+          <table class="full-width">
+            <tr>
+              @if (tiers.isIndividual==false) {
+                <td>
+                  <generic-input [(model)]="tiers.intercommunityVat" [isDisabled]="!editMode" label="TVA intercommunaitaire"
+                    [form]="principalForm" propertyName="intercommunityVat" [isMandatory]="false" [conditionnalRequired]=""
+                    [customValidators]="[checkVAT('intercommunityVat')]">
+                  </generic-input>
+                </td>
+              }
+              <td>
+                <chips-special-offers [(model)]="tiers.specialOffers" [form]="principalForm" propertyName="specialOffers"
                 [isDisabled]="!editMode"></chips-special-offers>
-            </td>
-            <td>
-              <generic-input [(model)]="tiers.rffFormaliteRate" [isDisabled]="!editMode" label="Taux RFF Formalité"
+              </td>
+              <td>
+                <generic-input [(model)]="tiers.rffFormaliteRate" [isDisabled]="!editMode" label="Taux RFF Formalité"
                 [form]="principalForm" propertyName="rffFormaliteRate" type="number"></generic-input>
-            </td>
-            <td>
-              <generic-input [(model)]="tiers.rffInsertionRate" [isDisabled]="!editMode" label="Taux RFF Insertion"
+              </td>
+              <td>
+                <generic-input [(model)]="tiers.rffInsertionRate" [isDisabled]="!editMode" label="Taux RFF Insertion"
                 [form]="principalForm" propertyName="rffInsertionRate" type="number"></generic-input>
-            </td>
-            <td
-              *ngIf="tiers.rffFormaliteRate && tiers.rffFormaliteRate>0 || tiers.rffInsertionRate && tiers.rffInsertionRate>0">
-              <select-rff-frequency [(model)]="tiers.rffFrequency" label="Périodicité des RFF" [form]="principalForm"
-                propertyName="rffFrequency" [isMandatory]="true" [isDisabled]="!editMode"></select-rff-frequency>
-            </td>
-          </tr>
-        </table>
-        <table class="full-width">
-          <tr>
-            <td *ngIf="tiers.accountingAccountCustomer">
-              <autocomplete-accounting-account [(model)]="tiers.accountingAccountCustomer" [form]="principalForm"
-                propertyName="accountingAccountCustomer" [isMandatory]="false" [isDisabled]="true"
-                label="Compte comptable client">
-              </autocomplete-accounting-account>
-            </td>
-            <td *ngIf="tiers.accountingAccountDeposit">
-              <autocomplete-accounting-account [(model)]="tiers.accountingAccountDeposit" [form]="principalForm"
-                propertyName="accountingAccountDeposit" [isMandatory]="false" [isDisabled]="true"
-                label="Compte comptable d'acompte">
-              </autocomplete-accounting-account>
-            </td>
-          </tr>
-        </table>
-        <table class="full-width">
-          <tr>
-            <td>
-              <chips-mail [(model)]="tiers.mails" [form]="principalForm" label="Mails" propertyName="mails"
-                [isDisabled]="!editMode">
-              </chips-mail>
-            </td>
-            <td>
-              <chips-phone [(model)]="tiers.phones" [form]="principalForm" propertyName="phones" label="Téléphones"
+              </td>
+              @if (tiers.rffFormaliteRate && tiers.rffFormaliteRate>0 || tiers.rffInsertionRate && tiers.rffInsertionRate>0) {
+                <td
+                  >
+                  <select-rff-frequency [(model)]="tiers.rffFrequency" label="Périodicité des RFF" [form]="principalForm"
+                  propertyName="rffFrequency" [isMandatory]="true" [isDisabled]="!editMode"></select-rff-frequency>
+                </td>
+              }
+            </tr>
+          </table>
+          <table class="full-width">
+            <tr>
+              @if (tiers.accountingAccountCustomer) {
+                <td>
+                  <autocomplete-accounting-account [(model)]="tiers.accountingAccountCustomer" [form]="principalForm"
+                    propertyName="accountingAccountCustomer" [isMandatory]="false" [isDisabled]="true"
+                    label="Compte comptable client">
+                  </autocomplete-accounting-account>
+                </td>
+              }
+              @if (tiers.accountingAccountDeposit) {
+                <td>
+                  <autocomplete-accounting-account [(model)]="tiers.accountingAccountDeposit" [form]="principalForm"
+                    propertyName="accountingAccountDeposit" [isMandatory]="false" [isDisabled]="true"
+                    label="Compte comptable d'acompte">
+                  </autocomplete-accounting-account>
+                </td>
+              }
+            </tr>
+          </table>
+          <table class="full-width">
+            <tr>
+              <td>
+                <chips-mail [(model)]="tiers.mails" [form]="principalForm" label="Mails" propertyName="mails"
+                  [isDisabled]="!editMode">
+                </chips-mail>
+              </td>
+              <td>
+                <chips-phone [(model)]="tiers.phones" [form]="principalForm" propertyName="phones" label="Téléphones"
                 [isDisabled]="!editMode"></chips-phone>
-            </td>
-          </tr>
-        </table>
-        <table class="full-width">
-          <tr>
-            <td>
-              <chips-competitor [(model)]="tiers.competitors" [form]="principalForm" propertyName="competitors"
+              </td>
+            </tr>
+          </table>
+          <table class="full-width">
+            <tr>
+              <td>
+                <chips-competitor [(model)]="tiers.competitors" [form]="principalForm" propertyName="competitors"
                 [isMandatory]="false" [isDisabled]="!editMode" label="Concurrents"></chips-competitor>
-            </td>
-            <td>
-              <select-discovery-origin [(model)]="tiers.discoveringOrigin" label="Origine de la découverte du JSS"
-                [form]="principalForm" propertyName="discoveringOrigin" [isMandatory]="false" [isDisabled]="!editMode">
-              </select-discovery-origin>
-            </td>
-            <td>
-              <select-business-sector [(model)]="tiers.businessSector" label="Secteur d'activité" [form]="principalForm"
-                propertyName="businessSector" [isMandatory]="false" [isDisabled]="!editMode">
-              </select-business-sector>
-            </td>
-            <td>
-              <select-company-size [(model)]="tiers.companySize" label="Taille de l'entreprise" [form]="principalForm"
-                propertyName="companySize" [isMandatory]="false" [isDisabled]="!editMode">
-              </select-company-size>
-            </td>
-          </tr>
-        </table>
-        <table class="full-width">
-          <tr>
-            <td>
-              <generic-textarea [(model)]="tiers.instructions" label="Consignes" [form]="principalForm"
+              </td>
+              <td>
+                <select-discovery-origin [(model)]="tiers.discoveringOrigin" label="Origine de la découverte du JSS"
+                  [form]="principalForm" propertyName="discoveringOrigin" [isMandatory]="false" [isDisabled]="!editMode">
+                </select-discovery-origin>
+              </td>
+              <td>
+                <select-business-sector [(model)]="tiers.businessSector" label="Secteur d'activité" [form]="principalForm"
+                  propertyName="businessSector" [isMandatory]="false" [isDisabled]="!editMode">
+                </select-business-sector>
+              </td>
+              <td>
+                <select-company-size [(model)]="tiers.companySize" label="Taille de l'entreprise" [form]="principalForm"
+                  propertyName="companySize" [isMandatory]="false" [isDisabled]="!editMode">
+                </select-company-size>
+              </td>
+            </tr>
+          </table>
+          <table class="full-width">
+            <tr>
+              <td>
+                <generic-textarea [(model)]="tiers.instructions" label="Consignes" [form]="principalForm"
                 [isDisabled]="!editMode" propertyName="instructions" [numberOfLines]="4"></generic-textarea>
-            </td>
-          </tr>
-        </table>
-
-        <table class="full-width">
-          <tr>
-            <td>
-              <generic-textarea [(model)]="tiers.observations" label="Observations / Informations complémentaires"
-                [isDisabled]="!editMode" [form]="principalForm" propertyName="observations"
+              </td>
+            </tr>
+          </table>
+          <table class="full-width">
+            <tr>
+              <td>
+                <generic-textarea [(model)]="tiers.observations" label="Observations / Informations complémentaires"
+                  [isDisabled]="!editMode" [form]="principalForm" propertyName="observations"
                 [numberOfLines]="8"></generic-textarea>
-            </td>
-          </tr>
-        </table>
-      </fieldset>
-    </div>
-  </form>
-</div>
+              </td>
+            </tr>
+          </table>
+        </fieldset>
+      </div>
+    </form>
+  </div>
+}

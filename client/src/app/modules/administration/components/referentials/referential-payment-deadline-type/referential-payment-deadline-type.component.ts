@@ -7,9 +7,10 @@ import { AppService } from 'src/app/services/app.service';
 import { GenericReferentialComponent } from '../generic-referential/generic-referential-component';
 
 @Component({
-  selector: 'referential-payment-deadline-type',
-  templateUrl: './referential-payment-deadline-type.component.html',
-  styleUrls: ['./../generic-referential/generic-referential.component.css']
+    selector: 'referential-payment-deadline-type',
+    templateUrl: './referential-payment-deadline-type.component.html',
+    styleUrls: ['./../generic-referential/generic-referential.component.css'],
+    standalone: false
 })
 export class ReferentialPaymentDeadlineTypeComponent extends GenericReferentialComponent<PaymentDeadlineType> implements OnInit {
   constructor(private paymentDeadlineTypeService: PaymentDeadlineTypeService,

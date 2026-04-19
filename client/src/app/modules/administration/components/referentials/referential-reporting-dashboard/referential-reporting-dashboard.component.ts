@@ -9,9 +9,10 @@ import { AppService } from 'src/app/services/app.service';
 import { GenericReferentialComponent } from '../generic-referential/generic-referential-component';
 
 @Component({
-  selector: 'referential-reporting-dashboard',
-  templateUrl: './referential-reporting-dashboard.component.html',
-  styleUrls: ['./../generic-referential/generic-referential.component.css']
+    selector: 'referential-reporting-dashboard',
+    templateUrl: './referential-reporting-dashboard.component.html',
+    styleUrls: ['./../generic-referential/generic-referential.component.css'],
+    standalone: false
 })
 export class ReferentialReportingDashboardComponent extends GenericReferentialComponent<ReportingDashboard> implements OnInit {
   constructor(private reportingDashboardService: ReportingDashboardService,

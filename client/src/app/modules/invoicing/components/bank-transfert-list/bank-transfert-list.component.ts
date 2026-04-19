@@ -15,9 +15,10 @@ import { BankTransfertSearchResult } from '../../model/BankTransfertSearchResult
 import { BankTransfertSearchResultService } from '../../services/bank.transfert.search.result.service';
 
 @Component({
-  selector: 'bank-transfer-list',
-  templateUrl: './bank-transfert-list.component.html',
-  styleUrls: ['./bank-transfert-list.component.css']
+    selector: 'bank-transfer-list',
+    templateUrl: './bank-transfert-list.component.html',
+    styleUrls: ['./bank-transfert-list.component.css'],
+    standalone: false
 })
 export class BankTransfertListComponent implements OnInit, AfterContentChecked {
 

@@ -5,12 +5,14 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
+import com.jss.osiris.modules.osiris.miscellaneous.model.Notification;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -53,6 +55,10 @@ public class Service implements Serializable, IId {
 	@JsonIgnoreProperties(value = { "services" }, allowSetters = true)
 	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
 	private AssoAffaireOrder assoAffaireOrder;
+
+	@OneToMany(targetEntity = Notification.class, mappedBy = "service")
+	@JsonIgnore
+	private List<Notification> notifications;
 
 	@ManyToMany
 	@JoinTable(name = "asso_service_service_type", joinColumns = @JoinColumn(name = "id_service"), inverseJoinColumns = @JoinColumn(name = "id_service_type"))
@@ -296,6 +302,14 @@ public class Service implements Serializable, IId {
 
 	public void setJssAnnouncementId(Integer jssAnnouncementId) {
 		this.jssAnnouncementId = jssAnnouncementId;
+	}
+
+	public List<Notification> getNotifications() {
+		return notifications;
+	}
+
+	public void setNotifications(List<Notification> notifications) {
+		this.notifications = notifications;
 	}
 
 }

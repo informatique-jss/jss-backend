@@ -7,9 +7,10 @@ import { Affaire } from '../../model/Affaire';
 import { Provision } from '../../model/Provision';
 
 @Component({
-  selector: 'acte-deposit',
-  templateUrl: './acte-deposit.component.html',
-  styleUrls: ['./acte-deposit.component.css']
+    selector: 'acte-deposit',
+    templateUrl: './acte-deposit.component.html',
+    styleUrls: ['./acte-deposit.component.css'],
+    standalone: false
 })
 export class ActeDepositComponent implements OnInit {
   @Input() provision: Provision | undefined;

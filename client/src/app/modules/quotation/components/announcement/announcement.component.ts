@@ -39,9 +39,10 @@ import { NoticeTypeService } from '../../services/notice.type.service';
 
 
 @Component({
-  selector: 'announcement',
-  templateUrl: './announcement.component.html',
-  styleUrls: ['./announcement.component.css']
+    selector: 'announcement',
+    templateUrl: './announcement.component.html',
+    styleUrls: ['./announcement.component.css'],
+    standalone: false
 })
 export class AnnouncementComponent implements OnInit {
   @Input() announcement: Announcement = {} as Announcement;

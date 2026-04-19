@@ -6,9 +6,10 @@ import { GenericSelectComponent } from '../generic-select/generic-select.compone
 import { AppService } from 'src/app/services/app.service';
 
 @Component({
-  selector: 'select-fund-type',
-  templateUrl: './select-fund-type.component.html',
-  styleUrls: ['./select-fund-type.component.css']
+    selector: 'select-fund-type',
+    templateUrl: './select-fund-type.component.html',
+    styleUrls: ['./select-fund-type.component.css'],
+    standalone: false
 })
 export class SelectFundTypeComponent extends GenericSelectComponent<FundType> implements OnInit {
 

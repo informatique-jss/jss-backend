@@ -14,9 +14,10 @@ import { AffaireService } from '../../services/affaire.service';
 import { OrderingSearchResultService } from '../../services/ordering.search.result.service';
 
 @Component({
-  selector: 'recurring-parent-ordering-list',
-  templateUrl: './recurring-parent-ordering-list.component.html',
-  styleUrls: ['./recurring-parent-ordering-list.component.css']
+    selector: 'recurring-parent-ordering-list',
+    templateUrl: './recurring-parent-ordering-list.component.html',
+    styleUrls: ['./recurring-parent-ordering-list.component.css'],
+    standalone: false
 })
 export class RecurringParentOrderingListComponent implements OnInit {
 

@@ -3,9 +3,10 @@ import { CUSTOMER_ORDER_STATUS_BILLED, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT, QU
 import { ConstantService } from '../../services/constant.service';
 
 @Component({
-  selector: 'chips-status',
-  templateUrl: './chips-status.component.html',
-  styleUrls: ['./chips-status.component.css']
+    selector: 'chips-status',
+    templateUrl: './chips-status.component.html',
+    styleUrls: ['./chips-status.component.css'],
+    standalone: false
 })
 export class ChipsStatusComponent implements OnInit {
 

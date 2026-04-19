@@ -20,10 +20,11 @@ import { CompetentAuthorityType } from '../../../miscellaneous/model/CompetentAu
 import { CompetentAuthorityService } from '../../../miscellaneous/services/competent.authority.service';
 
 @Component({
-  selector: 'competent-authority',
-  templateUrl: './competent-authority.component.html',
-  styleUrls: ['./competent-authority.component.css'],
-  encapsulation: ViewEncapsulation.None,
+    selector: 'competent-authority',
+    templateUrl: './competent-authority.component.html',
+    styleUrls: ['./competent-authority.component.css'],
+    encapsulation: ViewEncapsulation.None,
+    standalone: false
 })
 export class CompetentAuthorityComponent implements OnInit {
   constructor(private competentAuthorityService: CompetentAuthorityService,

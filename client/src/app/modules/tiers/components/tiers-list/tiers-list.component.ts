@@ -15,9 +15,10 @@ import { ResponsableSearchResultService } from '../../services/responsable.searc
 import { TiersSearchResultService } from '../../services/tiers.search.result.service';
 
 @Component({
-  selector: 'tiers-list',
-  templateUrl: './tiers-list.component.html',
-  styleUrls: ['./tiers-list.component.css']
+    selector: 'tiers-list',
+    templateUrl: './tiers-list.component.html',
+    styleUrls: ['./tiers-list.component.css'],
+    standalone: false
 })
 export class TiersListComponent implements OnInit {
   tiers: TiersSearchResult[] | undefined;

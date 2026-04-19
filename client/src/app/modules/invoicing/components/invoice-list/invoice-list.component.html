@@ -1,77 +1,91 @@
 <div class="mat-elevation-z2 form-div">
   <div class=" full-width">
-    <table class="full-width table-fixed-layout" *ngIf="!isForDashboard   && invoiceSearch">
-      <tr>
-        <td>
-          <select-invoice-status [(model)]=" invoiceSearch.invoiceStatus" label="Statut de la facture"
-            [form]="invoiceForm" propertyName="invoiceStatus" [isMandatory]="false"
-            [defaultStatusSelected]="defaultStatusFilter">
-          </select-invoice-status>
-        </td>
-        <td>
-          <generic-input [(model)]="invoiceSearch.minAmount" label="Montant minimum" [form]="invoiceForm"
+    @if (!isForDashboard   && invoiceSearch) {
+      <table class="full-width table-fixed-layout">
+        <tr>
+          <td>
+            <select-invoice-status [(model)]=" invoiceSearch.invoiceStatus" label="Statut de la facture"
+              [form]="invoiceForm" propertyName="invoiceStatus" [isMandatory]="false"
+              [defaultStatusSelected]="defaultStatusFilter">
+            </select-invoice-status>
+          </td>
+          <td>
+            <generic-input [(model)]="invoiceSearch.minAmount" label="Montant minimum" [form]="invoiceForm"
             propertyName="minAmount" [isMandatory]="false" [isDisabled]="false" type="number"></generic-input>
-        </td>
-        <td>
-          <generic-input [(model)]="invoiceSearch.maxAmount" label="Montant maximum" [form]="invoiceForm"
+          </td>
+          <td>
+            <generic-input [(model)]="invoiceSearch.maxAmount" label="Montant maximum" [form]="invoiceForm"
             propertyName="maxAmount" [isMandatory]="false" [isDisabled]="false" type="number"></generic-input>
-        </td>
-        <td>
-          <autocomplete-employee [(model)]="invoiceSearch.salesEmployee" label="Commercial" [form]="invoiceForm"
-            propertyName="salesEmployee" [isMandatory]="false">
-          </autocomplete-employee>
-        </td>
-        <td>
-          <generic-datepicker [(model)]="invoiceSearch.startDate" label="Date de début" [form]="invoiceForm"
+          </td>
+          <td>
+            <autocomplete-employee [(model)]="invoiceSearch.salesEmployee" label="Commercial" [form]="invoiceForm"
+              propertyName="salesEmployee" [isMandatory]="false">
+            </autocomplete-employee>
+          </td>
+          <td>
+            <generic-datepicker [(model)]="invoiceSearch.startDate" label="Date de début" [form]="invoiceForm"
             propertyName="startDate" [isMandatory]="false" [isDisabled]="false"></generic-datepicker>
-        </td>
-        <td>
-          <generic-datepicker [(model)]="invoiceSearch.endDate" label="Date de fin" [form]="invoiceForm"
+          </td>
+          <td>
+            <generic-datepicker [(model)]="invoiceSearch.endDate" label="Date de fin" [form]="invoiceForm"
             propertyName="endDate" [isMandatory]="false" [isDisabled]="false"></generic-datepicker>
-        </td>
-        <td *ngIf="!isForPaymentAssocationIntegration">
-          <generic-toggle [(model)]="invoiceSearch.showToRecover" label="A recouvrer ?" [form]="invoiceForm"
-            propertyName="showToRecover"></generic-toggle>
-        </td>
-        <td *ngIf="isForPaymentAssocationIntegration">
-          <generic-input [(model)]="invoiceSearch.customerOrderId" label="Numéro de commande" [form]="invoiceForm"
-            propertyName="customerOrderId" [isMandatory]="false"></generic-input>
-        </td>
-        <td *ngIf="isForPaymentAssocationIntegration">
-          <autocomplete-tiers-individual [(model)]="searchedTiers" label="Tiers" [form]="invoiceForm"
-            propertyName="tiers" [isMandatory]="false"
-            [authorizeNonIndividualTiers]="true"></autocomplete-tiers-individual>
-        </td>
-        <td *ngIf="isForPaymentAssocationIntegration">
-          <generic-input [(model)]="invoiceSearch.invoiceId" label="Numéro de facture" [form]="invoiceForm"
-            propertyName="invoiceId" [isMandatory]="false"></generic-input>
-        </td>
-        <td class="fab-td-button download-button">
-          <button (click)="populateMailValue()" mat-mini-fab color="accent" class="add-button"
-            matTooltip="Afficher les mails destinataires">
-            <mat-icon>mail</mat-icon>
-          </button>
-        </td>
-        <td class="fab-td-button download-button">
-          <button (click)="downloadAllFiles()" mat-mini-fab color="accent" class="add-button"
-            matTooltip="Télécharger toutes les factures">
-            <mat-icon>download</mat-icon>
-          </button>
-        </td>
-        <td class="fab-td-button">
-          <button mat-mini-fab color="warn" matTooltip="Rechercher" (click)="searchInvoices()" class="add-button">
-            <mat-icon>search</mat-icon>
-          </button>
-        </td>
-      </tr>
-    </table>
-    <sort-table [actions]="tableAction" [columns]="displayedColumns" [values]="invoices" tableName="Factures"
-      [isSmallerHeight]="true" *ngIf="displayedColumns && displayedColumns.length>0 " [displayTotalLines]="true"
-      [refreshTable]="refreshRecordTable.asObservable()">
-    </sort-table>
+          </td>
+          @if (!isForPaymentAssocationIntegration) {
+            <td>
+              <generic-toggle [(model)]="invoiceSearch.showToRecover" label="A recouvrer ?" [form]="invoiceForm"
+              propertyName="showToRecover"></generic-toggle>
+            </td>
+          }
+          @if (isForPaymentAssocationIntegration) {
+            <td>
+              <generic-input [(model)]="invoiceSearch.customerOrderId" label="Numéro de commande" [form]="invoiceForm"
+              propertyName="customerOrderId" [isMandatory]="false"></generic-input>
+            </td>
+          }
+          @if (isForPaymentAssocationIntegration) {
+            <td>
+              <autocomplete-tiers-individual [(model)]="searchedTiers" label="Tiers" [form]="invoiceForm"
+                propertyName="tiers" [isMandatory]="false"
+              [authorizeNonIndividualTiers]="true"></autocomplete-tiers-individual>
+            </td>
+          }
+          @if (isForPaymentAssocationIntegration) {
+            <td>
+              <generic-input [(model)]="invoiceSearch.invoiceId" label="Numéro de facture" [form]="invoiceForm"
+              propertyName="invoiceId" [isMandatory]="false"></generic-input>
+            </td>
+          }
+          <td class="fab-td-button download-button">
+            <button (click)="populateMailValue()" mat-mini-fab color="accent" class="add-button"
+              matTooltip="Afficher les mails destinataires">
+              <mat-icon>mail</mat-icon>
+            </button>
+          </td>
+          <td class="fab-td-button download-button">
+            <button (click)="downloadAllFiles()" mat-mini-fab color="accent" class="add-button"
+              matTooltip="Télécharger toutes les factures">
+              <mat-icon>download</mat-icon>
+            </button>
+          </td>
+          <td class="fab-td-button">
+            <button mat-mini-fab color="warn" matTooltip="Rechercher" (click)="searchInvoices()" class="add-button">
+              <mat-icon>search</mat-icon>
+            </button>
+          </td>
+        </tr>
+      </table>
+    }
+    @if (displayedColumns && displayedColumns.length>0 ) {
+      <sort-table [actions]="tableAction" [columns]="displayedColumns" [values]="invoices" tableName="Factures"
+        [isSmallerHeight]="true" [displayTotalLines]="true"
+        [refreshTable]="refreshRecordTable.asObservable()">
+      </sort-table>
+    }
   </div>
 </div>
-<button *ngIf="!isForDashboard && canAddNewInvoice()" matTooltip="Ajouter une facture libre" mat-fab color="accent"
-  class="fab-button" (click)="addInvoice($event)" (auxclick)="addInvoice($event)">
-  <mat-icon>add</mat-icon>
-</button>
+@if (!isForDashboard && canAddNewInvoice()) {
+  <button matTooltip="Ajouter une facture libre" mat-fab color="accent"
+    class="fab-button" (click)="addInvoice($event)" (auxclick)="addInvoice($event)">
+    <mat-icon>add</mat-icon>
+  </button>
+}

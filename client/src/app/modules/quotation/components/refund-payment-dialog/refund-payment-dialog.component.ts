@@ -7,9 +7,10 @@ import { AppService } from '../../../../services/app.service';
 import { Affaire } from '../../model/Affaire';
 
 @Component({
-  selector: 'refund-payment-dialog',
-  templateUrl: './refund-payment-dialog.component.html',
-  styleUrls: ['./refund-payment-dialog.component.css']
+    selector: 'refund-payment-dialog',
+    templateUrl: './refund-payment-dialog.component.html',
+    styleUrls: ['./refund-payment-dialog.component.css'],
+    standalone: false
 })
 export class RefundPaymentDialogComponent implements OnInit {
 

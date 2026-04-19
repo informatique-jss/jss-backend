@@ -2,80 +2,114 @@
   <mat-tab label="Affaire">
     <div class="mat-elevation-z2 form-div">
       <fieldset [disabled]="editMode==false" class="fieldset-no-border">
-        <add-affaire *ngIf="affaire" [affaire]="affaire" [editMode]="editMode"></add-affaire>
+        @if (affaire) {
+          <add-affaire [affaire]="affaire" [editMode]="editMode"></add-affaire>
+        }
       </fieldset>
     </div>
   </mat-tab>
-  <mat-tab label="Devis" *ngIf="affaire && affaire.id ">
-    <ng-template matTabContent>
-      <quotation-list class="integration-component" [quotationSearch]="quotationSearch" [isForTiersIntegration]="true">
-      </quotation-list>
-    </ng-template>
-  </mat-tab>
-  <mat-tab label="Commandes" *ngIf="affaire && affaire.id ">
-    <ng-template matTabContent>
-      <ordering-list class="integration-component" [orderingSearch]="orderingSearch" [isForTiersIntegration]="true">
-      </ordering-list>
-    </ng-template>
-  </mat-tab>
-  <mat-tab label="Prestations" *ngIf="affaire && affaire.id">
-    <ng-template matTabContent>
-      <provision-list class="integration-component" *ngIf="this.provisionSearch.affaire"
-        [affaireSearch]="provisionSearch" [isForTiersIntegration]="true">
-      </provision-list>
-    </ng-template>
-  </mat-tab>
-  <mat-tab label="Factures" *ngIf="affaire && affaire.id">
-    <ng-template matTabContent>
-      <invoice-list class="integration-component" *ngIf="this.invoiceSearch.affaireId" [invoiceSearch]="invoiceSearch"
-        [isForTiersIntegration]="true"></invoice-list>
-    </ng-template>
-  </mat-tab>
-  <mat-tab label="Suivi" *ngIf="affaire && affaire.id">
-    <ng-template matTabContent>
-      <tiers-followup [affaire]="affaire" [editMode]="true"></tiers-followup>
-    </ng-template>
-  </mat-tab>
-  <mat-tab label="BODACC" *ngIf="affaire && affaire.id">
-    <ng-template matTabContent>
-      <bodacc-list [affaire]="affaire"></bodacc-list>
-    </ng-template>
-  </mat-tab>
-  <mat-tab label="BALO" *ngIf="affaire && affaire.id">
-    <ng-template matTabContent>
-      <balo-list [affaire]="affaire"></balo-list>
-    </ng-template>
-  </mat-tab>
-  <mat-tab label="JO" *ngIf="affaire && affaire.id">
-    <ng-template matTabContent>
-      <jo-list [affaire]="affaire"></jo-list>
-    </ng-template>
-  </mat-tab>
-  <mat-tab label="Documents" *ngIf="affaire && affaire.id">
-    <attachments [entity]="affaire" [editMode]="true" [entityType]="AFFAIRE_ENTITY_TYPE.entityType">
-    </attachments>
-  </mat-tab>
-  <mat-tab label="Historique" *ngIf="affaire && affaire.id">
-    <ng-template matTabContent>
-      <history [entity]="affaire" [entityType]="AFFAIRE_ENTITY_TYPE"></history>
-    </ng-template>
-  </mat-tab>
+  @if (affaire && affaire.id ) {
+    <mat-tab label="Devis">
+      <ng-template matTabContent>
+        <quotation-list class="integration-component" [quotationSearch]="quotationSearch" [isForTiersIntegration]="true">
+        </quotation-list>
+      </ng-template>
+    </mat-tab>
+  }
+  @if (affaire && affaire.id ) {
+    <mat-tab label="Commandes">
+      <ng-template matTabContent>
+        <ordering-list class="integration-component" [orderingSearch]="orderingSearch" [isForTiersIntegration]="true">
+        </ordering-list>
+      </ng-template>
+    </mat-tab>
+  }
+  @if (affaire && affaire.id) {
+    <mat-tab label="Prestations">
+      <ng-template matTabContent>
+        @if (this.provisionSearch.affaire) {
+          <provision-list class="integration-component"
+            [affaireSearch]="provisionSearch" [isForTiersIntegration]="true">
+          </provision-list>
+        }
+      </ng-template>
+    </mat-tab>
+  }
+  @if (affaire && affaire.id) {
+    <mat-tab label="Factures">
+      <ng-template matTabContent>
+        @if (this.invoiceSearch.affaireId) {
+          <invoice-list class="integration-component" [invoiceSearch]="invoiceSearch"
+          [isForTiersIntegration]="true"></invoice-list>
+        }
+      </ng-template>
+    </mat-tab>
+  }
+  @if (affaire && affaire.id) {
+    <mat-tab label="Suivi">
+      <ng-template matTabContent>
+        <tiers-followup [affaire]="affaire" [editMode]="true"></tiers-followup>
+      </ng-template>
+    </mat-tab>
+  }
+  @if (affaire && affaire.id) {
+    <mat-tab label="BODACC">
+      <ng-template matTabContent>
+        <bodacc-list [affaire]="affaire"></bodacc-list>
+      </ng-template>
+    </mat-tab>
+  }
+  @if (affaire && affaire.id) {
+    <mat-tab label="BALO">
+      <ng-template matTabContent>
+        <balo-list [affaire]="affaire"></balo-list>
+      </ng-template>
+    </mat-tab>
+  }
+  @if (affaire && affaire.id) {
+    <mat-tab label="JO">
+      <ng-template matTabContent>
+        <jo-list [affaire]="affaire"></jo-list>
+      </ng-template>
+    </mat-tab>
+  }
+  @if (affaire && affaire.id) {
+    <mat-tab label="Documents">
+      <attachments [entity]="affaire" [editMode]="true" [entityType]="AFFAIRE_ENTITY_TYPE.entityType">
+      </attachments>
+    </mat-tab>
+  }
+  @if (affaire && affaire.id) {
+    <mat-tab label="Historique">
+      <ng-template matTabContent>
+        <history [entity]="affaire" [entityType]="AFFAIRE_ENTITY_TYPE"></history>
+      </ng-template>
+    </mat-tab>
+  }
 </mat-tab-group>
 
-<button matTooltip="Sauvegarder" mat-fab color="warn" class="fab-button" *ngIf="editMode==true" (click)="saveAffaire()">
-  <mat-icon>save</mat-icon>
-</button>
-<button matTooltip="Modifier l'affaire" mat-fab color="accent" class="fab-button" *ngIf="editMode==false  "
-  (click)="editAffaire()">
-  <mat-icon>edit</mat-icon>
-</button>
-<button matTooltip="Raffraichir l'affaire avec le RNE" mat-fab color="accent" class="second-fab-button"
-  (click)="refreshAffaire()" *ngIf="affaire && affaire.siret">
-  <mat-icon>refresh</mat-icon>
-</button>
-<button matTooltip="Ajouter une notification sur cette affaire" mat-fab color="accent" class="third-fab-button"
-  *ngIf="getNotificationForAffaire() &&  canDisplayNotifications()" (click)="addNewNotification()"
-  [matBadge]="getNotificationForAffaire()!.length" [matBadgeHidden]="getNotificationForAffaire()!.length<=0"
-  matBadgePosition="below after" matBadgeColor="warn">
-  <mat-icon>notifications</mat-icon>
-</button>
+@if (editMode==true) {
+  <button matTooltip="Sauvegarder" mat-fab color="warn" class="fab-button" (click)="saveAffaire()">
+    <mat-icon>save</mat-icon>
+  </button>
+}
+@if (editMode==false  ) {
+  <button matTooltip="Modifier l'affaire" mat-fab color="accent" class="fab-button"
+    (click)="editAffaire()">
+    <mat-icon>edit</mat-icon>
+  </button>
+}
+@if (affaire && affaire.siret) {
+  <button matTooltip="Raffraichir l'affaire avec le RNE" mat-fab color="accent" class="second-fab-button"
+    (click)="refreshAffaire()">
+    <mat-icon>refresh</mat-icon>
+  </button>
+}
+@if (getNotificationForAffaire() &&  canDisplayNotifications()) {
+  <button matTooltip="Ajouter une notification sur cette affaire" mat-fab color="accent" class="third-fab-button"
+    (click)="addNewNotification()"
+    [matBadge]="getNotificationForAffaire()!.length" [matBadgeHidden]="getNotificationForAffaire()!.length<=0"
+    matBadgePosition="below after" matBadgeColor="warn">
+    <mat-icon>notifications</mat-icon>
+  </button>
+}

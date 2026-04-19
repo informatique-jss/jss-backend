@@ -7,9 +7,10 @@ import { AppService } from 'src/app/services/app.service';
 import { GenericReferentialComponent } from '../generic-referential/generic-referential-component';
 
 @Component({
-  selector: 'referential-billing-closure-recipient-type',
-  templateUrl: './../generic-referential/generic-referential.component.html',
-  styleUrls: ['./../generic-referential/generic-referential.component.css']
+    selector: 'referential-billing-closure-recipient-type',
+    templateUrl: './../generic-referential/generic-referential.component.html',
+    styleUrls: ['./../generic-referential/generic-referential.component.css'],
+    standalone: false
 })
 export class ReferentialBillingClosureRecipientTypeComponent extends GenericReferentialComponent<BillingClosureRecipientType> implements OnInit {
   constructor(private billingClosureRecipientType: BillingClosureRecipientTypeService,

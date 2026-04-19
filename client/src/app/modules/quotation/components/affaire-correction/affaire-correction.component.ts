@@ -8,9 +8,10 @@ import { Affaire } from '../../model/Affaire';
 import { AffaireService } from '../../services/affaire.service';
 
 @Component({
-  selector: 'app-affaire-correction',
-  templateUrl: './affaire-correction.component.html',
-  styleUrls: ['./affaire-correction.component.css']
+    selector: 'app-affaire-correction',
+    templateUrl: './affaire-correction.component.html',
+    styleUrls: ['./affaire-correction.component.css'],
+    standalone: false
 })
 export class AffaireCorrectionComponent implements OnInit {
 

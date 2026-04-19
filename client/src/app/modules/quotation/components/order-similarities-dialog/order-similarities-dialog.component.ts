@@ -7,9 +7,10 @@ import { OrderingSearchResult } from '../../model/OrderingSearchResult';
 import { AddAffaireDialogComponent } from '../add-affaire-dialog/add-affaire-dialog.component';
 
 @Component({
-  selector: 'order-similarities-dialog',
-  templateUrl: './order-similarities-dialog.component.html',
-  styleUrls: ['./order-similarities-dialog.component.css']
+    selector: 'order-similarities-dialog',
+    templateUrl: './order-similarities-dialog.component.html',
+    styleUrls: ['./order-similarities-dialog.component.css'],
+    standalone: false
 })
 export class OrderSimilaritiesDialogComponent implements OnInit {
 

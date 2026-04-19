@@ -11,152 +11,168 @@
     </sort-table>
   </div>
 </div>
-<div class="mat-elevation-z2 form-div" *ngIf="selectedEntity ">
-  <form [formGroup]="entityForm">
-    <div class="full-width">
-      <fieldset [disabled]="editMode==false" class="fieldset-no-border">
-        <table class="full-width">
-          <tr *ngIf="selectedEntity.id">
-            <td>
-              <generic-input [(model)]="selectedEntity.id" label="Identifiant technique" [form]="entityForm"
-                propertyName="id" [isMandatory]="true" [isDisabled]="true"></generic-input>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <generic-input [(model)]="selectedEntity.code" label="Codification" [maxLength]="20" [form]="entityForm"
+@if (selectedEntity ) {
+  <div class="mat-elevation-z2 form-div">
+    <form [formGroup]="entityForm">
+      <div class="full-width">
+        <fieldset [disabled]="editMode==false" class="fieldset-no-border">
+          <table class="full-width">
+            @if (selectedEntity.id) {
+              <tr>
+                <td>
+                  <generic-input [(model)]="selectedEntity.id" label="Identifiant technique" [form]="entityForm"
+                  propertyName="id" [isMandatory]="true" [isDisabled]="true"></generic-input>
+                </td>
+              </tr>
+            }
+            <tr>
+              <td>
+                <generic-input [(model)]="selectedEntity.code" label="Codification" [maxLength]="20" [form]="entityForm"
                 propertyName="code" [isMandatory]="true" [isDisabled]="!editMode"></generic-input>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <generic-input [(model)]="selectedEntity.label" label="Nom fonctionnel" [maxLength]="255"
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <generic-input [(model)]="selectedEntity.label" label="Nom fonctionnel" [maxLength]="255"
                 [form]="entityForm" propertyName="label" [isMandatory]="true" [isDisabled]="!editMode"></generic-input>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <select-provision-family [(model)]="selectedEntity.provisionFamilyType" label="Famille de prestation"
-                [form]="entityForm" propertyName="provisionFamilyType" [isMandatory]="true" [isDisabled]="!editMode">
-              </select-provision-family>
-            </td>
-          </tr>
-        </table>
-        <table class="full-width">
-          <tr>
-            <td>
-              <select-provision-screen-type [(model)]="selectedEntity.provisionScreenType" label="Type d'écran"
-                [form]="entityForm" propertyName="provisionScreenType" [isMandatory]="true" [isDisabled]="!editMode">
-              </select-provision-screen-type>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <select-assignation-type [(model)]="selectedEntity.assignationType" label="Assignation par défaut"
-                [form]="entityForm" propertyName="assignationType" [isMandatory]="true" [isDisabled]="!editMode">
-              </select-assignation-type>
-            </td>
-            <td>
-              <autocomplete-employee [(model)]="selectedEntity.defaultEmployee" [form]="entityForm"
-                propertyName="defaultEmployee" [isMandatory]="true" [isDisabled]="!editMode" label="Employé par défaut">
-              </autocomplete-employee>
-            </td>
-            <td>
-              <generic-input [(model)]="selectedEntity.assignationWeight" label="Poids de l'assignation"
-                matTooltip="Lorsqu'un poids est défini sur au moins une prestation d'une affaire, alors l'ensemble des prestations de l'affaire et l'affaire est assigné au responsable de la prestation la plus lourde"
-                [form]="entityForm" propertyName="assignationWeight" [isMandatory]="false" [isDisabled]="!editMode"
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <select-provision-family [(model)]="selectedEntity.provisionFamilyType" label="Famille de prestation"
+                  [form]="entityForm" propertyName="provisionFamilyType" [isMandatory]="true" [isDisabled]="!editMode">
+                </select-provision-family>
+              </td>
+            </tr>
+          </table>
+          <table class="full-width">
+            <tr>
+              <td>
+                <select-provision-screen-type [(model)]="selectedEntity.provisionScreenType" label="Type d'écran"
+                  [form]="entityForm" propertyName="provisionScreenType" [isMandatory]="true" [isDisabled]="!editMode">
+                </select-provision-screen-type>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <select-assignation-type [(model)]="selectedEntity.assignationType" label="Assignation par défaut"
+                  [form]="entityForm" propertyName="assignationType" [isMandatory]="true" [isDisabled]="!editMode">
+                </select-assignation-type>
+              </td>
+              <td>
+                <autocomplete-employee [(model)]="selectedEntity.defaultEmployee" [form]="entityForm"
+                  propertyName="defaultEmployee" [isMandatory]="true" [isDisabled]="!editMode" label="Employé par défaut">
+                </autocomplete-employee>
+              </td>
+              <td>
+                <generic-input [(model)]="selectedEntity.assignationWeight" label="Poids de l'assignation"
+                  matTooltip="Lorsqu'un poids est défini sur au moins une prestation d'une affaire, alors l'ensemble des prestations de l'affaire et l'affaire est assigné au responsable de la prestation la plus lourde"
+                  [form]="entityForm" propertyName="assignationWeight" [isMandatory]="false" [isDisabled]="!editMode"
                 type="number"></generic-input>
-            </td>
-          </tr>
-        </table>
-        <table class="full-width">
-          <tr>
-            <td>
-              <generic-toggle [(model)]="selectedEntity.isCouldNotifyBodacc"
-                label="Peut notifier des modifications au BODACC ?" [form]="entityForm"
+              </td>
+            </tr>
+          </table>
+          <table class="full-width">
+            <tr>
+              <td>
+                <generic-toggle [(model)]="selectedEntity.isCouldNotifyBodacc"
+                  label="Peut notifier des modifications au BODACC ?" [form]="entityForm"
                 propertyName="isCouldNotifyBodacc"></generic-toggle>
-            </td>
-            <td>
-              <generic-toggle [(model)]="selectedEntity.isCouldNotifyBalo"
-                label="Peut notifier des modifications au BALO ?" [form]="entityForm"
+              </td>
+              <td>
+                <generic-toggle [(model)]="selectedEntity.isCouldNotifyBalo"
+                  label="Peut notifier des modifications au BALO ?" [form]="entityForm"
                 propertyName="isCouldNotifyBalo"></generic-toggle>
-            </td>
-            <td>
-              <generic-toggle [(model)]="selectedEntity.isCouldNotifyJo" label="Peut notifier des modifications au JO ?"
+              </td>
+              <td>
+                <generic-toggle [(model)]="selectedEntity.isCouldNotifyJo" label="Peut notifier des modifications au JO ?"
                 [form]="entityForm" propertyName="isCouldNotifyJo"></generic-toggle>
-            </td>
-          </tr>
-        </table>
-        <table class="full-width"
-          *ngIf="selectedEntity.provisionScreenType && selectedEntity.provisionScreenType.code==PROVISION_SCREEN_TYPE_FORMALITE">
-          <tr>
-            <td>
-              <generic-toggle [(model)]="selectedEntity.isDisplayActeDepositScreen"
-                label="Afficher l'écran de dépôt d'actes ?" [form]="entityForm"
-                propertyName="isDisplayActeDepositScreen"></generic-toggle>
-            </td>
-            <td>
-              <generic-toggle [(model)]="selectedEntity.isDisplayAnnualAccountScreen"
-                label="Afficher l'écran de dépôt de comptes ?" [form]="entityForm"
-                propertyName="isDisplayAnnualAccountScreen"></generic-toggle>
-            </td>
-          </tr>
-        </table>
-        <table class="full-width">
-          <tr>
-            <td>
-              <generic-toggle [(model)]="selectedEntity.isNotReinvoiced" label="Ne pas refacturer au client ?"
+              </td>
+            </tr>
+          </table>
+          @if (selectedEntity.provisionScreenType && selectedEntity.provisionScreenType.code==PROVISION_SCREEN_TYPE_FORMALITE) {
+            <table class="full-width"
+              >
+              <tr>
+                <td>
+                  <generic-toggle [(model)]="selectedEntity.isDisplayActeDepositScreen"
+                    label="Afficher l'écran de dépôt d'actes ?" [form]="entityForm"
+                  propertyName="isDisplayActeDepositScreen"></generic-toggle>
+                </td>
+                <td>
+                  <generic-toggle [(model)]="selectedEntity.isDisplayAnnualAccountScreen"
+                    label="Afficher l'écran de dépôt de comptes ?" [form]="entityForm"
+                  propertyName="isDisplayAnnualAccountScreen"></generic-toggle>
+                </td>
+              </tr>
+            </table>
+          }
+          <table class="full-width">
+            <tr>
+              <td>
+                <generic-toggle [(model)]="selectedEntity.isNotReinvoiced" label="Ne pas refacturer au client ?"
                 [form]="entityForm" propertyName="isNotReinvoiced"></generic-toggle>
-            </td>
-            <td>
-              <generic-toggle [(model)]="selectedEntity.isCanBeAddByAdmin"
-                label="N'est ajoutable que par l'administrateur ?" [form]="entityForm"
+              </td>
+              <td>
+                <generic-toggle [(model)]="selectedEntity.isCanBeAddByAdmin"
+                  label="N'est ajoutable que par l'administrateur ?" [form]="entityForm"
                 propertyName="isCanBeAddByAdmin"></generic-toggle>
-            </td>
-          </tr>
-        </table>
-        <table class="full-width">
-          <tr>
-            <td>
-              <generic-toggle [(model)]="selectedEntity.isRecurring" label="Est recurrente par défaut ?"
+              </td>
+            </tr>
+          </table>
+          <table class="full-width">
+            <tr>
+              <td>
+                <generic-toggle [(model)]="selectedEntity.isRecurring" label="Est recurrente par défaut ?"
                 [form]="entityForm" propertyName="isRecurring"></generic-toggle>
-            </td>
-            <td *ngIf="selectedEntity.isRecurring">
-              <select-customer-order-frequency [(model)]="selectedEntity.recurringFrequency"
-                label="Fréquence de récurrence" [form]="entityForm" propertyName="recurringFrequency"
-                [isMandatory]="true" [isDisabled]="!editMode"></select-customer-order-frequency>
-            </td>
-            <td>
-              <generic-toggle [(model)]="selectedEntity.isMergeable"
-                label="Peut être fusionné à d'autres prestations fusionnables" [form]="entityForm"
+              </td>
+              @if (selectedEntity.isRecurring) {
+                <td>
+                  <select-customer-order-frequency [(model)]="selectedEntity.recurringFrequency"
+                    label="Fréquence de récurrence" [form]="entityForm" propertyName="recurringFrequency"
+                  [isMandatory]="true" [isDisabled]="!editMode"></select-customer-order-frequency>
+                </td>
+              }
+              <td>
+                <generic-toggle [(model)]="selectedEntity.isMergeable"
+                  label="Peut être fusionné à d'autres prestations fusionnables" [form]="entityForm"
                 propertyName="isMergeable" [isDisabled]="!editMode"></generic-toggle>
-            </td>
-          </tr>
-        </table>
-        <table class="full-width" *ngIf="selectedEntity.billingTypes">
-          <tr *ngFor="let billingType of selectedEntity.billingTypes; let i = index">
-            <td>
-              <autocomplete-billing-type [(model)]="selectedEntity.billingTypes[i]"
-                [label]="'Famille de produit '+(i+1)" [form]="entityForm" [propertyName]="'billingType'+i"
-                [isMandatory]="true" [isDisabled]="!editMode">
-              </autocomplete-billing-type>
-            </td>
-            <td>
-              <button *ngIf="editMode" (click)="deleteBillingType(billingType)" mat-raised-button color="accent">
-                <mat-icon>delete</mat-icon>
-              </button>
-            </td>
-          </tr>
-        </table>
-        <table class="full-width">
-          <tr>
-            <td>
-              <button *ngIf="editMode" (click)="addBillingType()" mat-raised-button color="accent">Ajouter une famille
-                de produit </button>
-            </td>
-          </tr>
-        </table>
-      </fieldset>
-    </div>
-  </form>
-</div>
+              </td>
+            </tr>
+          </table>
+          @if (selectedEntity.billingTypes) {
+            <table class="full-width">
+              @for (billingType of selectedEntity.billingTypes; track billingType; let i = $index) {
+                <tr>
+                  <td>
+                    <autocomplete-billing-type [(model)]="selectedEntity.billingTypes[i]"
+                      [label]="'Famille de produit '+(i+1)" [form]="entityForm" [propertyName]="'billingType'+i"
+                      [isMandatory]="true" [isDisabled]="!editMode">
+                    </autocomplete-billing-type>
+                  </td>
+                  <td>
+                    @if (editMode) {
+                      <button (click)="deleteBillingType(billingType)" mat-raised-button color="accent">
+                        <mat-icon>delete</mat-icon>
+                      </button>
+                    }
+                  </td>
+                </tr>
+              }
+            </table>
+          }
+          <table class="full-width">
+            <tr>
+              <td>
+                @if (editMode) {
+                  <button (click)="addBillingType()" mat-raised-button color="accent">Ajouter une famille
+                  de produit </button>
+                }
+              </td>
+            </tr>
+          </table>
+        </fieldset>
+      </div>
+    </form>
+  </div>
+}

@@ -5,9 +5,10 @@ import { Employee } from 'src/app/modules/profile/model/Employee';
 import { EmployeeDialogComponent } from '../employee-dialog/employee-dialog.component';
 
 @Component({
-  selector: 'avatar-chip',
-  templateUrl: './avatar-chip.component.html',
-  styleUrls: ['./avatar-chip.component.css']
+    selector: 'avatar-chip',
+    templateUrl: './avatar-chip.component.html',
+    styleUrls: ['./avatar-chip.component.css'],
+    standalone: false
 })
 export class AvatarChipComponent implements OnInit {
 

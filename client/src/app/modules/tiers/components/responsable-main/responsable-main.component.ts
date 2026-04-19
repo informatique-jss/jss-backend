@@ -37,9 +37,10 @@ import { TiersTypeService } from '../../services/tiers.type.service';
 import { SettlementBillingComponent } from '../settlement-billing/settlement-billing.component';
 
 @Component({
-  selector: 'responsable-main',
-  templateUrl: './responsable-main.component.html',
-  styleUrls: ['./responsable-main.component.css']
+    selector: 'responsable-main',
+    templateUrl: './responsable-main.component.html',
+    styleUrls: ['./responsable-main.component.css'],
+    standalone: false
 })
 
 export class ResponsableMainComponent implements OnInit, AfterContentChecked {

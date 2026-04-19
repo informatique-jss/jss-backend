@@ -1,10 +1,18 @@
-<top-bar [isForQuotationNavbar]="false" *ngIf="!isDisplayLightHeader()"></top-bar>
-<top-bar [isForQuotationNavbar]="true" *ngIf="isDisplayLightHeader()"></top-bar>
+@if (!isDisplayLightHeader()) {
+  <top-bar [isForQuotationNavbar]="false"></top-bar>
+}
+@if (isDisplayLightHeader()) {
+  <top-bar [isForQuotationNavbar]="true"></top-bar>
+}
 <router-outlet></router-outlet>
-<cookie-consent *ngIf="isBrowser"></cookie-consent>
+@if (isBrowser) {
+  <cookie-consent></cookie-consent>
+}
 <div>
-  <main-footer *ngIf="isDisplayFooter()"></main-footer>
+  @if (isDisplayFooter()) {
+    <main-footer></main-footer>
+  }
 </div>
 <toast style="display: block; position: fixed; bottom: 20px; right: 20px;z-index :1300"
-  [displayLight]="isDisplayLightHeader()"></toast>
+[displayLight]="isDisplayLightHeader()"></toast>
 <loading></loading>

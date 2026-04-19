@@ -7,9 +7,10 @@ import { AppService } from 'src/app/services/app.service';
 import { GenericReferentialComponent } from '../generic-referential/generic-referential-component';
 
 @Component({
-  selector: 'referential-domiciliation-contract-type',
-  templateUrl: './referential-domiciliation-contract-type.component.html',
-  styleUrls: ['./../generic-referential/generic-referential.component.css']
+    selector: 'referential-domiciliation-contract-type',
+    templateUrl: './referential-domiciliation-contract-type.component.html',
+    styleUrls: ['./../generic-referential/generic-referential.component.css'],
+    standalone: false
 })
 export class ReferentialDomiciliationContractTypeComponent extends GenericReferentialComponent<DomiciliationContractType> implements OnInit {
   constructor(private domiciliationContractTypeService: DomiciliationContractTypeService,

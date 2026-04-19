@@ -5,9 +5,10 @@ import { AppService } from '../../../../services/app.service';
 import { Notification } from '../../model/Notification';
 
 @Component({
-  selector: 'add-notification-dialog',
-  templateUrl: './add-notification-dialog.component.html',
-  styleUrls: ['./add-notification-dialog.component.css']
+    selector: 'add-notification-dialog',
+    templateUrl: './add-notification-dialog.component.html',
+    styleUrls: ['./add-notification-dialog.component.css'],
+    standalone: false
 })
 export class AddNotificationDialogComponent implements OnInit, AfterContentChecked {
 

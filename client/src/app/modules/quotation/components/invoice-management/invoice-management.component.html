@@ -1,202 +1,241 @@
-<div *ngIf="quotation && quotation.id" class=" form-div   ">
-  <div *ngIf="customerOrderInvoices && customerOrderInvoices.length>0">
-    <p>
-      Factures clientes :
-    </p>
-    <sort-table [actions]="invoicesActions" [columns]="customerInvoicesColumns" [values]="customerOrderInvoices"
-      [noMaxHeight]="true" [noPaddingBottom]="true" tableName="Factures"
-      *ngIf="customerInvoicesColumns && customerInvoicesColumns.length>0 ">
-    </sort-table>
-  </div>
-  <div *ngIf="customerOrderProviderInvoices && customerOrderProviderInvoices.length>0" class="description-table ">
-    <p>
-      Factures fournisseurs :
-    </p>
-    <sort-table [actions]="invoicesActions" [columns]="providerInvoicesColumns" [values]="customerOrderProviderInvoices"
-      [noMaxHeight]="true" [noPaddingBottom]="true" tableName="Factures"
-      *ngIf="providerInvoicesColumns && providerInvoicesColumns.length>0 ">
-    </sort-table>
-  </div>
-  <div
-    *ngIf="instanceOfCustomerOrderFn(quotation) && ((quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED ||quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED ) || quotation.invoicingEmployee)">
-    <div class=" full-width">
-      <table class="full-width table-fixed-layout">
-        <tr>
-          <td>
-            <autocomplete-employee [(model)]="quotation.invoicingEmployee" [form]="invoiceManagementForm"
-              propertyName="invoicingEmployee" [isMandatory]="false" [isDisabled]="!canChangeInvoicingResponsible()"
-              label="Responsable de la facturation"
-              (onOptionSelected)="assignInvoicingEmployee($event)"></autocomplete-employee>
-          </td>
-          <td>
-            <select-invoicing-blockage [(model)]="quotation.invoicingBlockage" label="Type de blocage de la facturation"
-              [form]="invoiceManagementForm" propertyName="invoicingBlockage" [isMandatory]="false"
-              (onFormChange)="modifyInvoicingBlockage($event)" [isDisabled]="false"></select-invoicing-blockage>
-          </td>
-        </tr>
-      </table>
-    </div>
-  </div>
-  <fieldset [disabled]="editMode==false" class="fieldset-no-border">
-    <form [formGroup]="invoiceManagementForm">
-      <table class="mat-table mat-mdc-table mdc-data-table__table full-width container-affaire ">
-        <thead>
-          <tr class="mat-mdc-header-row mdc-data-table__header-row ">
-            <th class="mat-mdc-header-cell mdc-data-table__header-cell " colspan="2">Facture</th>
-          </tr>
-        </thead>
-        <ng-container *ngFor="let asso of quotation.assoAffaireOrders;let indexAsso = index">
-          <tr class="mat-mdc-row mdc-data-table__row ">
-            <td class="mat-mdc-cell mdc-data-table__cell  affaire affaire-align " colspan="2"
-              *ngIf="asso.affaire && asso.affaire.denomination">
-              {{asso.affaire.denomination}}
-            </td>
-            <td class="mat-mdc-cell mdc-data-table__cell  affaire affaire-align " colspan="2"
-              *ngIf="asso.affaire && asso.affaire.firstname">
-              {{asso.affaire.firstname}} - {{asso.affaire.lastname}} -
-            </td>
-          </tr>
-          <ng-container *ngFor="let service of asso.services;let indexService = index">
-            <ng-container *ngFor="let provision of service.provisions;let indexProvision = index">
-              <tr class="mat-mdc-row mdc-data-table__row ">
-                <td class="mat-mdc-cell mdc-data-table__cell  affaire  affaire-align  " colspan="2">
-                  {{service.serviceLabelToDisplay}}
+@if (quotation && quotation.id) {
+  <div class=" form-div   ">
+    @if (customerOrderInvoices && customerOrderInvoices.length>0) {
+      <div>
+        <p>
+          Factures clientes :
+        </p>
+        @if (customerInvoicesColumns && customerInvoicesColumns.length>0 ) {
+          <sort-table [actions]="invoicesActions" [columns]="customerInvoicesColumns" [values]="customerOrderInvoices"
+            [noMaxHeight]="true" [noPaddingBottom]="true" tableName="Factures"
+            >
+          </sort-table>
+        }
+      </div>
+    }
+    @if (customerOrderProviderInvoices && customerOrderProviderInvoices.length>0) {
+      <div class="description-table ">
+        <p>
+          Factures fournisseurs :
+        </p>
+        @if (providerInvoicesColumns && providerInvoicesColumns.length>0 ) {
+          <sort-table [actions]="invoicesActions" [columns]="providerInvoicesColumns" [values]="customerOrderProviderInvoices"
+            [noMaxHeight]="true" [noPaddingBottom]="true" tableName="Factures"
+            >
+          </sort-table>
+        }
+      </div>
+    }
+    @if (instanceOfCustomerOrderFn(quotation) && ((quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED ||quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED ) || quotation.invoicingEmployee)) {
+      <div
+        >
+        <div class=" full-width">
+          <table class="full-width table-fixed-layout">
+            <tr>
+              <td>
+                <autocomplete-employee [(model)]="quotation.invoicingEmployee" [form]="invoiceManagementForm"
+                  propertyName="invoicingEmployee" [isMandatory]="false" [isDisabled]="!canChangeInvoicingResponsible()"
+                  label="Responsable de la facturation"
+                (onOptionSelected)="assignInvoicingEmployee($event)"></autocomplete-employee>
+              </td>
+              <td>
+                <select-invoicing-blockage [(model)]="quotation.invoicingBlockage" label="Type de blocage de la facturation"
+                  [form]="invoiceManagementForm" propertyName="invoicingBlockage" [isMandatory]="false"
+                (onFormChange)="modifyInvoicingBlockage($event)" [isDisabled]="false"></select-invoicing-blockage>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    }
+    <fieldset [disabled]="editMode==false" class="fieldset-no-border">
+      <form [formGroup]="invoiceManagementForm">
+        <table class="mat-table mat-mdc-table mdc-data-table__table full-width container-affaire ">
+          <thead>
+            <tr class="mat-mdc-header-row mdc-data-table__header-row ">
+              <th class="mat-mdc-header-cell mdc-data-table__header-cell " colspan="2">Facture</th>
+            </tr>
+          </thead>
+          @for (asso of quotation.assoAffaireOrders; track asso; let indexAsso = $index) {
+            <tr class="mat-mdc-row mdc-data-table__row ">
+              @if (asso.affaire && asso.affaire.denomination) {
+                <td class="mat-mdc-cell mdc-data-table__cell  affaire affaire-align " colspan="2"
+                  >
+                  {{asso.affaire.denomination}}
                 </td>
-              </tr>
-              <tr class="mat-mdc-row mdc-data-table__row " *ngIf="provision.provisionType">
-                <td class="mat-mdc-cell mdc-data-table__cell  affaire " colspan="2">
-                  {{provision.provisionType.label}}
+              }
+              @if (asso.affaire && asso.affaire.firstname) {
+                <td class="mat-mdc-cell mdc-data-table__cell  affaire affaire-align " colspan="2"
+                  >
+                  {{asso.affaire.firstname}} - {{asso.affaire.lastname}} -
                 </td>
-              </tr>
-              <ng-container *ngFor="let invoiceItem of provision.invoiceItems;let indexInvoiceItem = index">
+              }
+            </tr>
+            @for (service of asso.services; track service; let indexService = $index) {
+              @for (provision of service.provisions; track provision; let indexProvision = $index) {
                 <tr class="mat-mdc-row mdc-data-table__row ">
-                  <td class="mat-mdc-cell mdc-data-table__cell  ">
-                    <span class="invoice-item">{{invoiceItem.label}} <mat-icon color="accent" inline="true"
-                        [matTooltip]="invoiceItem.isGifted?'Ne plus offrir cette ligne de facturation':'Offrir cette ligne de facturation'"
-                        *ngIf="editMode && !getLetteringDate(invoiceItem.invoice)" class="info-icon pointer"
+                  <td class="mat-mdc-cell mdc-data-table__cell  affaire  affaire-align  " colspan="2">
+                    {{service.serviceLabelToDisplay}}
+                  </td>
+                </tr>
+                @if (provision.provisionType) {
+                  <tr class="mat-mdc-row mdc-data-table__row ">
+                    <td class="mat-mdc-cell mdc-data-table__cell  affaire " colspan="2">
+                      {{provision.provisionType.label}}
+                    </td>
+                  </tr>
+                }
+                @for (invoiceItem of provision.invoiceItems; track invoiceItem; let indexInvoiceItem = $index) {
+                  <tr class="mat-mdc-row mdc-data-table__row ">
+                    <td class="mat-mdc-cell mdc-data-table__cell  ">
+                      <span class="invoice-item">{{invoiceItem.label}} @if (editMode && !getLetteringDate(invoiceItem.invoice)) {
+                        <mat-icon color="accent" inline="true"
+                          [matTooltip]="invoiceItem.isGifted?'Ne plus offrir cette ligne de facturation':'Offrir cette ligne de facturation'"
+                          class="info-icon pointer"
                         (click)="toggleIsGifTed(invoiceItem)">redeem</mat-icon>
-                      <mat-icon color="accent" inline="true"
-                        matTooltip="Veuillez enregistrer pour pouvoir modifier le prix appliqué"
-                        *ngIf="editMode && invoiceItem.billingItem.billingType.canOverridePrice==true && !invoiceItem.id && !invoiceItem.invoice"
-                        class="info-icon">info</mat-icon></span>
-                  </td>
-                  <td class="mat-mdc-cell mdc-data-table__cell  td-price "
-                    *ngIf="!editMode || invoiceItem.billingItem.billingType.canOverridePrice==false || !invoiceItem.id || invoiceItem.invoice">
-                    {{invoiceItem.preTaxPrice|number}} €
-                  </td>
-                  <td class="mat-mdc-cell mdc-data-table__cell "
-                    *ngIf="editMode && invoiceItem.billingItem.billingType.canOverridePrice==true && invoiceItem.id && !invoiceItem.invoice">
-                    <generic-input [(model)]="invoiceItem.preTaxPrice" label="" [form]="invoiceManagementForm"
-                      [propertyName]='"preTaxPrice"+indexInvoiceItem+indexProvision+indexAsso+indexService'
-                      [isMandatory]="true" type="number" step="0,01" (onFormBlur)="itemChange(invoiceItem)"
-                      hint="Laisser vide pour recalculer le prix">
-                    </generic-input>
-                  </td>
-                </tr>
-                <tr class="mat-mdc-row mdc-data-table__row "
-                  *ngIf="invoiceItem.discountAmount && invoiceItem.discountAmount>0">
-                  <td class="mat-mdc-cell mdc-data-table__cell ">
-                    <span class="invoice-item">Remise</span>
-                  </td>
-                  <td class="mat-mdc-cell mdc-data-table__cell  td-price remise ">
-                    - {{invoiceItem.discountAmount|number}} €
-                  </td>
-                </tr>
-              </ng-container>
-            </ng-container>
-          </ng-container>
-        </ng-container>
-      </table>
-    </form>
-  </fieldset>
-  <table class="mat-table mat-mdc-table mdc-data-table__table total-table  full-width">
-    <thead>
-      <tr class="mat-mdc-header-row mdc-data-table__header-row ">
-        <th class="mat-mdc-header-cell mdc-data-table__header-cell " colspan="2">Total</th>
-      </tr>
-    </thead>
-    <tr class="mat-mdc-row mdc-data-table__row ">
-      <td class="mat-mdc-cell mdc-data-table__cell ">
-        Prix total HT
-      </td>
-      <td class="mat-mdc-cell mdc-data-table__cell  td-price ">
-        {{getPreTaxPriceTotal() |number}} €
-      </td>
-    </tr>
-    <tr class="mat-mdc-row mdc-data-table__row " *ngIf="getDiscountTotal() && getDiscountTotal()>0">
-      <td class="mat-mdc-cell mdc-data-table__cell ">
-        Remise totale
-      </td>
-      <td class="mat-mdc-cell mdc-data-table__cell  td-price remise ">
-        - {{getDiscountTotal()|number}} €
-      </td>
-    </tr>
-    <tr class="mat-mdc-row mdc-data-table__row " *ngIf="getDiscountTotal() && getDiscountTotal()>0">
-      <td class="mat-mdc-cell mdc-data-table__cell ">
-        Total HT avec remise
-      </td>
-      <td class="mat-mdc-cell mdc-data-table__cell  td-price ">
-        {{getPreTaxPriceTotal()-getDiscountTotal()|number}} €
-      </td>
-    </tr>
-    <ng-container *ngIf="getApplicableVat().length>0">
-      <tr *ngFor="let vat of getApplicableVat()">
+                      }
+                      @if (editMode && invoiceItem.billingItem.billingType.canOverridePrice==true && !invoiceItem.id && !invoiceItem.invoice) {
+                        <mat-icon color="accent" inline="true"
+                          matTooltip="Veuillez enregistrer pour pouvoir modifier le prix appliqué"
+                        class="info-icon">info</mat-icon>
+                      }</span>
+                    </td>
+                    @if (!editMode || invoiceItem.billingItem.billingType.canOverridePrice==false || !invoiceItem.id || invoiceItem.invoice) {
+                      <td class="mat-mdc-cell mdc-data-table__cell  td-price "
+                        >
+                        {{invoiceItem.preTaxPrice|number}} €
+                      </td>
+                    }
+                    @if (editMode && invoiceItem.billingItem.billingType.canOverridePrice==true && invoiceItem.id && !invoiceItem.invoice) {
+                      <td class="mat-mdc-cell mdc-data-table__cell "
+                        >
+                        <generic-input [(model)]="invoiceItem.preTaxPrice" label="" [form]="invoiceManagementForm"
+                          [propertyName]='"preTaxPrice"+indexInvoiceItem+indexProvision+indexAsso+indexService'
+                          [isMandatory]="true" type="number" step="0,01" (onFormBlur)="itemChange(invoiceItem)"
+                          hint="Laisser vide pour recalculer le prix">
+                        </generic-input>
+                      </td>
+                    }
+                  </tr>
+                  @if (invoiceItem.discountAmount && invoiceItem.discountAmount>0) {
+                    <tr class="mat-mdc-row mdc-data-table__row "
+                      >
+                      <td class="mat-mdc-cell mdc-data-table__cell ">
+                        <span class="invoice-item">Remise</span>
+                      </td>
+                      <td class="mat-mdc-cell mdc-data-table__cell  td-price remise ">
+                        - {{invoiceItem.discountAmount|number}} €
+                      </td>
+                    </tr>
+                  }
+                }
+              }
+            }
+          }
+        </table>
+      </form>
+    </fieldset>
+    <table class="mat-table mat-mdc-table mdc-data-table__table total-table  full-width">
+      <thead>
+        <tr class="mat-mdc-header-row mdc-data-table__header-row ">
+          <th class="mat-mdc-header-cell mdc-data-table__header-cell " colspan="2">Total</th>
+        </tr>
+      </thead>
+      <tr class="mat-mdc-row mdc-data-table__row ">
         <td class="mat-mdc-cell mdc-data-table__cell ">
-          Total {{vat.label}} sur la base de {{vat.base |number}} €
+          Prix total HT
         </td>
         <td class="mat-mdc-cell mdc-data-table__cell  td-price ">
-          {{vat.total|number}} €
+          {{getPreTaxPriceTotal() |number}} €
         </td>
       </tr>
-    </ng-container>
-    <tr class="mat-mdc-row mdc-data-table__row ">
-      <td class="mat-mdc-cell mdc-data-table__cell ">
-        Total TTC
-      </td>
-      <td class="mat-mdc-cell mdc-data-table__cell  td-price ">
-        {{getPriceTotal()|number}} €
-      </td>
-    </tr>
-    <ng-container *ngIf="instanceOfCustomerOrderFn(quotation) && getCurrentInvoiceForCustomerOrder()==undefined">
-      <ng-container *ngFor="let deposit of quotation.payments">
-        <tr class="mat-mdc-row mdc-data-table__row " *ngIf="!deposit.isCancelled">
-          <td class="mat-mdc-cell mdc-data-table__cell  payment-label" [matTooltip]="deposit.label">
-            <button matTooltip="Actions" mat-button color="accent" [matMenuTriggerFor]="menu">
-              <mat-icon>more_vert</mat-icon>
-              <mat-menu #menu="matMenu" style="min-height: 0px;padding: 0;" xPosition="before">
-                <button mat-menu-item (click)="movePayment(deposit)">
-                  <mat-icon>move_up</mat-icon><span>Déplacer le paiement</span>
-                </button>
-                <button mat-menu-item (click)="openPaymentDialog(deposit)">
-                  <mat-icon>visibility</mat-icon><span>Voir le détail du paiement</span>
-                </button>
-                <button mat-menu-item (click)="movePaymentToWaitingAccount(deposit)"
-                  *ngIf="canMovePaymentToWaitingAccount()">
-                  <mat-icon>hourglass_empty</mat-icon><span>Déplacer dans le compte d'attente</span>
-                </button>
-              </mat-menu>
-            </button>
-            N°{{deposit.id}} du {{formatDate(deposit.paymentDate)}} - {{deposit.label}}
+      @if (getDiscountTotal() && getDiscountTotal()>0) {
+        <tr class="mat-mdc-row mdc-data-table__row ">
+          <td class="mat-mdc-cell mdc-data-table__cell ">
+            Remise totale
+          </td>
+          <td class="mat-mdc-cell mdc-data-table__cell  td-price remise ">
+            - {{getDiscountTotal()|number}} €
+          </td>
+        </tr>
+      }
+      @if (getDiscountTotal() && getDiscountTotal()>0) {
+        <tr class="mat-mdc-row mdc-data-table__row ">
+          <td class="mat-mdc-cell mdc-data-table__cell ">
+            Total HT avec remise
           </td>
           <td class="mat-mdc-cell mdc-data-table__cell  td-price ">
-            - {{deposit.paymentAmount|number}} €
+            {{getPreTaxPriceTotal()-getDiscountTotal()|number}} €
           </td>
         </tr>
-      </ng-container>
-      <tr class="mat-mdc-row mdc-data-table__row " *ngFor="let refund of quotation.refunds">
-        <td class="mat-mdc-cell mdc-data-table__cell  payment-label" [matTooltip]="refund.label">
-          Remboursement n°{{refund.id}} - {{refund.label}}
+      }
+      @if (getApplicableVat().length>0) {
+        @for (vat of getApplicableVat(); track vat) {
+          <tr>
+            <td class="mat-mdc-cell mdc-data-table__cell ">
+              Total {{vat.label}} sur la base de {{vat.base |number}} €
+            </td>
+            <td class="mat-mdc-cell mdc-data-table__cell  td-price ">
+              {{vat.total|number}} €
+            </td>
+          </tr>
+        }
+      }
+      <tr class="mat-mdc-row mdc-data-table__row ">
+        <td class="mat-mdc-cell mdc-data-table__cell ">
+          Total TTC
         </td>
         <td class="mat-mdc-cell mdc-data-table__cell  td-price ">
-          - {{refund.refundAmount|number}} €
+          {{getPriceTotal()|number}} €
         </td>
       </tr>
-    </ng-container>
-    <tr class="mat-mdc-row mdc-data-table__row ">
-      <td class="mat-mdc-cell mdc-data-table__cell ">Reste à payer
-      </td>
-      <td class="mat-mdc-cell mdc-data-table__cell  td-price ">{{getRemainingToPay()}} €
-      </td>
-    </tr>
-  </table>
-</div>
+      @if (instanceOfCustomerOrderFn(quotation) && getCurrentInvoiceForCustomerOrder()==undefined) {
+        @for (deposit of quotation.payments; track deposit) {
+          @if (!deposit.isCancelled) {
+            <tr class="mat-mdc-row mdc-data-table__row ">
+              <td class="mat-mdc-cell mdc-data-table__cell  payment-label" [matTooltip]="deposit.label">
+                <button matTooltip="Actions" mat-button color="accent" [matMenuTriggerFor]="menu">
+                  <mat-icon>more_vert</mat-icon>
+                  <mat-menu #menu="matMenu" style="min-height: 0px;padding: 0;" xPosition="before">
+                    <button mat-menu-item (click)="movePayment(deposit)">
+                      <mat-icon>move_up</mat-icon><span>Déplacer le paiement</span>
+                    </button>
+                    <button mat-menu-item (click)="openPaymentDialog(deposit)">
+                      <mat-icon>visibility</mat-icon><span>Voir le détail du paiement</span>
+                    </button>
+                    @if (canMovePaymentToWaitingAccount()) {
+                      <button mat-menu-item (click)="movePaymentToWaitingAccount(deposit)"
+                        >
+                        <mat-icon>hourglass_empty</mat-icon><span>Déplacer dans le compte d'attente</span>
+                      </button>
+                    }
+                  </mat-menu>
+                </button>
+                N°{{deposit.id}} du {{formatDate(deposit.paymentDate)}} - {{deposit.label}}
+              </td>
+              <td class="mat-mdc-cell mdc-data-table__cell  td-price ">
+                - {{deposit.paymentAmount|number}} €
+              </td>
+            </tr>
+          }
+        }
+        @for (refund of quotation.refunds; track refund) {
+          <tr class="mat-mdc-row mdc-data-table__row ">
+            <td class="mat-mdc-cell mdc-data-table__cell  payment-label" [matTooltip]="refund.label">
+              Remboursement n°{{refund.id}} - {{refund.label}}
+            </td>
+            <td class="mat-mdc-cell mdc-data-table__cell  td-price ">
+              - {{refund.refundAmount|number}} €
+            </td>
+          </tr>
+        }
+      }
+      <tr class="mat-mdc-row mdc-data-table__row ">
+        <td class="mat-mdc-cell mdc-data-table__cell ">Reste à payer
+        </td>
+        <td class="mat-mdc-cell mdc-data-table__cell  td-price ">{{getRemainingToPay()}} €
+        </td>
+      </tr>
+    </table>
+  </div>
+}

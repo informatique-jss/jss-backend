@@ -3,9 +3,10 @@ import { FormBuilder } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 
 @Component({
-  selector: 'edit-amount-invoice-item-dialog',
-  templateUrl: './edit-amount-invoice-item-dialog.component.html',
-  styleUrls: ['./edit-amount-invoice-item-dialog.component.css']
+    selector: 'edit-amount-invoice-item-dialog',
+    templateUrl: './edit-amount-invoice-item-dialog.component.html',
+    styleUrls: ['./edit-amount-invoice-item-dialog.component.css'],
+    standalone: false
 })
 export class EditAmountInvoiceItemDialogComponent implements OnInit {
 

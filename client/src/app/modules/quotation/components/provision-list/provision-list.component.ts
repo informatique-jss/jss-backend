@@ -13,9 +13,10 @@ import { AssoAffaireOrderSearchResult } from '../../model/AssoAffaireOrderSearch
 import { AssoAffaireOrderSearchResultService } from '../../services/asso.affaire.order.search.result.service';
 
 @Component({
-  selector: 'provision-list',
-  templateUrl: './provision-list.component.html',
-  styleUrls: ['./provision-list.component.css']
+    selector: 'provision-list',
+    templateUrl: './provision-list.component.html',
+    styleUrls: ['./provision-list.component.css'],
+    standalone: false
 })
 export class ProvisionListComponent implements OnInit {
   @Input() affaireSearch: AffaireSearch | undefined;

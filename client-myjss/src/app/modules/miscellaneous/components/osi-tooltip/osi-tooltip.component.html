@@ -1,11 +1,13 @@
-<div *ngIf="tooltipToDisplay && tooltipToDisplay.isVisible" class="tooltip-trigger align-items-center">
-  <button #trigger class="btn-logo btn-trigger" (mouseenter)="show()" (mouseleave)="hide()" (touchstart)="toggle()">
-    <img class="bird-icon" src="../../../../../assets/img/others/myjss-logos/white-logo.svg" />
-  </button>
-  <div class="tooltip-base" #tooltip
-    [ngStyle]="{'left': leftPosition != 0 ? leftPosition + 'px' : '38px', 'bottom': leftPosition != 0 ? '200%' : '158%', }">
-    <div class="tooltip-content rounded-3 px-3 py-2 fs-sm">
-      {{tooltipToDisplay.label}}
+@if (tooltipToDisplay && tooltipToDisplay.isVisible) {
+  <div class="tooltip-trigger align-items-center">
+    <button #trigger class="btn-logo btn-trigger" (mouseenter)="show()" (mouseleave)="hide()" (touchstart)="toggle()">
+      <img class="bird-icon" src="../../../../../assets/img/others/myjss-logos/white-logo.svg" />
+    </button>
+    <div class="tooltip-base" #tooltip
+      [ngStyle]="{'left': leftPosition != 0 ? leftPosition + 'px' : '38px', 'bottom': leftPosition != 0 ? '200%' : '158%', }">
+      <div class="tooltip-content rounded-3 px-3 py-2 fs-sm">
+        {{tooltipToDisplay.label}}
+      </div>
     </div>
   </div>
-</div>
+}

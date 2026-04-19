@@ -3,252 +3,265 @@
   <div class="col-auto">
     <div class="row">
       <div class="col"><generic-input [(model)]="searchText" label="SIRET / Dénomination" [form]="affaireForm"
-          propertyName="searchText" [isMandatory]="false" [isDisabled]="false" icon="search" [isDisplayLabel]="false"
-          (onFormChange)="changeFilter()"></generic-input></div>
+        propertyName="searchText" [isMandatory]="false" [isDisabled]="false" icon="search" [isDisplayLabel]="false"
+      (onFormChange)="changeFilter()"></generic-input></div>
 
-      <div ngbDropdown [autoClose]="'outside'" class="btn-group dropdown col"
-        *ngIf="responsablesForCurrentUser && responsablesForCurrentUser.length > 0">
-        <button type="button" class="btn btn-outline-secondary dropdown-toggle" ngbDropdownToggle aria-haspopup="true"
-          aria-expanded="false">
-          <i class="ai-filter me-2"></i>
-          Responsables
-        </button>
-        <div ngbDropdownMenu class="dropdown-menu my-1">
-          <label class="dropdown-item">
-            <input class="form-check-input me-2" type="checkbox" [(ngModel)]="selectAllActiveResponsable"
-              (change)="selectAllActiveResponsables()">
-            <strong>Sélectionner tout</strong>
-          </label>
-
-          <div class="dropdown-divider"></div>
-          <ng-container *ngFor="let respo of responsablesForCurrentUser; let i = index">
-            <ng-container *ngIf="i > 0 && !respo.isActive && responsablesForCurrentUser[i-1].isActive">
-              <div class="dropdown-divider"></div>
-              <label class="dropdown-item">
-                <input class="form-check-input me-2" type="checkbox" [(ngModel)]="selectAllInactiveResponsable"
-                  (change)="selectAllInactiveResponsables()">
-                <strong>Ajouter les inactifs</strong>
-              </label>
-            </ng-container>
-
+      @if (responsablesForCurrentUser && responsablesForCurrentUser.length > 0) {
+        <div ngbDropdown [autoClose]="'outside'" class="btn-group dropdown col"
+          >
+          <button type="button" class="btn btn-outline-secondary dropdown-toggle" ngbDropdownToggle aria-haspopup="true"
+            aria-expanded="false">
+            <i class="ai-filter me-2"></i>
+            Responsables
+          </button>
+          <div ngbDropdownMenu class="dropdown-menu my-1">
             <label class="dropdown-item">
-              <input class="form-check-input me-2" type="checkbox" [(ngModel)]="responsableCheck[respo.id]"
-                (change)="changeFilter()">
-              {{respo.firstname}} {{respo.lastname}}
-            </label>
-          </ng-container>
-        </div>
-      </div>
-
-      <div ngbDropdown class="btn-group dropdown col">
-        <button type="button" class="btn btn-outline-secondary dropdown-toggle" ngbDropdownToggle aria-haspopup="true"
-          aria-expanded="false">
-          <i class="ai-bar-chart-3 me-2"></i>
-          Trier par
-        </button>
-        <div ngbDropdownMenu class="dropdown-menu my-1">
-          <a class="dropdown-item" style="cursor: pointer;" (click)="changeSort('nameAsc');$event.stopPropagation();">
-            <i class="ai-bar-chart-3 me-2"></i>
-            Dans l'ordre alphabétique
-            <i class="ai-check me-2" *ngIf="currentSort=='nameAsc'"></i>
-          </a>
-          <a class="dropdown-item" style="cursor: pointer;" (click)="changeSort('nameDesc');$event.stopPropagation();">
-            <i class="ai-bar-chart-1 me-2"></i>
-            Dans l'ordre anti-alphabétique
-            <i class="ai-check me-2" *ngIf="currentSort=='nameDesc'"></i>
-          </a>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-<div class="card border-0 py-1 p-md-2 p-xl-3 p-xxl-4">
-  <div class="card-body pb-4">
-
-    <div class="alert alert-info d-flex mb-0" role="alert" *ngIf="!isFirstLoading && affaires.length==0">
-      <i class="ai-circle-info fs-xl"></i>
-      <div class="ps-2">Aucune affaire n'a été trouvée, essayez de modifier votre filtres ci-dessus</div>
-    </div>
-
-    <!-- Orders accordion -->
-    <div class="accordion accordion-alt accordion-orders" id="affaires">
-
-      <!-- Placeholder au chargement -->
-      <div class="accordion-item border-top mb-3" *ngIf="isFirstLoading">
-        <div class="card shadow-sm p-4">
-          <p class="card-text placeholder-glow mb-0">
-            <span class="placeholder placeholder-sm col-7 me-2"></span>
-            <span class="placeholder placeholder-sm col-4"></span>
-            <span class="placeholder placeholder-sm col-4 me-2"></span>
-            <span class="placeholder placeholder-sm col-6"></span>
-            <span class="placeholder placeholder-sm col-8"></span>
-          </p>
-        </div>
-      </div>
-
-      <div ngbAccordion>
-        <div ngbAccordionItem *ngFor="let affaire of affaires" (show)="loadAffaireDetails( affaire)">
-          <h2 ngbAccordionHeader>
-            <button ngbAccordionButton class="border-top">
-              <div class="container-fluid ">
-                <div class="row g-2 w-100">
-
-                  <div class="col-12 col-sm-5">
-                    <div class="d-none d-sm-block fs-sm text-body-secondary mb-2  ">Dénomination</div>
-                    <div class="fs-sm fw-medium text-dark"> {{ affaire.denomination ? affaire.denomination :
-                      (affaire.firstname + ' ' + affaire.lastname) }}</div>
-                  </div>
-                  <div class="col-12 col-sm-3">
-                    <div class="d-none d-sm-block fs-sm text-body-secondary mb-2">SIRET</div>
-                    <div class="fs-sm fw-medium text-dark">{{ affaire.siret }}</div>
-                  </div>
-                  <div class="col-12 col-sm-4">
-                    <div class="fs-sm text-body-secondary mb-2">Ville</div>
-                    <div class="fs-sm fw-medium text-dark">{{ affaire.city?affaire.city.label : '' }}</div>
-                  </div>
+              <input class="form-check-input me-2" type="checkbox" [(ngModel)]="selectAllActiveResponsable"
+                (change)="selectAllActiveResponsables()">
+                <strong>Sélectionner tout</strong>
+              </label>
+              <div class="dropdown-divider"></div>
+              @for (respo of responsablesForCurrentUser; track respo; let i = $index) {
+                @if (i > 0 && !respo.isActive && responsablesForCurrentUser[i-1].isActive) {
+                  <div class="dropdown-divider"></div>
+                  <label class="dropdown-item">
+                    <input class="form-check-input me-2" type="checkbox" [(ngModel)]="selectAllInactiveResponsable"
+                      (change)="selectAllInactiveResponsables()">
+                      <strong>Ajouter les inactifs</strong>
+                    </label>
+                  }
+                  <label class="dropdown-item">
+                    <input class="form-check-input me-2" type="checkbox" [(ngModel)]="responsableCheck[respo.id]"
+                      (change)="changeFilter()">
+                      {{respo.firstname}} {{respo.lastname}}
+                    </label>
+                  }
                 </div>
               </div>
-            </button>
-          </h2>
-          <div ngbAccordionCollapse>
-            <div ngbAccordionBody>
-              <ng-template>
-                <div class="accordion-body p-0">
+            }
 
-                  <!-- Placeholder chargement détail -->
-                  <div *ngIf="!ordersAffaire[affaire.id]" class="p-4">
-                    <p class="card-text placeholder-glow mb-0">
-                      <span class="placeholder placeholder-sm col-7 me-2"></span>
-                      <span class="placeholder placeholder-sm col-4"></span>
-                      <span class="placeholder placeholder-sm col-4 me-2"></span>
-                      <span class="placeholder placeholder-sm col-6"></span>
-                      <span class="placeholder placeholder-sm col-8"></span>
-                    </p>
-                  </div>
-
-
-                  <!-- Contenu des onglets -->
-                  <ul ngbNav #nav="ngbNav" [activeId]="1" class="nav-tabs">
-                    <li [ngbNavItem]="1">
-                      <button ngbNavLink>Commandes</button>
-                      <ng-template ngbNavContent>
-                        <div class="d-flex flex-column gap-3">
-                          <div *ngFor="let order of ordersAffaire[affaire.id]" class="card  p-3">
-                            <div class="container-fluid p-0">
-                              <div class="row g-2 w-100">
-                                <div class="col-12 col-sm-2 d-flex flex-column align-items-center">
-                                  <div class="fs-sm text-body-secondary fw-bold text-center">
-                                    n°{{order.id}}
-                                    <i class="ai-triangle-alert fs-base text-danger ms-2"
-                                      style="-webkit-text-stroke: 1px;" placement="right"
-                                      *ngIf="order.hasMissingInformations"
-                                      ngbTooltip="Des renseignements complémentaires sont nécessaires : veuillez vous reporter au détail de la commande"></i>
-                                  </div>
-                                  <span class="badge bg-opacity-10 fs-xs text-wrap mt-2"
-                                    [ngClass]="getClassForCustomerOrderStatus(order)" style="white-space: normal;">
-                                    {{getCustomerOrderStatusLabel(order)}}
-                                  </span>
-                                </div>
-
-                                <div class="col-12 col-sm-2">
-                                  <div class="fs-sm text-body-secondary fw-bold mb-1">Date de commande</div>
-                                  <div class="fs-sm fw-medium text-dark">
-                                    {{order.createdDate | date:'dd/MM/yyyy'}}
-                                  </div>
-                                </div>
-
-                                <div class="col-12 col-sm-3">
-                                  <div class="fs-sm text-body-secondary fw-bold mb-1">Affaire</div>
-                                  <div class="fs-sm fw-medium text-dark">
-                                    {{capitalizeName(order.affairesList)}}
-                                  </div>
-                                </div>
-
-                                <div class="col-12 col-sm-3">
-                                  <div class="fs-sm text-body-secondary fw-bold mb-1">Services</div>
-                                  <div class="fs-sm fw-medium text-dark">
-                                    {{order.servicesList}}
-                                  </div>
-                                </div>
-
-                                <div class="col-12 col-sm-2"
-                                  *ngIf="  order.responsable && responsablesForCurrentUser && responsablesForCurrentUser.length>0">
-                                  <div class="fs-sm text-body-secondary fw-bold mb-1">Responsable</div>
-                                  <div class="fs-sm fw-medium text-dark">
-                                    {{capitalizeName(order.responsable.firstname + ' ' + order.responsable.lastname)}}
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                            <div class="container-fluid p-0 mt-2">
-                              <!-- Deuxième ligne -->
-                              <div class="row">
-                                <div class="col-12 d-flex justify-content-left">
-                                  <button type="button" class="btn btn-link btn-sm px-2 hover-bg-light"
-                                    [routerLink]='"/account/orders/details/" + order.id'>
-                                    <i class="ai-file-text me-2"></i>
-                                    Détails de la commande
-                                  </button>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </ng-template>
-                    </li>
-                    <li [ngbNavItem]="2"
-                      *ngIf="attachmentsAffaire[affaire.id] && attachmentsAffaire[affaire.id].length > 0">
-                      <button ngbNavLink>Documents disponibles</button>
-                      <ng-template ngbNavContent>
-                        <div class="table-responsive">
-                          <table class="table table-hover mb-0">
-                            <thead>
-                              <tr>
-                                <th style="width: 5%;">#</th>
-                                <th>Nom</th>
-                                <th class="d-none d-md-table-cell" style="width: 20%;">Type</th>
-                                <th class="d-none d-lg-table-cell" style="width: 20%;">Date de dépôt</th>
-                                <th style="width: 10%;"></th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              <tr *ngFor="let attachment of attachmentsAffaire[affaire.id]; let i = index">
-                                <th scope="row">{{i + 1}}</th>
-                                <td class="text-wrap" style="min-width: 150px;">{{attachment.description}}</td>
-                                <td class="d-none d-md-table-cell">{{attachment.attachmentType.label}}</td>
-                                <td class="d-none d-lg-table-cell">{{attachment.creatDateTime | date:'dd/MM/yyyy'}}</td>
-                                <td>
-                                  <button type="button" class="btn btn-secondary btn-icon btn-sm"
-                                    aria-label="Télécharger" placement="right" ngbTooltip="Télécharger"
-                                    (click)="downloadAttachment(attachment)">
-                                    <i class="ai-download"></i>
-                                  </button>
-                                </td>
-                              </tr>
-                            </tbody>
-                          </table>
-                        </div>
-                      </ng-template>
-                    </li>
-                  </ul>
-
-                  <div [ngbNavOutlet]="nav" class="mt-2"></div>
-
-                </div>
-              </ng-template>
+            <div ngbDropdown class="btn-group dropdown col">
+              <button type="button" class="btn btn-outline-secondary dropdown-toggle" ngbDropdownToggle aria-haspopup="true"
+                aria-expanded="false">
+                <i class="ai-bar-chart-3 me-2"></i>
+                Trier par
+              </button>
+              <div ngbDropdownMenu class="dropdown-menu my-1">
+                <a class="dropdown-item" style="cursor: pointer;" (click)="changeSort('nameAsc');$event.stopPropagation();">
+                  <i class="ai-bar-chart-3 me-2"></i>
+                  Dans l'ordre alphabétique
+                  @if (currentSort=='nameAsc') {
+                    <i class="ai-check me-2"></i>
+                  }
+                </a>
+                <a class="dropdown-item" style="cursor: pointer;" (click)="changeSort('nameDesc');$event.stopPropagation();">
+                  <i class="ai-bar-chart-1 me-2"></i>
+                  Dans l'ordre anti-alphabétique
+                  @if (currentSort=='nameDesc') {
+                    <i class="ai-check me-2"></i>
+                  }
+                </a>
+              </div>
             </div>
           </div>
         </div>
       </div>
+      <div class="card border-0 py-1 p-md-2 p-xl-3 p-xxl-4">
+        <div class="card-body pb-4">
 
-      <!-- Pagination -->
-      <div class="d-sm-flex align-items-center pt-4 pt-sm-5" *ngIf="!hideSeeMore">
-        <nav class="order-sm-2 ms-sm-auto">
-        </nav>
-        <button class="btn btn-primary w-100 w-sm-auto order-sm-1 ms-sm-auto me-sm-n5" type="button"
-          (click)="loadMore()">
-          <i class="ai-chevrons-down me-2 ms-n1"></i>
-          Voir plus</button>
-      </div>
-    </div>
-  </div>
+          @if (!isFirstLoading && affaires.length==0) {
+            <div class="alert alert-info d-flex mb-0" role="alert">
+              <i class="ai-circle-info fs-xl"></i>
+              <div class="ps-2">Aucune affaire n'a été trouvée, essayez de modifier votre filtres ci-dessus</div>
+            </div>
+          }
+
+          <!-- Orders accordion -->
+          <div class="accordion accordion-alt accordion-orders" id="affaires">
+
+            <!-- Placeholder au chargement -->
+            @if (isFirstLoading) {
+              <div class="accordion-item border-top mb-3">
+                <div class="card shadow-sm p-4">
+                  <p class="card-text placeholder-glow mb-0">
+                    <span class="placeholder placeholder-sm col-7 me-2"></span>
+                    <span class="placeholder placeholder-sm col-4"></span>
+                    <span class="placeholder placeholder-sm col-4 me-2"></span>
+                    <span class="placeholder placeholder-sm col-6"></span>
+                    <span class="placeholder placeholder-sm col-8"></span>
+                  </p>
+                </div>
+              </div>
+            }
+
+            <div ngbAccordion>
+              @for (affaire of affaires; track affaire) {
+                <div ngbAccordionItem (show)="loadAffaireDetails( affaire)">
+                  <h2 ngbAccordionHeader>
+                    <button ngbAccordionButton class="border-top">
+                      <div class="container-fluid ">
+                        <div class="row g-2 w-100">
+                          <div class="col-12 col-sm-5">
+                            <div class="d-none d-sm-block fs-sm text-body-secondary mb-2  ">Dénomination</div>
+                            <div class="fs-sm fw-medium text-dark"> {{ affaire.denomination ? affaire.denomination :
+                            (affaire.firstname + ' ' + affaire.lastname) }}</div>
+                          </div>
+                          <div class="col-12 col-sm-3">
+                            <div class="d-none d-sm-block fs-sm text-body-secondary mb-2">SIRET</div>
+                            <div class="fs-sm fw-medium text-dark">{{ affaire.siret }}</div>
+                          </div>
+                          <div class="col-12 col-sm-4">
+                            <div class="fs-sm text-body-secondary mb-2">Ville</div>
+                            <div class="fs-sm fw-medium text-dark">{{ affaire.city?affaire.city.label : '' }}</div>
+                          </div>
+                        </div>
+                      </div>
+                    </button>
+                  </h2>
+                  <div ngbAccordionCollapse>
+                    <div ngbAccordionBody>
+                      <ng-template>
+                        <div class="accordion-body p-0">
+                          <!-- Placeholder chargement détail -->
+                          @if (!ordersAffaire[affaire.id]) {
+                            <div class="p-4">
+                              <p class="card-text placeholder-glow mb-0">
+                                <span class="placeholder placeholder-sm col-7 me-2"></span>
+                                <span class="placeholder placeholder-sm col-4"></span>
+                                <span class="placeholder placeholder-sm col-4 me-2"></span>
+                                <span class="placeholder placeholder-sm col-6"></span>
+                                <span class="placeholder placeholder-sm col-8"></span>
+                              </p>
+                            </div>
+                          }
+                          <!-- Contenu des onglets -->
+                          <ul ngbNav #nav="ngbNav" [activeId]="1" class="nav-tabs">
+                            <li [ngbNavItem]="1">
+                              <button ngbNavLink>Commandes</button>
+                              <ng-template ngbNavContent>
+                                <div class="d-flex flex-column gap-3">
+                                  @for (order of ordersAffaire[affaire.id]; track order) {
+                                    <div class="card  p-3">
+                                      <div class="container-fluid p-0">
+                                        <div class="row g-2 w-100">
+                                          <div class="col-12 col-sm-2 d-flex flex-column align-items-center">
+                                            <div class="fs-sm text-body-secondary fw-bold text-center">
+                                              n°{{order.id}}
+                                              @if (order.hasMissingInformations) {
+                                                <i class="ai-triangle-alert fs-base text-danger ms-2"
+                                                  style="-webkit-text-stroke: 1px;" placement="right"
+                                                ngbTooltip="Des renseignements complémentaires sont nécessaires : veuillez vous reporter au détail de la commande"></i>
+                                              }
+                                            </div>
+                                            <span class="badge bg-opacity-10 fs-xs text-wrap mt-2"
+                                              [ngClass]="getClassForCustomerOrderStatus(order)" style="white-space: normal;">
+                                              {{getCustomerOrderStatusLabel(order)}}
+                                            </span>
+                                          </div>
+                                          <div class="col-12 col-sm-2">
+                                            <div class="fs-sm text-body-secondary fw-bold mb-1">Date de commande</div>
+                                            <div class="fs-sm fw-medium text-dark">
+                                              {{order.createdDate | date:'dd/MM/yyyy'}}
+                                            </div>
+                                          </div>
+                                          <div class="col-12 col-sm-3">
+                                            <div class="fs-sm text-body-secondary fw-bold mb-1">Affaire</div>
+                                            <div class="fs-sm fw-medium text-dark">
+                                              {{capitalizeName(order.affairesList)}}
+                                            </div>
+                                          </div>
+                                          <div class="col-12 col-sm-3">
+                                            <div class="fs-sm text-body-secondary fw-bold mb-1">Services</div>
+                                            <div class="fs-sm fw-medium text-dark">
+                                              {{order.servicesList}}
+                                            </div>
+                                          </div>
+                                          @if (  order.responsable && responsablesForCurrentUser && responsablesForCurrentUser.length>0) {
+                                            <div class="col-12 col-sm-2"
+                                              >
+                                              <div class="fs-sm text-body-secondary fw-bold mb-1">Responsable</div>
+                                              <div class="fs-sm fw-medium text-dark">
+                                                {{capitalizeName(order.responsable.firstname + ' ' + order.responsable.lastname)}}
+                                              </div>
+                                            </div>
+                                          }
+                                        </div>
+                                      </div>
+                                      <div class="container-fluid p-0 mt-2">
+                                        <!-- Deuxième ligne -->
+                                        <div class="row">
+                                          <div class="col-12 d-flex justify-content-left">
+                                            <button type="button" class="btn btn-link btn-sm px-2 hover-bg-light"
+                                              [routerLink]='"/account/orders/details/" + order.id'>
+                                              <i class="ai-file-text me-2"></i>
+                                              Détails de la commande
+                                            </button>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  }
+                                </div>
+                              </ng-template>
+                            </li>
+                            @if (attachmentsAffaire[affaire.id] && attachmentsAffaire[affaire.id].length > 0) {
+                              <li [ngbNavItem]="2"
+                                >
+                                <button ngbNavLink>Documents disponibles</button>
+                                <ng-template ngbNavContent>
+                                  <div class="table-responsive">
+                                    <table class="table table-hover mb-0">
+                                      <thead>
+                                        <tr>
+                                          <th style="width: 5%;">#</th>
+                                          <th>Nom</th>
+                                          <th class="d-none d-md-table-cell" style="width: 20%;">Type</th>
+                                          <th class="d-none d-lg-table-cell" style="width: 20%;">Date de dépôt</th>
+                                          <th style="width: 10%;"></th>
+                                        </tr>
+                                      </thead>
+                                      <tbody>
+                                        @for (attachment of attachmentsAffaire[affaire.id]; track attachment; let i = $index) {
+                                          <tr>
+                                            <th scope="row">{{i + 1}}</th>
+                                            <td class="text-wrap" style="min-width: 150px;">{{attachment.description}}</td>
+                                            <td class="d-none d-md-table-cell">{{attachment.attachmentType.label}}</td>
+                                            <td class="d-none d-lg-table-cell">{{attachment.creatDateTime | date:'dd/MM/yyyy'}}</td>
+                                            <td>
+                                              <button type="button" class="btn btn-secondary btn-icon btn-sm"
+                                                aria-label="Télécharger" placement="right" ngbTooltip="Télécharger"
+                                                (click)="downloadAttachment(attachment)">
+                                                <i class="ai-download"></i>
+                                              </button>
+                                            </td>
+                                          </tr>
+                                        }
+                                      </tbody>
+                                    </table>
+                                  </div>
+                                </ng-template>
+                              </li>
+                            }
+                          </ul>
+                          <div [ngbNavOutlet]="nav" class="mt-2"></div>
+                        </div>
+                      </ng-template>
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+
+            <!-- Pagination -->
+            @if (!hideSeeMore) {
+              <div class="d-sm-flex align-items-center pt-4 pt-sm-5">
+                <nav class="order-sm-2 ms-sm-auto">
+                </nav>
+                <button class="btn btn-primary w-100 w-sm-auto order-sm-1 ms-sm-auto me-sm-n5" type="button"
+                  (click)="loadMore()">
+                  <i class="ai-chevrons-down me-2 ms-n1"></i>
+                Voir plus</button>
+              </div>
+            }
+          </div>
+        </div>

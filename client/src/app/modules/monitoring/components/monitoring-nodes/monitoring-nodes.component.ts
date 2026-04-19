@@ -5,9 +5,10 @@ import { Node } from '../../model/Node';
 import { NodeService } from '../../services/node.service';
 
 @Component({
-  selector: 'monitoring-nodes',
-  templateUrl: './monitoring-nodes.component.html',
-  styleUrls: ['./monitoring-nodes.component.css']
+    selector: 'monitoring-nodes',
+    templateUrl: './monitoring-nodes.component.html',
+    styleUrls: ['./monitoring-nodes.component.css'],
+    standalone: false
 })
 export class MonitoringNodesComponent implements OnInit {
 

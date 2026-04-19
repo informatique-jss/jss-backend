@@ -9,9 +9,10 @@ import { AppService } from 'src/app/services/app.service';
 import { GenericChipsComponent } from '../generic-chips/generic-chips.component';
 
 @Component({
-  selector: 'chips-tiers-group',
-  templateUrl: './chips-tiers-group.component.html',
-  styleUrls: ['./chips-tiers-group.component.css']
+    selector: 'chips-tiers-group',
+    templateUrl: './chips-tiers-group.component.html',
+    styleUrls: ['./chips-tiers-group.component.css'],
+    standalone: false
 })
 export class ChipsTiersGroupComponent extends GenericChipsComponent<TiersGroup> implements OnInit {
 

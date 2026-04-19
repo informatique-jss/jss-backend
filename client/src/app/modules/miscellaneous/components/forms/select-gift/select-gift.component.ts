@@ -7,9 +7,10 @@ import { AppService } from 'src/app/services/app.service';
 
 
 @Component({
-  selector: 'select-gift',
-  templateUrl: './select-gift.component.html',
-  styleUrls: ['./select-gift.component.css']
+    selector: 'select-gift',
+    templateUrl: './select-gift.component.html',
+    styleUrls: ['./select-gift.component.css'],
+    standalone: false
 })
 export class SelectGiftComponent extends GenericSelectComponent<Gift> implements OnInit {
 

@@ -7,9 +7,10 @@ declare var jQuery: any;
 declare var $: any;
 
 @Component({
-  selector: 'reporting',
-  templateUrl: './reporting.component.html',
-  styleUrls: ['./reporting.component.css']
+    selector: 'reporting',
+    templateUrl: './reporting.component.html',
+    styleUrls: ['./reporting.component.css'],
+    standalone: false
 })
 export class ReportingComponent implements OnInit {
   private el: ElementRef;

@@ -10,9 +10,10 @@ import { AppService } from 'src/app/services/app.service';
 import { GenericReferentialComponent } from '../generic-referential/generic-referential-component';
 
 @Component({
-  selector: 'referential-provision-type',
-  templateUrl: 'referential-provision-type.component.html',
-  styleUrls: ['./../generic-referential/generic-referential.component.css']
+    selector: 'referential-provision-type',
+    templateUrl: 'referential-provision-type.component.html',
+    styleUrls: ['./../generic-referential/generic-referential.component.css'],
+    standalone: false
 })
 export class ReferentialProvisionTypeComponent extends GenericReferentialComponent<ProvisionType> implements OnInit {
   constructor(private provisionTypeService: ProvisionTypeService,

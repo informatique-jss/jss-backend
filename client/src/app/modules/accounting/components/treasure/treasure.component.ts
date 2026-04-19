@@ -5,9 +5,10 @@ import { TreasureResult } from '../../model/TreasureResult';
 import { TreasureResultService } from '../../services/treasure.result.service';
 
 @Component({
-  selector: 'treasure',
-  templateUrl: './treasure.component.html',
-  styleUrls: ['./treasure.component.css']
+    selector: 'treasure',
+    templateUrl: './treasure.component.html',
+    styleUrls: ['./treasure.component.css'],
+    standalone: false
 })
 export class TreasureComponent implements OnInit {
   displayedColumns: SortTableColumn<TreasureResult>[] = [];

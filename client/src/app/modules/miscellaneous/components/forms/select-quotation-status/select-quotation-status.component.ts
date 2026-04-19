@@ -6,9 +6,10 @@ import { AppService } from 'src/app/services/app.service';
 import { GenericMultipleSelectComponent } from '../generic-select/generic-multiple-select.component';
 
 @Component({
-  selector: 'select-quotation-status',
-  templateUrl: './../generic-select/generic-multiple-select.component.html',
-  styleUrls: ['./../generic-select/generic-select.component.html']
+    selector: 'select-quotation-status',
+    templateUrl: './../generic-select/generic-multiple-select.component.html',
+    styleUrls: ['./../generic-select/generic-select.component.html'],
+    standalone: false
 })
 
 export class SelectQuotationStatusComponent extends GenericMultipleSelectComponent<QuotationStatus> implements OnInit {

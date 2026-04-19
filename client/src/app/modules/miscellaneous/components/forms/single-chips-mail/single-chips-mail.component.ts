@@ -7,9 +7,10 @@ import { Mail } from '../../../model/Mail';
 import { GenericSingleChipsComponent } from '../generic-single-chips/generic-single-chips.component';
 
 @Component({
-  selector: 'single-chips-mail',
-  templateUrl: './single-chips-mail.component.html',
-  styleUrls: ['./single-chips-mail.component.css']
+    selector: 'single-chips-mail',
+    templateUrl: './single-chips-mail.component.html',
+    styleUrls: ['./single-chips-mail.component.css'],
+    standalone: false
 })
 export class SingleChipsMailComponent extends GenericSingleChipsComponent<Mail> implements OnInit {
 

@@ -7,9 +7,10 @@ import { FormaliteGuichetUnique } from '../../model/guichet-unique/FormaliteGuic
 import { ValidationRequest } from '../../model/guichet-unique/ValidationRequest';
 
 @Component({
-  selector: 'guichet-unique-status',
-  templateUrl: './guichet-unique-status.component.html',
-  styleUrls: ['./guichet-unique-status.component.css']
+    selector: 'guichet-unique-status',
+    templateUrl: './guichet-unique-status.component.html',
+    styleUrls: ['./guichet-unique-status.component.css'],
+    standalone: false
 })
 export class GuichetUniqueStatusComponent implements OnInit {
 

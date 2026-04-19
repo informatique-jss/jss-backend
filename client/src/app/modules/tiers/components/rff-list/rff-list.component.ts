@@ -17,9 +17,10 @@ import { RffSearch } from '../../model/RffSearch';
 import { RffService } from '../../services/rff.service';
 
 @Component({
-  selector: 'rff-list',
-  templateUrl: './rff-list.component.html',
-  styleUrls: ['./rff-list.component.css']
+    selector: 'rff-list',
+    templateUrl: './rff-list.component.html',
+    styleUrls: ['./rff-list.component.css'],
+    standalone: false
 })
 export class RffListComponent implements OnInit {
   rff: Rff[] | undefined;

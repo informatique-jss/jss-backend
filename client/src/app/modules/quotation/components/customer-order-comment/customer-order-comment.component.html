@@ -1,72 +1,108 @@
-<div *ngIf="currentEmployee">
-  <div *ngIf="!isDisplayCommentInput" style="text-align: center;"><button mat-fab extended color="primary"
-      (click)="toggleDisplayCommentInput()">
-      <mat-icon>add_comment</mat-icon>
-      Ajouter un commentaire
-    </button></div>
-  <table class="full-width" [formGroup]="commentForm">
-    <tr *ngIf="isDisplayCommentInput">
-      <td>
-        <ckeditor [editor]="ckEditorComment" [config]="config" [data]="initialCommentValue"
-          (change)="onCommentChange($event)"></ckeditor>
-      </td>
-      <td style="width : 20px ; vertical-align: middle;">
-        <button mat-mini-fab matTooltip="Ajouter un commentaire" (click)="addNewComment()">
-          <mat-icon>add_comment</mat-icon>
-        </button>
-      </td>
-    </tr>
-    <tr *ngIf="isDisplayCommentInput">
-      <td colspan="2" style="display : flex; padding-left: 10px;padding-right: 10px;">
-        <chips-status style="margin-right : 5px" *ngFor="let group of adGroups" [value]="'@'+group.label"
-          [status]="isAdGroupSelectedInComment(group,newComment)?'SELECTED' : ''"
-          (click)="toggleAdGroup(group)"></chips-status>
-      </td>
-    </tr>
-    <tr *ngIf="isDisplayCommentInput">
-      <td colspan="2" style="display : flex; padding-left: 10px;padding-right: 10px;">
-        <generic-toggle [(model)]="newComment.isToDisplayToCustomer" label="Afficher le commentaire au client"
-          [form]="commentForm" propertyName="isToDisplayToCustomer" [isDisabled]="false"></generic-toggle>
-      </td>
-    </tr>
-  </table>
-  <div class="div-speech">
-    <div class="speech-wrapper">
-      <div class="bubble" *ngFor="let comment of comments" [class.bubble-for-myself]="comment.isCurrentUserInGroup">
-        <div class="txt">
-          <p *ngIf="comment.employee" class="name" [ngStyle]="{ 'color': getEmployeeBackgoundColor(comment.employee) }"
-            style="display : flex">
-            <span>{{comment.employee.firstname}} {{comment.employee.lastname}}</span> <span *ngIf="comment.provision"
-              style="color :#b3b3b3; padding-left: 3px;">
-              {{getProvisionLabel(comment.provision)}}</span> <span style=" display : flex"
-              *ngIf="comment.activeDirectoryGroups && comment.activeDirectoryGroups.length>0"><chips-status
-                style="margin-left : 5px;" *ngFor="let group of comment.activeDirectoryGroups"
-                [status]="isEmployeeInGroupList(currentEmployee, [group])?'EMPHASIZED' : ''"
-                [value]="'@'+group.label"></chips-status></span>
-          </p>
-          <p *ngIf="comment.currentCustomer" class="name"
-            [ngStyle]="{ 'color': getEmployeeBackgoundColor(comment.currentCustomer) }" style="display : flex">
-            <span>{{comment.currentCustomer.firstname}} {{comment.currentCustomer.lastname}} (responsable
-              n°{{comment.currentCustomer.id}})</span> <span *ngIf="comment.provision"
-              style="color :#b3b3b3; padding-left: 3px;">
-              {{getProvisionLabel(comment.provision)}}</span><span style=" display : flex"
-              *ngIf="comment.activeDirectoryGroups && comment.activeDirectoryGroups.length>0"><chips-status
-                style="margin-left : 5px;" *ngFor="let group of comment.activeDirectoryGroups"
-                [status]="isEmployeeInGroupList(currentEmployee, [group])?'EMPHASIZED' : ''"
-                [value]="'@'+group.label"></chips-status></span>
-          </p>
+@if (currentEmployee) {
+  <div>
+    @if (!isDisplayCommentInput) {
+      <div style="text-align: center;"><button mat-fab extended color="primary"
+        (click)="toggleDisplayCommentInput()">
+        <mat-icon>add_comment</mat-icon>
+        Ajouter un commentaire
+      </button></div>
+    }
+    <table class="full-width" [formGroup]="commentForm">
+      @if (isDisplayCommentInput) {
+        <tr>
+          <td>
+            <ckeditor [editor]="ckEditorComment" [config]="config" [data]="initialCommentValue"
+            (change)="onCommentChange($event)"></ckeditor>
+          </td>
+          <td style="width : 20px ; vertical-align: middle;">
+            <button mat-mini-fab matTooltip="Ajouter un commentaire" (click)="addNewComment()">
+              <mat-icon>add_comment</mat-icon>
+            </button>
+          </td>
+        </tr>
+      }
+      @if (isDisplayCommentInput) {
+        <tr>
+          <td colspan="2" style="display : flex; padding-left: 10px;padding-right: 10px;">
+            @for (group of adGroups; track group) {
+              <chips-status style="margin-right : 5px" [value]="'@'+group.label"
+                [status]="isAdGroupSelectedInComment(group,newComment)?'SELECTED' : ''"
+              (click)="toggleAdGroup(group)"></chips-status>
+            }
+          </td>
+        </tr>
+      }
+      @if (isDisplayCommentInput) {
+        <tr>
+          <td colspan="2" style="display : flex; padding-left: 10px;padding-right: 10px;">
+            <generic-toggle [(model)]="newComment.isToDisplayToCustomer" label="Afficher le commentaire au client"
+            [form]="commentForm" propertyName="isToDisplayToCustomer" [isDisabled]="false"></generic-toggle>
+          </td>
+        </tr>
+      }
+    </table>
+    <div class="div-speech">
+      <div class="speech-wrapper">
+        @for (comment of comments; track comment) {
+          <div class="bubble" [class.bubble-for-myself]="comment.isCurrentUserInGroup">
+            <div class="txt">
+              @if (comment.employee) {
+                <p class="name" [ngStyle]="{ 'color': getEmployeeBackgoundColor(comment.employee) }"
+                  style="display : flex">
+                  <span>{{comment.employee.firstname}} {{comment.employee.lastname}}</span> @if (comment.provision) {
+                  <span
+                    style="color :#b3b3b3; padding-left: 3px;">
+                  {{getProvisionLabel(comment.provision)}}</span>
+                  } @if (comment.activeDirectoryGroups && comment.activeDirectoryGroups.length>0) {
+                  <span style=" display : flex"
+                    >@for (group of comment.activeDirectoryGroups; track group) {
+                    <chips-status
+                      style="margin-left : 5px;"
+                      [status]="isEmployeeInGroupList(currentEmployee, [group])?'EMPHASIZED' : ''"
+                    [value]="'@'+group.label"></chips-status>
+                  }</span>
+                }
+              </p>
+            }
+            @if (comment.currentCustomer) {
+              <p class="name"
+                [ngStyle]="{ 'color': getEmployeeBackgoundColor(comment.currentCustomer) }" style="display : flex">
+                <span>{{comment.currentCustomer.firstname}} {{comment.currentCustomer.lastname}} (responsable
+                n°{{comment.currentCustomer.id}})</span> @if (comment.provision) {
+                <span
+                  style="color :#b3b3b3; padding-left: 3px;">
+                {{getProvisionLabel(comment.provision)}}</span>
+                }@if (comment.activeDirectoryGroups && comment.activeDirectoryGroups.length>0) {
+                <span style=" display : flex"
+                  >@for (group of comment.activeDirectoryGroups; track group) {
+                  <chips-status
+                    style="margin-left : 5px;"
+                    [status]="isEmployeeInGroupList(currentEmployee, [group])?'EMPHASIZED' : ''"
+                  [value]="'@'+group.label"></chips-status>
+                }</span>
+              }
+            </p>
+          }
           <p class="message" [innerHTML]="comment.comment| trustHtml"> </p>
           <span class="timestamp" [matTooltip]="getTooltipDateText(comment)">{{comment.createdDateTime |
-            date:'dd/MM/yyyy à HH:mm'}} <span *ngIf="comment.isToDisplayToCustomer">(visible du
-              client)</span></span><button mat-icon-button matTooltip="Editer le commentaire" color="accent"
-            class="edit-icon" *ngIf="canEditComment(comment)" (click)="editComment(comment)"><mat-icon>edit</mat-icon>
+            date:'dd/MM/yyyy à HH:mm'}} @if (comment.isToDisplayToCustomer) {
+            <span>(visible du
+            client)</span>
+          }</span>@if (canEditComment(comment)) {
+          <button mat-icon-button matTooltip="Editer le commentaire" color="accent"
+            class="edit-icon" (click)="editComment(comment)"><mat-icon>edit</mat-icon>
           </button>
-          <button mat-icon-button matTooltip="Commentaire visible du client" *ngIf="comment.isToDisplayToCustomer"
+        }
+        @if (comment.isToDisplayToCustomer) {
+          <button mat-icon-button matTooltip="Commentaire visible du client"
             class="read-icon"><mat-icon>visibility</mat-icon>
           </button>
-        </div>
-        <div class="bubble-arrow" [class.bubble-arrow-for-myself]="comment.isCurrentUserInGroup"></div>
+        }
       </div>
+      <div class="bubble-arrow" [class.bubble-arrow-for-myself]="comment.isCurrentUserInGroup"></div>
     </div>
-  </div>
+  }
 </div>
+</div>
+</div>
+}

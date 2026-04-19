@@ -3,550 +3,641 @@
   <div class="bg-container">
 
     <!-- ======================= Banner intro START -->
-    <section class="pb-3 pb-lg-4" *ngIf="post">
-      <div class="container header-hub-bg">
-        <div class="row pt-2">
-          <div class="col-12">
-            <ng-container *ngIf="post.departments!=null && post.departments.length>0">
-              <a *ngFor="let department of post.departments  " style="cursor: pointer;"
-                [routerLink]='"/post/department/" + department.code + "/page" '
-                class="my-2 margin-category fw-bold p-1">{{department.name}}</a> -
-            </ng-container>
-            <ng-container *ngIf="post.jssCategories!=null && post.jssCategories.length>0">
-              <a *ngFor="let category of post.jssCategories  " style="cursor: pointer;"
-                [routerLink]='"/post/category/" + category.slug'
-                class="my-2 margin-category fw-bold p-1">{{category.name}}</a>
-            </ng-container>
-          </div>
-          <div class="col-12">
-            <h1 class="mt-2"><img *ngIf="post.isPremium" class="px-0 me-1" src="/assets/images/premium-icon.svg"><img
-                *ngIf="post.isHidePremium" class="pe-0 me-1" src="/assets/images/subscribed-icon.svg">
-              {{post.titleText}} </h1>
-          </div>
-          <span class="fs-6" [innerHTML]="post.excerptText| trustHtml"></span>
-
-          <hr class="d-none d-lg-block">
-          <div class="row inline-row align-items-center mb-2">
-            <!-- Author info -->
-            <div class="col-auto position-relative border-end pe-3">
-              <div class="row align-items-center">
-                <div class="col-auto avatar avatar-xl"
-                  *ngIf="post.isHiddenAuthor==undefined || post.isHiddenAuthor==null || post.isHiddenAuthor==false">
-                  <img style="cursor: pointer;" [routerLink]='"/post/author/" + post.fullAuthor.slug'
-                    class="avatar-img rounded-circle" [src]="post.fullAuthor.avatar_url_size_48" alt="avatar">
-                </div>
-                <div class="col">
-                  <a style="cursor: pointer;" [routerLink]=' "/post/author/" + post.fullAuthor.slug' class="d-block"
-                    *ngIf="post.isHiddenAuthor==undefined || post.isHiddenAuthor==null || post.isHiddenAuthor==false">{{post.fullAuthor.name}}</a>
-                  <p *ngIf="post.fullAuthor.description && (post.isHiddenAuthor==undefined || post.isHiddenAuthor==null || post.isHiddenAuthor==false)"
-                    class="fs-8">{{post.fullAuthor.description}}</p>
-                </div>
+    @if (post) {
+      <section class="pb-3 pb-lg-4">
+        <div class="container header-hub-bg">
+          <div class="row pt-2">
+            <div class="col-12">
+              @if (post.departments!=null && post.departments.length>0) {
+                @for (department of post.departments  ; track department) {
+                  <a style="cursor: pointer;"
+                    [routerLink]='"/post/department/" + department.code + "/page" '
+                  class="my-2 margin-category fw-bold p-1">{{department.name}}</a>
+                  } -
+                }
+                @if (post.jssCategories!=null && post.jssCategories.length>0) {
+                  @for (category of post.jssCategories  ; track category) {
+                    <a style="cursor: pointer;"
+                      [routerLink]='"/post/category/" + category.slug'
+                    class="my-2 margin-category fw-bold p-1">{{category.name}}</a>
+                  }
+                }
               </div>
-              @if(post.postAdditionalAuthors && post.postAdditionalAuthors.length>0){
-              <div *ngFor="let author of post.postAdditionalAuthors" class="row align-items-center mt-1">
-                <div class="col-auto avatar avatar-xl"
-                  *ngIf="post.isHiddenAuthor==undefined || post.isHiddenAuthor==null || post.isHiddenAuthor==false">
-                  <img style="cursor: pointer;" [routerLink]='"/post/author/" + author.slug'
-                    class="avatar-img rounded-circle" [src]="author.avatar_url_size_48" alt="avatar">
-                </div>
-                <div class="col">
-                  <a style="cursor: pointer;" [routerLink]='"/post/author/" + author.slug' class="d-block"
-                    *ngIf="post.isHiddenAuthor==undefined || post.isHiddenAuthor==null || post.isHiddenAuthor==false">{{author.name}}</a>
-                  <p *ngIf="author.description && (post.isHiddenAuthor==undefined || post.isHiddenAuthor==null || post.isHiddenAuthor==false)"
-                    class="fs-8">{{author.description}}</p>
-                </div>
+              <div class="col-12">
+                <h1 class="mt-2">@if (post.isPremium) {
+                  <img class="px-0 me-1" src="/assets/images/premium-icon.svg">
+                  }@if (post.isHidePremium) {
+                  <img
+                    class="pe-0 me-1" src="/assets/images/subscribed-icon.svg">
+                  }
+                {{post.titleText}} </h1>
               </div>
-              }
-              <div class="mt-1">
-                <span class="list-inline-item d-lg-block fs-8">{{post.date | literalDateTimePipe}}</span>
-                <span class="list-inline-item d-lg-block fs-8">{{getTimeReading(post.contentText)}}</span>
-              </div>
-            </div>
-            <!-- Player START -->
-            <div class="col list-inline list-unstyled0 ps-4 me-2">
-              <div class="row inline-row align-items-center">
-                <div class="row post-player-bg border rounded-2 ms-0 p-1 align-items-center">
-                  <a class="col-auto px-1 btn-dark rounded-circle btn-circle-sm fs-6"
-                    (click)="togglePlayPause(post!)"><i
-                      [ngClass]="getIsPlaying(post!) ? 'bi-pause-fill' : 'bi-play-fill'"></i></a>
-                  <div class="col">
-                    <p class="h6 mb-0 fs-7">Écouter l'article</p>
-                  </div>
-                </div>
-                <!-- Player END -->
-              </div>
-            </div>
-
-
-            <!-- Boutons offrir article, enrregistrer, partager  -->
-            <div class="col-auto mt-0">
-              <div class="row inline-row align-items-center mb-1">
-                <div class="col-auto mt-0">
-
-                  <button *ngIf="currentUser" class="btn btn-primary btn-sm rounded-2"
-                    (click)="openOfferPostModal(givePostModal)"><i class="bi bi-gift me-2"></i>Offrir cet
-                    article</button>
-                </div>
-                <bookmark *ngIf="currentUser" [post]="post" [isSinglePost]="true" class="mt-0"></bookmark>
-
-                <div class="col-auto mt-0">
-                  <!-- Share dropdown -->
-                  <div class="dropdown nav" [ngClass]="{ show: dropdownOpen }">
-                    <a role="button" class="d-flex align-items-center p-0 user-account" (click)="toggleDropdown($event)"
-                      [attr.aria-expanded]="dropdownOpen">
-
-                      <div class="d-none d-md-block">
-                        <div class="btn btn-primary btn-sm rounded-2"><i class="bi bi-share me-2"></i>Partager</div>
+              <span class="fs-6" [innerHTML]="post.excerptText| trustHtml"></span>
+              <hr class="d-none d-lg-block">
+              <div class="row inline-row align-items-center mb-2">
+                <!-- Author info -->
+                <div class="col-auto position-relative border-end pe-3">
+                  <div class="row align-items-center">
+                    @if (post.isHiddenAuthor==undefined || post.isHiddenAuthor==null || post.isHiddenAuthor==false) {
+                      <div class="col-auto avatar avatar-xl"
+                        >
+                        <img style="cursor: pointer;" [routerLink]='"/post/author/" + post.fullAuthor.slug'
+                          class="avatar-img rounded-circle" [src]="post.fullAuthor.avatar_url_size_48" alt="avatar">
+                        </div>
+                      }
+                      <div class="col">
+                        @if (post.isHiddenAuthor==undefined || post.isHiddenAuthor==null || post.isHiddenAuthor==false) {
+                          <a style="cursor: pointer;" [routerLink]=' "/post/author/" + post.fullAuthor.slug' class="d-block"
+                          >{{post.fullAuthor.name}}</a>
+                        }
+                        @if (post.fullAuthor.description && (post.isHiddenAuthor==undefined || post.isHiddenAuthor==null || post.isHiddenAuthor==false)) {
+                          <p
+                          class="fs-8">{{post.fullAuthor.description}}</p>
+                        }
                       </div>
-                    </a>
-
-                    <div class="dropdown-menu dropdown-menu-end my-1 p-2" [ngClass]="{ show: dropdownOpen }">
-                      <ng-container>
-                        <div class="d-flex flex-row gap-2">
-                          <a (click)="shareOnLinkedin()"
-                            class="btn btn-primary bg-light border-0 rounded-circle d-flex justify-content-center align-items-center"
-                            style="width: 48px; height: 48px;">
-                            <i class="bi bi-linkedin fs-6"></i>
-                          </a>
-                          <a href="https://www.instagram.com/journalspecialdessocietes/" target="_blank"
-                            class="btn btn-primary bg-light border-0 rounded-circle d-flex justify-content-center align-items-center"
-                            style="width: 48px; height: 48px;">
-                            <i class="bi bi-instagram fs-4"></i>
-                          </a>
-                          <a (click)="shareOnFacebook()"
-                            class="btn btn-primary bg-light border-0 rounded-circle d-flex justify-content-center align-items-center"
-                            style="width: 48px; height: 48px;">
-                            <i class="bi bi-facebook fs-4"></i>
-                          </a>
-                          <a (click)="shareOnBluesky()"
-                            class="btn btn-primary bg-light border-0 rounded-circle d-flex justify-content-center align-items-center"
-                            style="width: 48px; height: 48px;">
-                            <i class="bi bi-bluesky fs-4"></i>
-                          </a>
-                          <a (click)="shareByMail()"
-                            class="btn btn-primary bg-light border-0 rounded-circle d-flex justify-content-center align-items-center"
-                            style="width: 48px; height: 48px;">
-                            <i class="bi bi-envelope fs-4"></i>
-                          </a>
+                    </div>
+                    @if(post.postAdditionalAuthors && post.postAdditionalAuthors.length>0){
+                      @for (author of post.postAdditionalAuthors; track author) {
+                        <div class="row align-items-center mt-1">
+                          @if (post.isHiddenAuthor==undefined || post.isHiddenAuthor==null || post.isHiddenAuthor==false) {
+                            <div class="col-auto avatar avatar-xl"
+                              >
+                              <img style="cursor: pointer;" [routerLink]='"/post/author/" + author.slug'
+                                class="avatar-img rounded-circle" [src]="author.avatar_url_size_48" alt="avatar">
+                              </div>
+                            }
+                            <div class="col">
+                              @if (post.isHiddenAuthor==undefined || post.isHiddenAuthor==null || post.isHiddenAuthor==false) {
+                                <a style="cursor: pointer;" [routerLink]='"/post/author/" + author.slug' class="d-block"
+                                >{{author.name}}</a>
+                              }
+                              @if (author.description && (post.isHiddenAuthor==undefined || post.isHiddenAuthor==null || post.isHiddenAuthor==false)) {
+                                <p
+                                class="fs-8">{{author.description}}</p>
+                              }
+                            </div>
+                          </div>
+                        }
+                      }
+                      <div class="mt-1">
+                        <span class="list-inline-item d-lg-block fs-8">{{post.date | literalDateTimePipe}}</span>
+                        <span class="list-inline-item d-lg-block fs-8">{{getTimeReading(post.contentText)}}</span>
+                      </div>
+                    </div>
+                    <!-- Player START -->
+                    <div class="col list-inline list-unstyled0 ps-4 me-2">
+                      <div class="row inline-row align-items-center">
+                        <div class="row post-player-bg border rounded-2 ms-0 p-1 align-items-center">
+                          <a class="col-auto px-1 btn-dark rounded-circle btn-circle-sm fs-6"
+                            (click)="togglePlayPause(post!)"><i
+                          [ngClass]="getIsPlaying(post!) ? 'bi-pause-fill' : 'bi-play-fill'"></i></a>
+                          <div class="col">
+                            <p class="h6 mb-0 fs-7">Écouter l'article</p>
+                          </div>
                         </div>
-                      </ng-container>
+                        <!-- Player END -->
+                      </div>
+                    </div>
+                    <!-- Boutons offrir article, enrregistrer, partager  -->
+                    <div class="col-auto mt-0">
+                      <div class="row inline-row align-items-center mb-1">
+                        <div class="col-auto mt-0">
+                          @if (currentUser) {
+                            <button class="btn btn-primary btn-sm rounded-2"
+                              (click)="openOfferPostModal(givePostModal)"><i class="bi bi-gift me-2"></i>Offrir cet
+                            article</button>
+                          }
+                        </div>
+                        @if (currentUser) {
+                          <bookmark [post]="post" [isSinglePost]="true" class="mt-0"></bookmark>
+                        }
+                        <div class="col-auto mt-0">
+                          <!-- Share dropdown -->
+                          <div class="dropdown nav" [ngClass]="{ show: dropdownOpen }">
+                            <a role="button" class="d-flex align-items-center p-0 user-account" (click)="toggleDropdown($event)"
+                              [attr.aria-expanded]="dropdownOpen">
+                              <div class="d-none d-md-block">
+                                <div class="btn btn-primary btn-sm rounded-2"><i class="bi bi-share me-2"></i>Partager</div>
+                              </div>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-end my-1 p-2" [ngClass]="{ show: dropdownOpen }">
+                              <ng-container>
+                                <div class="d-flex flex-row gap-2">
+                                  <a (click)="shareOnLinkedin()"
+                                    class="btn btn-primary bg-light border-0 rounded-circle d-flex justify-content-center align-items-center"
+                                    style="width: 48px; height: 48px;">
+                                    <i class="bi bi-linkedin fs-6"></i>
+                                  </a>
+                                  <a href="https://www.instagram.com/journalspecialdessocietes/" target="_blank"
+                                    class="btn btn-primary bg-light border-0 rounded-circle d-flex justify-content-center align-items-center"
+                                    style="width: 48px; height: 48px;">
+                                    <i class="bi bi-instagram fs-4"></i>
+                                  </a>
+                                  <a (click)="shareOnFacebook()"
+                                    class="btn btn-primary bg-light border-0 rounded-circle d-flex justify-content-center align-items-center"
+                                    style="width: 48px; height: 48px;">
+                                    <i class="bi bi-facebook fs-4"></i>
+                                  </a>
+                                  <a (click)="shareOnBluesky()"
+                                    class="btn btn-primary bg-light border-0 rounded-circle d-flex justify-content-center align-items-center"
+                                    style="width: 48px; height: 48px;">
+                                    <i class="bi bi-bluesky fs-4"></i>
+                                  </a>
+                                  <a (click)="shareByMail()"
+                                    class="btn btn-primary bg-light border-0 rounded-circle d-flex justify-content-center align-items-center"
+                                    style="width: 48px; height: 48px;">
+                                    <i class="bi bi-envelope fs-4"></i>
+                                  </a>
+                                </div>
+                              </ng-container>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-    <!-- ======================= Banner intro END -->
+            </section>
+          }
+          <!-- ======================= Banner intro END -->
 
-    <!-- ======================= Main START -->
-    <!-- ======================= Left column START -->
-    <section class="row">
-      <div class="col-md-8">
+          <!-- ======================= Main START -->
+          <!-- ======================= Left column START -->
+          <section class="row">
+            <div class="col-md-8">
 
-        <div class="row p-0">
-          <div *ngIf="!post" class="pb-3">
-            <div class="panel-loader">
-              <div class="skeleton skeleton-header"></div>
-              <div class="skeleton skeleton-line"></div>
-              <div class="skeleton skeleton-line"></div>
-              <div class="skeleton skeleton-line short"></div>
-              <div class="skeleton skeleton-block"></div>
-            </div>
-          </div>
-
-          <section class="pt-0" *ngIf="post">
-            <div class="row">
-              <!-- Main Content START -->
-              <div *ngIf="post.media">
-                <img class="rounded-2 mb-2 resize-featured-img" [src]="post.media.urlFull ? post.media.urlFull : ''">
-                <figcaption class="figure-caption" *ngIf="post.media.captionText">{{post.media.captionText}}
-                </figcaption>
-              </div>
-
-              <!-- IF serie : Serie bloc -->
-              <div class="my-2" *ngIf="seriePost">
-                <div class="serie-border p-3">
-                  <div class="row">
-                    <h3>Notre série «{{seriePost.name}}»</h3>
-                  </div>
-                  <div class="row pb-2">
-                    <strong>{{getRawTextFromHtml(seriePost.excerptText)}}</strong>
-                  </div>
-                  <div class="row ms-1" *ngFor="let seriePost of postsOfSerie">
-                    <li *ngIf="seriePost.id!=post.id">
-                      <a style="color: var(--ar-blue-medium);"
-                        [routerLink]=' "/post/" + seriePost.slug'>{{seriePost.titleText}}</a>
-                    </li>
-                    <li *ngIf="seriePost.id==post.id">
-                      {{seriePost.titleText}}
-                    </li>
-                  </div>
-                </div>
-              </div>
-
-              <div class="mb-5 mt-2">
-                <span class="fs-6" [innerHTML]="post.contentText| trustHtml"></span>
-
-                <!-- Bannière d'abonnement en bas de l'article visible -->
-                <div class="bg-blue-400 d-flex justify-content-center align-items-center flex-column text-center p-4"
-                  style="position: relative; " *ngIf="post.isPremium && !post.isHidePremium">
-                  <h2 class="fw-bold">Vous avez envie de lire la suite ?</h2>
-                  <p>Débloquez immédiatement cet article pour 1 €, ou abonnez-vous pour accéder à l'ensemble de nos
-                    contenus.</p>
-                  <div class="row gap-2 justify-content-center">
-                    <button class="col-auto btn btn-secondary mt-3" style="cursor: pointer;"
-                      (click)="buyUniquePost(post.id)" target="_blank">Lire pour 1 €</button>
-                    <button class="col-auto btn btn-yellow mt-3" style="cursor: pointer;"
-                      (click)="routeToSubscription()">S'abonner</button>
-                  </div>
-                </div>
-
-                <!-- Lire aussi -->
-                <div *ngIf="post.relatedPosts.length > 0" class="my-4">
-                  <p class="fw-bold">LIRE AUSSI</p>
-                  <div class="row border-left-blue ms-0 ps-1 py-1">
-                    <a *ngFor="let relatedPost of post.relatedPosts.slice(0, 3)"
-                      [routerLink]='"/post/" + relatedPost.slug' class="card-truncate-1">
-                      <h6 class="m-0 p-1"><img *ngIf="relatedPost.isPremium" class="px-0 me-1"
-                          src="/assets/images/premium-icon.svg"><img *ngIf="post.isHidePremium" class="pe-0 me-1"
-                          src="/assets/images/subscribed-icon.svg">&#9632; {{relatedPost.titleText}}</h6>
-                    </a>
-                  </div>
-                </div>
-
-                <!-- Partager l'article  -->
-                <div>
-                  <div class="single-post-widget border-light border-top pt-3 mt-3 ">
-                    <h4 class="mb-2">Partager l'article</h4>
-                    <div class="d-flex gap-2 justify-content-start">
-                      <a (click)="shareOnLinkedin()"
-                        class="btn btn-primary rounded-circle d-flex justify-content-center align-items-center"
-                        style="width: 48px; height: 48px;">
-                        <i class="bi bi-linkedin fs-6"></i>
-                      </a>
-                      <a href="https://www.instagram.com/journalspecialdessocietes/" target="_blank"
-                        class="btn btn-primary rounded-circle d-flex justify-content-center align-items-center"
-                        style="width: 48px; height: 48px;">
-                        <i class="bi bi-instagram fs-4"></i>
-                      </a>
-                      <a (click)="shareOnFacebook()"
-                        class="btn btn-primary rounded-circle d-flex justify-content-center align-items-center"
-                        style="width: 48px; height: 48px;">
-                        <i class="bi bi-facebook fs-4"></i>
-                      </a>
-                      <a (click)="shareOnBluesky()"
-                        class="btn btn-primary rounded-circle d-flex justify-content-center align-items-center"
-                        style="width: 48px; height: 48px;">
-                        <i class="bi bi-bluesky fs-4"></i>
-                      </a>
-                      <a (click)="shareByMail()"
-                        class="btn btn-primary rounded-circle d-flex justify-content-center align-items-center"
-                        style="width: 48px; height: 48px;">
-                        <i class="bi bi-envelope fs-4"></i>
-                      </a>
+              <div class="row p-0">
+                @if (!post) {
+                  <div class="pb-3">
+                    <div class="panel-loader">
+                      <div class="skeleton skeleton-header"></div>
+                      <div class="skeleton skeleton-line"></div>
+                      <div class="skeleton skeleton-line"></div>
+                      <div class="skeleton skeleton-line short"></div>
+                      <div class="skeleton skeleton-block"></div>
                     </div>
                   </div>
-                </div>
+                }
 
-                <!-- Thematiques associées -->
-                <div *ngIf="post.postTags.length > 0" class="my-4 border-light border-top pt-3 mt-3">
-                  <p class="fw-bold">THÉMATIQUES ASSOCIÉES</p>
-                  <div class="border-left-blue ms-0 ps-1 pt-1 pb-0">
-                    <ul class="tag-cloud mb-0 list-inline">
-                      <li *ngFor="let tag of post.postTags" class="list-inline-item pb-1"><a
-                          class="btn bg-light text-secondary bg-hover-danger text-hover-white bg-hover-secondary"
-                          [routerLink]='"/post/tag/" + tag.slug'>{{tag.name}}</a>
-                      </li>
-                    </ul>
-
-                  </div>
-                </div>
-
-                <!-- Next article, previous article  -->
-                <div class="single-post-widget border-light border-top pt-3 mt-3">
-                  <ul class="entry-navigation list-inline d-block d-lg-flex justify-content-between flex">
-                    <li *ngIf="previousPost" [routerLink]='"/post/" + previousPost.slug'
-                      class="col-xl-6  mb-3 mb-lg-0 ">
-                      <article class="blog-style5 d-flex align-items-center rounded">
-                        <a>
-                          <div class="post-img-wrap position-relative overflow-hidden  me-2 ms-0">
-                            <img class="post-img"
-                              [src]="previousPost.media ? (previousPost.media.urlThumbnail ? previousPost.media.urlThumbnail : previousPost.media.urlFull) : ''"
-                              [alt]="previousPost.titleText">
-                          </div>
-                        </a>
-                        <div class="post-content pt-md-2 pt-xl-0 pt-0">
-                          <p class="mb-1"><i class="bi bi-arrow-left"></i> Article précédent</p>
-                          <h6 class="post-title card-text-truncate">
-                            <a [routerLink]='"/post/" + previousPost.slug'><img *ngIf="previousPost.isPremium"
-                                class="px-0 me-1" src="/assets/images/premium-icon.svg"><img
-                                *ngIf="previousPost.isHidePremium" class="pe-0 me-1"
-                                src="/assets/images/subscribed-icon.svg">
-                              {{previousPost.titleText}}</a>
-                          </h6>
+                @if (post) {
+                  <section class="pt-0">
+                    <div class="row">
+                      <!-- Main Content START -->
+                      @if (post.media) {
+                        <div>
+                          <img class="rounded-2 mb-2 resize-featured-img" [src]="post.media.urlFull ? post.media.urlFull : ''">
+                          @if (post.media.captionText) {
+                            <figcaption class="figure-caption">{{post.media.captionText}}
+                            </figcaption>
+                          }
                         </div>
-                      </article>
-                    </li>
-                    <li class="col-xl-6" *ngIf="nextPost" [routerLink]='"/post/" + nextPost.slug'>
-                      <article class="blog-style5 d-flex align-items-center rounded">
-                        <div class="post-content pt-md-2 pt-xl-0 pt-0">
-                          <p class="mb-1 text-end">Article suivant <i class="bi bi-arrow-right"></i></p>
-                          <h6 class="post-title text-end card-text-truncate">
-                            <a [routerLink]='"/post/" + nextPost.slug'><img *ngIf="nextPost.isPremium" class="px-0 me-1"
-                                src="/assets/images/premium-icon.svg"><img *ngIf="nextPost.isHidePremium"
-                                class="pe-0 me-1" src="/assets/images/subscribed-icon.svg">
-                              {{nextPost.titleText}}</a>
-                          </h6>
-                        </div>
-                        <a [routerLink]='"/post/" + nextPost.slug' *ngIf="nextPost.media">
-                          <div class="post-img-wrap position-relative overflow-hidden me-0 ms-2">
-                            <img class="post-img"
-                              [src]="nextPost.media.urlThumbnail ? nextPost.media.urlThumbnail : nextPost.media.urlFull"
-                              [alt]="nextPost.titleText">
+                      }
+                      <!-- IF serie : Serie bloc -->
+                      @if (seriePost) {
+                        <div class="my-2">
+                          <div class="serie-border p-3">
+                            <div class="row">
+                              <h3>Notre série «{{seriePost.name}}»</h3>
+                            </div>
+                            <div class="row pb-2">
+                              <strong>{{getRawTextFromHtml(seriePost.excerptText)}}</strong>
+                            </div>
+                            @for (seriePost of postsOfSerie; track seriePost) {
+                              <div class="row ms-1">
+                                @if (seriePost.id!=post.id) {
+                                  <li>
+                                    <a style="color: var(--ar-blue-medium);"
+                                    [routerLink]=' "/post/" + seriePost.slug'>{{seriePost.titleText}}</a>
+                                  </li>
+                                }
+                                @if (seriePost.id==post.id) {
+                                  <li>
+                                    {{seriePost.titleText}}
+                                  </li>
+                                }
+                              </div>
+                            }
                           </div>
-                        </a>
-                      </article>
-                    </li>
-                  </ul>
-                </div>
-
-                <!--============= Comments ==============-->
-
-                <!-- Comments -->
-                <hr>
-                <div class="" id="comments">
-                  <p class="h3 py-lg-1 py-xl-3" *ngIf="!commentsPagination.totalElements">0 Commentaire </p>
-                  <p class="h3 py-lg-1 py-xl-3" *ngIf="commentsPagination.totalElements">
-                    {{commentsPagination.totalElements <= 1 ? commentsPagination.totalElements + " Commentaire" :
-                      commentsPagination.totalElements + " Commentaires" }} </p>
-                      <div class="" *ngIf="commentsPagination.totalElements!=0">
-                        <hr>
-                        <!-- Comment -->
-                        <div *ngFor="let comment of comments" [attr.id]="comment.id">
-                          <div class="py-4 mt-2 mb-4 border-bottom">
-                            <div>
-                              <div class="d-flex align-items-center pb-1 mb-3">
-                                <avatar class="avatar-select rounded-circle" [user]="getResponsableNames(comment)"
-                                  [size]="50" [centerAvatar]="true" alt="Comment author"></avatar>
-                                <div class="ps-3">
-                                  <h6 class="mb-0">{{comment.authorFirstName}} {{comment.authorLastNameInitials}}.</h6>
-                                  <span class="fs-sm text-body-secondary">{{comment.creationDate |
-                                    date:'dd/MM/yyyy'}}</span>
+                        </div>
+                      }
+                      <div class="mb-5 mt-2">
+                        <span class="fs-6" [innerHTML]="post.contentText| trustHtml"></span>
+                        <!-- Bannière d'abonnement en bas de l'article visible -->
+                        @if (post.isPremium && !post.isHidePremium) {
+                          <div class="bg-blue-400 d-flex justify-content-center align-items-center flex-column text-center p-4"
+                            style="position: relative; ">
+                            <h2 class="fw-bold">Vous avez envie de lire la suite ?</h2>
+                            <p>Débloquez immédiatement cet article pour 1 €, ou abonnez-vous pour accéder à l'ensemble de nos
+                            contenus.</p>
+                            <div class="row gap-2 justify-content-center">
+                              <button class="col-auto btn btn-secondary mt-3" style="cursor: pointer;"
+                              (click)="buyUniquePost(post.id)" target="_blank">Lire pour 1 €</button>
+                              <button class="col-auto btn btn-yellow mt-3" style="cursor: pointer;"
+                              (click)="routeToSubscription()">S'abonner</button>
+                            </div>
+                          </div>
+                        }
+                        <!-- Lire aussi -->
+                        @if (post.relatedPosts.length > 0) {
+                          <div class="my-4">
+                            <p class="fw-bold">LIRE AUSSI</p>
+                            <div class="row border-left-blue ms-0 ps-1 py-1">
+                              @for (relatedPost of post.relatedPosts.slice(0, 3); track relatedPost) {
+                                <a
+                                  [routerLink]='"/post/" + relatedPost.slug' class="card-truncate-1">
+                                  <h6 class="m-0 p-1">@if (relatedPost.isPremium) {
+                                    <img class="px-0 me-1"
+                                      src="/assets/images/premium-icon.svg">
+                                      }@if (post.isHidePremium) {
+                                      <img class="pe-0 me-1"
+                                        src="/assets/images/subscribed-icon.svg">
+                                      }&#9632; {{relatedPost.titleText}}</h6>
+                                    </a>
+                                  }
                                 </div>
                               </div>
-                              <p class="pb-2 mb-0">{{comment.content}}</p>
-                              <button
-                                class="btn bg-light text-secondary text-hover-white bg-hover-secondary fs-sm fw-semibold"
-                                type="button" (click)="replyComment(comment)">
-                                Répondre<i class="bi bi-reply ms-2"></i>
-                              </button>
+                            }
+                            <!-- Partager l'article  -->
+                            <div>
+                              <div class="single-post-widget border-light border-top pt-3 mt-3 ">
+                                <h4 class="mb-2">Partager l'article</h4>
+                                <div class="d-flex gap-2 justify-content-start">
+                                  <a (click)="shareOnLinkedin()"
+                                    class="btn btn-primary rounded-circle d-flex justify-content-center align-items-center"
+                                    style="width: 48px; height: 48px;">
+                                    <i class="bi bi-linkedin fs-6"></i>
+                                  </a>
+                                  <a href="https://www.instagram.com/journalspecialdessocietes/" target="_blank"
+                                    class="btn btn-primary rounded-circle d-flex justify-content-center align-items-center"
+                                    style="width: 48px; height: 48px;">
+                                    <i class="bi bi-instagram fs-4"></i>
+                                  </a>
+                                  <a (click)="shareOnFacebook()"
+                                    class="btn btn-primary rounded-circle d-flex justify-content-center align-items-center"
+                                    style="width: 48px; height: 48px;">
+                                    <i class="bi bi-facebook fs-4"></i>
+                                  </a>
+                                  <a (click)="shareOnBluesky()"
+                                    class="btn btn-primary rounded-circle d-flex justify-content-center align-items-center"
+                                    style="width: 48px; height: 48px;">
+                                    <i class="bi bi-bluesky fs-4"></i>
+                                  </a>
+                                  <a (click)="shareByMail()"
+                                    class="btn btn-primary rounded-circle d-flex justify-content-center align-items-center"
+                                    style="width: 48px; height: 48px;">
+                                    <i class="bi bi-envelope fs-4"></i>
+                                  </a>
+                                </div>
+                              </div>
                             </div>
+                            <!-- Thematiques associées -->
+                            @if (post.postTags.length > 0) {
+                              <div class="my-4 border-light border-top pt-3 mt-3">
+                                <p class="fw-bold">THÉMATIQUES ASSOCIÉES</p>
+                                <div class="border-left-blue ms-0 ps-1 pt-1 pb-0">
+                                  <ul class="tag-cloud mb-0 list-inline">
+                                    @for (tag of post.postTags; track tag) {
+                                      <li class="list-inline-item pb-1"><a
+                                        class="btn bg-light text-secondary bg-hover-danger text-hover-white bg-hover-secondary"
+                                      [routerLink]='"/post/tag/" + tag.slug'>{{tag.name}}</a>
+                                    </li>
+                                  }
+                                </ul>
+                              </div>
+                            </div>
+                          }
+                          <!-- Next article, previous article  -->
+                          <div class="single-post-widget border-light border-top pt-3 mt-3">
+                            <ul class="entry-navigation list-inline d-block d-lg-flex justify-content-between flex">
+                              @if (previousPost) {
+                                <li [routerLink]='"/post/" + previousPost.slug'
+                                  class="col-xl-6  mb-3 mb-lg-0 ">
+                                  <article class="blog-style5 d-flex align-items-center rounded">
+                                    <a>
+                                      <div class="post-img-wrap position-relative overflow-hidden  me-2 ms-0">
+                                        <img class="post-img"
+                                          [src]="previousPost.media ? (previousPost.media.urlThumbnail ? previousPost.media.urlThumbnail : previousPost.media.urlFull) : ''"
+                                          [alt]="previousPost.titleText">
+                                        </div>
+                                      </a>
+                                      <div class="post-content pt-md-2 pt-xl-0 pt-0">
+                                        <p class="mb-1"><i class="bi bi-arrow-left"></i> Article précédent</p>
+                                        <h6 class="post-title card-text-truncate">
+                                          <a [routerLink]='"/post/" + previousPost.slug'>@if (previousPost.isPremium) {
+                                            <img
+                                              class="px-0 me-1" src="/assets/images/premium-icon.svg">
+                                              }@if (previousPost.isHidePremium) {
+                                              <img
+                                                class="pe-0 me-1"
+                                                src="/assets/images/subscribed-icon.svg">
+                                              }
+                                            {{previousPost.titleText}}</a>
+                                          </h6>
+                                        </div>
+                                      </article>
+                                    </li>
+                                  }
+                                  @if (nextPost) {
+                                    <li class="col-xl-6" [routerLink]='"/post/" + nextPost.slug'>
+                                      <article class="blog-style5 d-flex align-items-center rounded">
+                                        <div class="post-content pt-md-2 pt-xl-0 pt-0">
+                                          <p class="mb-1 text-end">Article suivant <i class="bi bi-arrow-right"></i></p>
+                                          <h6 class="post-title text-end card-text-truncate">
+                                            <a [routerLink]='"/post/" + nextPost.slug'>@if (nextPost.isPremium) {
+                                              <img class="px-0 me-1"
+                                                src="/assets/images/premium-icon.svg">
+                                                }@if (nextPost.isHidePremium) {
+                                                <img
+                                                  class="pe-0 me-1" src="/assets/images/subscribed-icon.svg">
+                                                }
+                                              {{nextPost.titleText}}</a>
+                                            </h6>
+                                          </div>
+                                          @if (nextPost.media) {
+                                            <a [routerLink]='"/post/" + nextPost.slug'>
+                                              <div class="post-img-wrap position-relative overflow-hidden me-0 ms-2">
+                                                <img class="post-img"
+                                                  [src]="nextPost.media.urlThumbnail ? nextPost.media.urlThumbnail : nextPost.media.urlFull"
+                                                  [alt]="nextPost.titleText">
+                                                </div>
+                                              </a>
+                                            }
+                                          </article>
+                                        </li>
+                                      }
+                                    </ul>
+                                  </div>
+                                  <!--============= Comments ==============-->
+                                  <!-- Comments -->
+                                  <hr>
+                                    <div class="" id="comments">
+                                      @if (!commentsPagination.totalElements) {
+                                        <p class="h3 py-lg-1 py-xl-3">0 Commentaire </p>
+                                      }
+                                      @if (commentsPagination.totalElements) {
+                                        <p class="h3 py-lg-1 py-xl-3">
+                                          {{commentsPagination.totalElements <= 1 ? commentsPagination.totalElements + " Commentaire" :
+                                        commentsPagination.totalElements + " Commentaires" }} </p>
+                                      }
+                                      @if (commentsPagination.totalElements!=0) {
+                                        <div class="">
+                                          <hr>
+                                            <!-- Comment -->
+                                            @for (comment of comments; track comment) {
+                                              <div [attr.id]="comment.id">
+                                                <div class="py-4 mt-2 mb-4 border-bottom">
+                                                  <div>
+                                                    <div class="d-flex align-items-center pb-1 mb-3">
+                                                      <avatar class="avatar-select rounded-circle" [user]="getResponsableNames(comment)"
+                                                      [size]="50" [centerAvatar]="true" alt="Comment author"></avatar>
+                                                      <div class="ps-3">
+                                                        <h6 class="mb-0">{{comment.authorFirstName}} {{comment.authorLastNameInitials}}.</h6>
+                                                        <span class="fs-sm text-body-secondary">{{comment.creationDate |
+                                                        date:'dd/MM/yyyy'}}</span>
+                                                      </div>
+                                                    </div>
+                                                    <p class="pb-2 mb-0">{{comment.content}}</p>
+                                                    <button
+                                                      class="btn bg-light text-secondary text-hover-white bg-hover-secondary fs-sm fw-semibold"
+                                                      type="button" (click)="replyComment(comment)">
+                                                      Répondre<i class="bi bi-reply ms-2"></i>
+                                                    </button>
+                                                  </div>
+                                                  <!-- Comment reply -->
+                                                  @if (comment.childrenComments && comment.childrenComments.length > 0) {
+                                                    <div class="">
+                                                      @for (children of comment.childrenComments; track children) {
+                                                        <div [attr.id]="children.id"
+                                                          class="card card-body border-0 my-3 header-hub-bg">
+                                                          <div class="d-flex align-items-center pb-1 mb-3">
+                                                            <avatar class="avatar-select rounded-circle" [user]="getResponsableNames(children)"
+                                                            [size]="50" [centerAvatar]="true" alt="Comment author"></avatar>
+                                                            <div class="ps-3">
+                                                              <h6 class="mb-0">{{children.authorFirstName}}
+                                                                {{children.authorLastNameInitials}}.
+                                                              </h6>
+                                                              <span class="fs-sm text-body-secondary">{{children.creationDate|
+                                                              date:'dd/MM/yyyy'}}</span>
+                                                            </div>
+                                                          </div>
+                                                          <p class="mb-0"><b
+                                                            class="fw-bold text-decoration-none citing-author">&commat;{{comment.authorFirstName}}
+                                                          {{children.authorLastNameInitials}}. </b>{{children.content}}</p>
+                                                        </div>
+                                                      }
+                                                    </div>
+                                                  }
+                                                </div>
+                                              </div>
+                                            }
+                                            <div class="row d-flex justify-content-center align-items-center">
+                                              @if (commentsPagination.totalElements>commentsPagination.pageSize && commentsPagination.totalElements-comments.length > 0) {
+                                                <a
+                                                  class="d-flex justify-content-center gap-2 cursor-pointer nav-link p-2"
+                                                  (click)="showMoreComments()">
+                                                  <span class="fw-semibold">Voir
+                                                    plus</span><span>({{commentsPagination.totalElements-comments.length}})</span>
+                                                    <i class="ai-circle-arrow-down fs-xl ms-2"></i>
+                                                  </a>
+                                                }
+                                                @if (commentsPagination.totalElements>commentsPagination.pageSize && commentsPagination.totalElements-comments.length <= 0) {
+                                                  <a
+                                                    class="d-flex justify-content-center gap-2 cursor-pointer nav-link p-2"
+                                                    (click)="showLessComments()">
+                                                    <span class="fw-semibold">Voir moins</span>
+                                                    <i class="ai-circle-arrow-up fs-xl ms-2"></i>
+                                                  </a>
+                                                }
+                                              </div>
+                                            </div>
+                                          }
+                                          <!-- Comment form not connected user -->
+                                          @if (!currentUser) {
+                                            <div id="commentForm"
+                                              class="card border-2 pt-2 p-md-2 p-xl-3 p-xxl-4 mt-5 mt-md-0 mb-4">
+                                              <div class="card-body">
+                                                <div class="row justify-content-between align-items-center">
+                                                  @if (!newCommentParent.id) {
+                                                    <p class="h2 col-8 pb-2 pb-lg-3 pb-xl-4">Laisser un commentaire
+                                                    </p>
+                                                  }
+                                                  @if (newCommentParent.id) {
+                                                    <h2 class="col-8 pb-2 pb-lg-3 pb-xl-4">Répondre à
+                                                    {{newCommentParent.authorFirstName}} {{newCommentParent.authorLastNameInitials}}.</h2>
+                                                  }
+                                                  @if (newCommentParent.id) {
+                                                    <div class=" col-4 d-inline-flex justify-content-end pb-2 pb-lg-3 pb-xl-4"
+                                                      >
+                                                      <a type="button" aria-label="Close" class="fs-sm" (click)="cancelReply()">
+                                                        Annuler la réponse
+                                                      </a>
+                                                    </div>
+                                                  }
+                                                </div>
+                                                <p>Votre adresse e-mail ne sera pas publiée. Les champs obligatoires sont indiqués avec *</p>
+                                                <form class="row needs-validation g-4" novalidate>
+                                                  <div class="col-sm-4">
+                                                    <generic-input [(model)]="newComment.authorFirstName" label="Prénom*"
+                                                      [form]="newCommentForm" propertyName="firstnameNotConnected" [isMandatory]="true"
+                                                    [isDisabled]="false" [isDisplayLabel]="true"></generic-input>
+                                                  </div>
+                                                  <div class="col-sm-4">
+                                                    <generic-input [(model)]="newComment.authorLastName" label="Nom" [form]="newCommentForm"
+                                                      propertyName="lastnameNotConnected" [isMandatory]="false" [isDisabled]="false"
+                                                    [isDisplayLabel]="true"></generic-input>
+                                                  </div>
+                                                  <div class="col-sm-4">
+                                                    <generic-input [(model)]="newComment.mail.mail" label="Email*" [form]="newCommentForm"
+                                                      propertyName="mailNotConnected" [isMandatory]="true" [isDisabled]="false"
+                                                    [isDisplayLabel]="true"></generic-input>
+                                                  </div>
+                                                  <div class="col-12">
+                                                    <generic-textarea [(model)]="newComment.content" label="Commentaire*"
+                                                      [form]="newCommentForm" propertyName="commentNotConnected" [isMandatory]="true"
+                                                    [isDisabled]="false" [numberOfLines]="5"></generic-textarea>
+                                                  </div>
+                                                  <div class="col-12">
+                                                    <button class="btn btn-secondary" type="submit" (click)="postComment()">Publier</button>
+                                                  </div>
+                                                </form>
+                                              </div>
+                                            </div>
+                                          }
+                                          <!-- Comment form for connected user -->
+                                          @if (currentUser) {
+                                            <div id="commentForm"
+                                              class="card border-2 pt-2 p-md-2 p-xl-3 p-xxl-4 mt-5 mt-md-0 mb-4">
+                                              <div class="card-body">
+                                                <div class="row justify-content-between align-items-center">
+                                                  @if (!newCommentParent.id) {
+                                                    <p class="h2 col-8 pb-2 pb-lg-3 pb-xl-4">Laisser un commentaire
+                                                    </p>
+                                                  }
+                                                  @if (newCommentParent.id) {
+                                                    <h2 class="col-8 pb-2 pb-lg-3 pb-xl-4">Répondre à
+                                                    {{newCommentParent.authorFirstName}} {{newCommentParent.authorLastNameInitials}}.</h2>
+                                                  }
+                                                  @if (newCommentParent.id) {
+                                                    <div class=" col-4 d-inline-flex justify-content-end pb-2 pb-lg-3 pb-xl-4"
+                                                      >
+                                                      <a type="button" aria-label="Close" class="fs-sm" (click)="cancelReply()">
+                                                        Annuler la réponse
+                                                      </a>
+                                                    </div>
+                                                  }
+                                                </div>
+                                                <p>Votre adresse e-mail ne sera pas publiée. Les champs obligatoires sont indiqués avec *</p>
+                                                <form class="row needs-validation g-4" novalidate>
+                                                  <div class="col-12">
+                                                    <generic-textarea [(model)]="newComment.content" label="Commentaire*"
+                                                      [form]="newCommentForm" propertyName="commentConnected" [isMandatory]="true"
+                                                    [isDisabled]="false" [numberOfLines]="5"></generic-textarea>
+                                                  </div>
+                                                  <div class="col-12">
+                                                    <button class="btn btn-secondary" type="submit" (click)="postComment()">Publier</button>
+                                                  </div>
+                                                </form>
+                                              </div>
+                                            </div>
+                                          }
+                                        </div>
+                                      </div>
+                                      <!-- Main Content END -->
+                                    </div>
+                                  </section>
+                                }
+                                <!-- ======================= Main END -->
+                              </div>
+                            </div>
+                            <!-- ======================= Left column END -->
 
-                            <!-- Comment reply -->
-                            <div *ngIf="comment.childrenComments && comment.childrenComments.length > 0" class="">
-                              <div *ngFor="let children of comment.childrenComments" [attr.id]="children.id"
-                                class="card card-body border-0 my-3 header-hub-bg">
-                                <div class="d-flex align-items-center pb-1 mb-3">
-                                  <avatar class="avatar-select rounded-circle" [user]="getResponsableNames(children)"
-                                    [size]="50" [centerAvatar]="true" alt="Comment author"></avatar>
-                                  <div class="ps-3">
-                                    <h6 class="mb-0">{{children.authorFirstName}}
-                                      {{children.authorLastNameInitials}}.
-                                    </h6>
-                                    <span class="fs-sm text-body-secondary">{{children.creationDate|
-                                      date:'dd/MM/yyyy'}}</span>
+                            <!-- ======================= Right column START -->
+                            <div class="col-md-4">
+
+                              <!-- Les plus vus -->
+                              <div class="mb-3 border border-light card">
+                                <div class="wrapper p-3">
+                                  <div class="row">
+                                    <div class="col-md-12">
+                                      <div class="section-title-block d-flex">
+                                        <h3 class="section-widget-title">Les plus vus</h3>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div class="tab-content" id="tab-content">
+                                    @for (post of mostSeenPostsByEntityType; track post; let index = $index) {
+                                      <div
+                                        class="row align-items-center my-3">
+                                        <div class="col-auto digits pe-2">
+                                          {{index+1}}.
+                                        </div>
+                                        <div class="col counter-post-item ps-2">
+                                          <a [routerLink]='"/post/" + post.slug' class="title-most-seen">{{post.titleText}}</a>
+                                        </div>
+                                      </div>
+                                    }
                                   </div>
                                 </div>
-                                <p class="mb-0"><b
-                                    class="fw-bold text-decoration-none citing-author">&commat;{{comment.authorFirstName}}
-                                    {{children.authorLastNameInitials}}. </b>{{children.content}}</p>
+                              </div>
+
+                              <!-- Newsletter -->
+                              <div class="border border-light card p-3 mb-3 bg-secondary">
+                                <div class="wrapper text-white">
+                                  <div class="row">
+                                    <div class="col-md-12">
+                                      <div class="section-title-block d-flex ">
+                                        <h3 class="text-white">Au cœur de l'actualité !</h3>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <p>Infos locales, analyses et enquêtes : restez informé(e) sans limite.</p>
+                                  <div class="row align-items-center">
+                                    <a class="btn btn-yellow" style="cursor: pointer;" href="subscription">S'abonner</a>
+                                  </div>
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        </div>
-                        <div class="row d-flex justify-content-center align-items-center">
-                          <a *ngIf="commentsPagination.totalElements>commentsPagination.pageSize && commentsPagination.totalElements-comments.length > 0"
-                            class="d-flex justify-content-center gap-2 cursor-pointer nav-link p-2"
-                            (click)="showMoreComments()">
-                            <span class="fw-semibold">Voir
-                              plus</span><span>({{commentsPagination.totalElements-comments.length}})</span>
-                            <i class="ai-circle-arrow-down fs-xl ms-2"></i>
-                          </a>
-                          <a *ngIf="commentsPagination.totalElements>commentsPagination.pageSize && commentsPagination.totalElements-comments.length <= 0"
-                            class="d-flex justify-content-center gap-2 cursor-pointer nav-link p-2"
-                            (click)="showLessComments()">
-                            <span class="fw-semibold">Voir moins</span>
-                            <i class="ai-circle-arrow-up fs-xl ms-2"></i>
-                          </a>
+                            <!-- ======================= Right column END -->
+                          </section>
+                          <newsletter></newsletter>
                         </div>
                       </div>
 
-                      <!-- Comment form not connected user -->
-                      <div *ngIf="!currentUser" id="commentForm"
-                        class="card border-2 pt-2 p-md-2 p-xl-3 p-xxl-4 mt-5 mt-md-0 mb-4">
-                        <div class="card-body">
-                          <div class="row justify-content-between align-items-center">
-                            <p class="h2 col-8 pb-2 pb-lg-3 pb-xl-4" *ngIf="!newCommentParent.id">Laisser un commentaire
-                            </p>
-                            <h2 class="col-8 pb-2 pb-lg-3 pb-xl-4" *ngIf="newCommentParent.id">Répondre à
-                              {{newCommentParent.authorFirstName}} {{newCommentParent.authorLastNameInitials}}.</h2>
-                            <div class=" col-4 d-inline-flex justify-content-end pb-2 pb-lg-3 pb-xl-4"
-                              *ngIf="newCommentParent.id">
-                              <a type="button" aria-label="Close" class="fs-sm" (click)="cancelReply()">
-                                Annuler la réponse
-                              </a>
-                            </div>
+                      <ng-template #givePostModal let-modal>
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title">Offrir cet article</h5>
+                            <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
                           </div>
-                          <p>Votre adresse e-mail ne sera pas publiée. Les champs obligatoires sont indiqués avec *</p>
-                          <form class="row needs-validation g-4" novalidate>
-                            <div class="col-sm-4">
-                              <generic-input [(model)]="newComment.authorFirstName" label="Prénom*"
-                                [form]="newCommentForm" propertyName="firstnameNotConnected" [isMandatory]="true"
-                                [isDisabled]="false" [isDisplayLabel]="true"></generic-input>
-                            </div>
-                            <div class="col-sm-4">
-                              <generic-input [(model)]="newComment.authorLastName" label="Nom" [form]="newCommentForm"
-                                propertyName="lastnameNotConnected" [isMandatory]="false" [isDisabled]="false"
-                                [isDisplayLabel]="true"></generic-input>
-                            </div>
-                            <div class="col-sm-4">
-                              <generic-input [(model)]="newComment.mail.mail" label="Email*" [form]="newCommentForm"
-                                propertyName="mailNotConnected" [isMandatory]="true" [isDisabled]="false"
-                                [isDisplayLabel]="true"></generic-input>
-                            </div>
-                            <div class="col-12">
-                              <generic-textarea [(model)]="newComment.content" label="Commentaire*"
-                                [form]="newCommentForm" propertyName="commentNotConnected" [isMandatory]="true"
-                                [isDisabled]="false" [numberOfLines]="5"></generic-textarea>
-                            </div>
-                            <div class="col-12">
-                              <button class="btn btn-secondary" type="submit" (click)="postComment()">Publier</button>
+                          <div class="modal-body">
+                            <form [formGroup]="giftForm" (ngSubmit)="givePost(modal, post!)">
+                              <div class="mb-3">
+                                <form class="subscription-from needs-validation" novalidate>
+                                  <div class="input-group">
+                                    <generic-input [(model)]="recipientMail"
+                                      label="Adresse e-mail de la personne à qui vous voulez offrir cet article" [form]="giftForm"
+                                      class="white-form-control" propertyName="propertyName" [isMandatory]="true" [isDisabled]="false"
+                                    type="email"></generic-input>
+                                  </div>
+                                </form>
+                              </div>
+                              @if (numberOfSharingPostRemaining) {
+                                <p class="small text-muted">
+                                  Nombre d'articles que vous pouvez encore partager ce mois-ci : <strong>
+                                {{ numberOfSharingPostRemaining }}</strong>
+                              </p>
+                            }
+                            @if (!numberOfSharingPostRemaining) {
+                              <p class="small text-muted alert alert-danger">
+                                Il ne vous reste plus d'article à partager pour ce mois-ci ! Vous retrouverez votre crédit le mois prochain.
+                              </p>
+                            }
+                            <div class="text-end">
+                              <button type="submit" class="btn btn-secondary"
+                              [disabled]="giftForm.invalid && !numberOfSharingPostRemaining">Envoyer</button>
                             </div>
                           </form>
                         </div>
                       </div>
-                      <!-- Comment form for connected user -->
-                      <div *ngIf="currentUser" id="commentForm"
-                        class="card border-2 pt-2 p-md-2 p-xl-3 p-xxl-4 mt-5 mt-md-0 mb-4">
-                        <div class="card-body">
-                          <div class="row justify-content-between align-items-center">
-                            <p class="h2 col-8 pb-2 pb-lg-3 pb-xl-4" *ngIf="!newCommentParent.id">Laisser un commentaire
-                            </p>
-                            <h2 class="col-8 pb-2 pb-lg-3 pb-xl-4" *ngIf="newCommentParent.id">Répondre à
-                              {{newCommentParent.authorFirstName}} {{newCommentParent.authorLastNameInitials}}.</h2>
-                            <div class=" col-4 d-inline-flex justify-content-end pb-2 pb-lg-3 pb-xl-4"
-                              *ngIf="newCommentParent.id">
-                              <a type="button" aria-label="Close" class="fs-sm" (click)="cancelReply()">
-                                Annuler la réponse
-                              </a>
-                            </div>
-                          </div>
-                          <p>Votre adresse e-mail ne sera pas publiée. Les champs obligatoires sont indiqués avec *</p>
-                          <form class="row needs-validation g-4" novalidate>
-                            <div class="col-12">
-                              <generic-textarea [(model)]="newComment.content" label="Commentaire*"
-                                [form]="newCommentForm" propertyName="commentConnected" [isMandatory]="true"
-                                [isDisabled]="false" [numberOfLines]="5"></generic-textarea>
-                            </div>
-                            <div class="col-12">
-                              <button class="btn btn-secondary" type="submit" (click)="postComment()">Publier</button>
-                            </div>
-                          </form>
-                        </div>
-                      </div>
-                </div>
-              </div>
-              <!-- Main Content END -->
-            </div>
-          </section>
-          <!-- ======================= Main END -->
-        </div>
-      </div>
-      <!-- ======================= Left column END -->
-
-      <!-- ======================= Right column START -->
-      <div class="col-md-4">
-
-        <!-- Les plus vus -->
-        <div class="mb-3 border border-light card">
-          <div class="wrapper p-3">
-            <div class="row">
-              <div class="col-md-12">
-                <div class="section-title-block d-flex">
-                  <h3 class="section-widget-title">Les plus vus</h3>
-                </div>
-              </div>
-            </div>
-            <div class="tab-content" id="tab-content">
-              <div *ngFor="let post of mostSeenPostsByEntityType; let index = index"
-                class="row align-items-center my-3">
-                <div class="col-auto digits pe-2">
-                  {{index+1}}.
-                </div>
-                <div class="col counter-post-item ps-2">
-                  <a [routerLink]='"/post/" + post.slug' class="title-most-seen">{{post.titleText}}</a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Newsletter -->
-        <div class="border border-light card p-3 mb-3 bg-secondary">
-          <div class="wrapper text-white">
-            <div class="row">
-              <div class="col-md-12">
-                <div class="section-title-block d-flex ">
-                  <h3 class="text-white">Au cœur de l'actualité !</h3>
-                </div>
-              </div>
-            </div>
-            <p>Infos locales, analyses et enquêtes : restez informé(e) sans limite.</p>
-            <div class="row align-items-center">
-              <a class="btn btn-yellow" style="cursor: pointer;" href="subscription">S'abonner</a>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- ======================= Right column END -->
-    </section>
-    <newsletter></newsletter>
-  </div>
-</div>
-
-<ng-template #givePostModal let-modal>
-  <div class="modal-content">
-    <div class="modal-header">
-      <h5 class="modal-title">Offrir cet article</h5>
-      <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
-    </div>
-    <div class="modal-body">
-      <form [formGroup]="giftForm" (ngSubmit)="givePost(modal, post!)">
-        <div class="mb-3">
-          <form class="subscription-from needs-validation" novalidate>
-            <div class="input-group">
-              <generic-input [(model)]="recipientMail"
-                label="Adresse e-mail de la personne à qui vous voulez offrir cet article" [form]="giftForm"
-                class="white-form-control" propertyName="propertyName" [isMandatory]="true" [isDisabled]="false"
-                type="email"></generic-input>
-            </div>
-          </form>
-        </div>
-        <p class="small text-muted" *ngIf="numberOfSharingPostRemaining">
-          Nombre d'articles que vous pouvez encore partager ce mois-ci : <strong>
-            {{ numberOfSharingPostRemaining }}</strong>
-        </p>
-        <p class="small text-muted alert alert-danger" *ngIf="!numberOfSharingPostRemaining">
-          Il ne vous reste plus d'article à partager pour ce mois-ci ! Vous retrouverez votre crédit le mois prochain.
-        </p>
-        <div class="text-end">
-          <button type="submit" class="btn btn-secondary"
-            [disabled]="giftForm.invalid && !numberOfSharingPostRemaining">Envoyer</button>
-        </div>
-      </form>
-    </div>
-  </div>
-</ng-template>
+                    </ng-template>

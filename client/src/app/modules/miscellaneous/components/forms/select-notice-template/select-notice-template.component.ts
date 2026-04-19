@@ -7,9 +7,10 @@ import { AppService } from 'src/app/services/app.service';
 import { GenericSelectComponent } from '../generic-select/generic-select.component';
 
 @Component({
-  selector: 'select-notice-template',
-  templateUrl: './select-notice-template.component.html',
-  styleUrls: ['./select-notice-template.component.css']
+    selector: 'select-notice-template',
+    templateUrl: './select-notice-template.component.html',
+    styleUrls: ['./select-notice-template.component.css'],
+    standalone: false
 })
 export class SelectNoticeTemplateComponent extends GenericSelectComponent<AnnouncementNoticeTemplate> implements OnInit {
   types: AnnouncementNoticeTemplate[] = [] as Array<AnnouncementNoticeTemplate>;

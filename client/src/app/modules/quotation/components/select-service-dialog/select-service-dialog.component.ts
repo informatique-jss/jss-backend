@@ -5,9 +5,10 @@ import { AssoAffaireOrder } from '../../model/AssoAffaireOrder';
 import { Service } from '../../model/Service';
 
 @Component({
-  selector: 'app-select-service-dialog',
-  templateUrl: './select-service-dialog.component.html',
-  styleUrls: ['./select-service-dialog.component.css']
+    selector: 'app-select-service-dialog',
+    templateUrl: './select-service-dialog.component.html',
+    styleUrls: ['./select-service-dialog.component.css'],
+    standalone: false
 })
 export class SelectServiceDialogComponent implements OnInit {
 

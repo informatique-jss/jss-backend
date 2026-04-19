@@ -1,110 +1,160 @@
-<div class="mat-elevation-z2 form-div" *ngIf="invoice">
-  <mat-tab-group animationDuration="0ms" (selectedTabChange)="onTabChange($event)" [selectedIndex]="index">
-    <mat-tab label="Détail">
-      <div class="full-width top">
-        <div class="chips-status">
-          <chips-status [status]="invoice.invoiceStatus.code" [value]="invoice.invoiceStatus.label"></chips-status>
-        </div>
-        <p>Emis<span *ngIf="!invoice.isCreditNote">e</span> à Paris, le {{invoice.createdDate|date:'dd/MM/yyyy à
-          HH:mm'}}<span *ngIf="getLetteringDate(invoice)">, lettrée le {{getLetteringDate(invoice)|date:'dd/MM/yyyy à
-            HH:mm'}}</span><span *ngIf="invoice.commandNumber">,<br> Numéro de commande :
-            {{invoice.commandNumber}}</span><span *ngIf="invoice.manualAccountingDocumentNumber">,<br> Référence de la
+@if (invoice) {
+  <div class="mat-elevation-z2 form-div">
+    <mat-tab-group animationDuration="0ms" (selectedTabChange)="onTabChange($event)" [selectedIndex]="index">
+      <mat-tab label="Détail">
+        <div class="full-width top">
+          <div class="chips-status">
+            <chips-status [status]="invoice.invoiceStatus.code" [value]="invoice.invoiceStatus.label"></chips-status>
+          </div>
+          <p>Emis@if (!invoice.isCreditNote) {
+            <span>e</span>
+            } à Paris, le {{invoice.createdDate|date:'dd/MM/yyyy à
+            HH:mm'}}@if (getLetteringDate(invoice)) {
+            <span>, lettrée le {{getLetteringDate(invoice)|date:'dd/MM/yyyy à
+            HH:mm'}}</span>
+            }@if (invoice.commandNumber) {
+            <span>,<br> Numéro de commande :
+            {{invoice.commandNumber}}</span>
+            }@if (invoice.manualAccountingDocumentNumber) {
+            <span>,<br> Référence de la
             pièce comptable : {{invoice.manualAccountingDocumentNumber}}</span>
-          <span *ngIf="invoice.manualAccountingDocumentDate">,<br> Date de la
+          }
+          @if (invoice.manualAccountingDocumentDate) {
+            <span>,<br> Date de la
             pièce comptable : {{invoice.manualAccountingDocumentDate|date:'dd/MM/yyyy'}}</span>
+          }
         </p>
         <p>
           Echéance de paiement : {{invoice.dueDate | date:'dd/MM/yyyy'}}
         </p>
-        <p *ngIf="invoice.manualPaymentType">
-          Type de paiement : {{invoice.manualPaymentType.label}}
-        </p>
-        <div class="invoice-title" *ngIf="invoice.creditNote">
-          <span>Avoir n°{{invoice.creditNote.id}} émis à Paris, le
+        @if (invoice.manualPaymentType) {
+          <p>
+            Type de paiement : {{invoice.manualPaymentType.label}}
+          </p>
+        }
+        @if (invoice.creditNote) {
+          <div class="invoice-title">
+            <span>Avoir n°{{invoice.creditNote.id}} émis à Paris, le
             {{invoice.creditNote.createdDate|date:'dd/MM/yyyy à HH:mm'}}</span>
-          <mat-icon color="accent" (click)="openRoute($event,'/invoicing/view/'+invoice.creditNote.id)"
-            (auxclick)="openRoute($event,'/invoicing/view/'+invoice.creditNote.id)" matTooltip="Voir l'avoir"
-            color="accent" class="pointer invoice-chip">visibility
-          </mat-icon>
-        </div>
-        <div class="invoice-title" *ngIf="(invoice.isCreditNote ) && invoice.reverseCreditNote">
-          <span>Pour la facture n°{{invoice.reverseCreditNote.id}} émise à Paris, le
+            <mat-icon color="accent" (click)="openRoute($event,'/invoicing/view/'+invoice.creditNote.id)"
+              (auxclick)="openRoute($event,'/invoicing/view/'+invoice.creditNote.id)" matTooltip="Voir l'avoir"
+              color="accent" class="pointer invoice-chip">visibility
+            </mat-icon>
+          </div>
+        }
+        @if ((invoice.isCreditNote ) && invoice.reverseCreditNote) {
+          <div class="invoice-title">
+            <span>Pour la facture n°{{invoice.reverseCreditNote.id}} émise à Paris, le
             {{invoice.reverseCreditNote.createdDate|date:'dd/MM/yyyy à HH:mm'}}</span>
-          <mat-icon color="accent" (click)="openRoute($event,'/invoicing/view/'+invoice.reverseCreditNote.id)"
-            (auxclick)="openRoute($event,'/invoicing/view/'+invoice.reverseCreditNote.id)" matTooltip="Voir la facture"
-            color="accent" class="pointer invoice-chip">visibility
-          </mat-icon>
-        </div>
-        <p *ngIf="invoice.customerOrder">Commande n°{{invoice.customerOrder.id}}
-          <mat-icon color="accent" matTooltip="Voir la commande" color="accent" class="pointer"
-            (click)="openRoute($event,'/order/'+invoice.customerOrder.id)"
-            (auxclick)="openRoute($event,'/order/'+invoice.customerOrder.id)">visibility
-          </mat-icon>
-        </p>
-        <p *ngIf="invoice.customerOrderForInboundInvoice">Commande n°{{invoice.customerOrderForInboundInvoice.id}}
-          <mat-icon color="accent" matTooltip="Voir la commande" color="accent" class="pointer"
-            (click)="openRoute($event,'/order/'+invoice.customerOrderForInboundInvoice.id)"
-            (auxclick)="openRoute($event,'/order/'+invoice.customerOrderForInboundInvoice.id)">visibility
-          </mat-icon>
-        </p>
-        <p *ngIf="invoice.attachments "> <single-attachment [entity]="invoice"
+            <mat-icon color="accent" (click)="openRoute($event,'/invoicing/view/'+invoice.reverseCreditNote.id)"
+              (auxclick)="openRoute($event,'/invoicing/view/'+invoice.reverseCreditNote.id)" matTooltip="Voir la facture"
+              color="accent" class="pointer invoice-chip">visibility
+            </mat-icon>
+          </div>
+        }
+        @if (invoice.customerOrder) {
+          <p>Commande n°{{invoice.customerOrder.id}}
+            <mat-icon color="accent" matTooltip="Voir la commande" color="accent" class="pointer"
+              (click)="openRoute($event,'/order/'+invoice.customerOrder.id)"
+              (auxclick)="openRoute($event,'/order/'+invoice.customerOrder.id)">visibility
+            </mat-icon>
+          </p>
+        }
+        @if (invoice.customerOrderForInboundInvoice) {
+          <p>Commande n°{{invoice.customerOrderForInboundInvoice.id}}
+            <mat-icon color="accent" matTooltip="Voir la commande" color="accent" class="pointer"
+              (click)="openRoute($event,'/order/'+invoice.customerOrderForInboundInvoice.id)"
+              (auxclick)="openRoute($event,'/order/'+invoice.customerOrderForInboundInvoice.id)">visibility
+            </mat-icon>
+          </p>
+        }
+        @if (invoice.attachments ) {
+          <p> <single-attachment [entity]="invoice"
             [entityType]="INVOICE_ENTITY_TYPE.entityType" [editMode]="false"
             [attachmentTypeToDisplay]="!invoice.isCreditNote?attachmentTypeInvoice:attachmentTypeCreditNote">
           </single-attachment>
         </p>
-        <table class="mat-table mat-mdc-table mdc-data-table__table full-width  description-table ">
-          <thead>
-            <tr class="mat-mdc-header-row mdc-data-table__header-row ">
-              <th class="mat-mdc-header-cell mdc-data-table__header-cell " *ngIf="invoice.responsable">
-                Affaire(s)</th>
-              <th class="mat-mdc-header-cell mdc-data-table__header-cell " *ngIf="invoice.responsable">
-                Payeur</th>
-              <th class="mat-mdc-header-cell mdc-data-table__header-cell " *ngIf="invoice.responsable">
+      }
+      <table class="mat-table mat-mdc-table mdc-data-table__table full-width  description-table ">
+        <thead>
+          <tr class="mat-mdc-header-row mdc-data-table__header-row ">
+            @if (invoice.responsable) {
+              <th class="mat-mdc-header-cell mdc-data-table__header-cell ">
+              Affaire(s)</th>
+            }
+            @if (invoice.responsable) {
+              <th class="mat-mdc-header-cell mdc-data-table__header-cell ">
+              Payeur</th>
+            }
+            @if (invoice.responsable) {
+              <th class="mat-mdc-header-cell mdc-data-table__header-cell ">
                 Donneur d'ordre
               </th>
-            </tr>
-          </thead>
-          <tr class="mat-mdc-row mdc-data-table__row ">
-            <td class="mat-mdc-cell mdc-data-table__cell  td-info" *ngIf="invoice.responsable">
+            }
+          </tr>
+        </thead>
+        <tr class="mat-mdc-row mdc-data-table__row ">
+          @if (invoice.responsable) {
+            <td class="mat-mdc-cell mdc-data-table__cell  td-info">
               <p>{{getAffaireList(invoice)}}</p>
             </td>
-            <td class="mat-mdc-cell mdc-data-table__cell  td-info" *ngIf="invoice.responsable">
+          }
+          @if (invoice.responsable) {
+            <td class="mat-mdc-cell mdc-data-table__cell  td-info">
               <p>{{invoice.billingLabel}}</p>
               <p>{{invoice.billingLabelAddress}}</p>
               <p>{{invoice.billingLabelPostalCode}} {{invoice.billingLabelCity?invoice.billingLabelCity.label:""}}
-                {{invoice.billingLabelCountry?invoice.billingLabelCountry.label:""}}</p>
-              <p *ngIf="invoice.billingLabelIntercommunityVat">N° de TVA : {{invoice.billingLabelIntercommunityVat}}</p>
-              <div *ngIf="billingMailComputeResult">
-                <p>Mails d'envoi :</p>
-                <ul>
-                  <li *ngFor="let mail of billingMailComputeResult.recipientsMailTo">{{mail.mail}}</li>
-                  <li *ngFor="let mail of billingMailComputeResult.recipientsMailCc">{{mail.mail}}</li>
-                </ul>
-              </div>
+              {{invoice.billingLabelCountry?invoice.billingLabelCountry.label:""}}</p>
+              @if (invoice.billingLabelIntercommunityVat) {
+                <p>N° de TVA : {{invoice.billingLabelIntercommunityVat}}</p>
+              }
+              @if (billingMailComputeResult) {
+                <div>
+                  <p>Mails d'envoi :</p>
+                  <ul>
+                    @for (mail of billingMailComputeResult.recipientsMailTo; track mail) {
+                      <li>{{mail.mail}}</li>
+                    }
+                    @for (mail of billingMailComputeResult.recipientsMailCc; track mail) {
+                      <li>{{mail.mail}}</li>
+                    }
+                  </ul>
+                </div>
+              }
             </td>
-            <td class="mat-mdc-cell mdc-data-table__cell  td-info" *ngIf="invoice.responsable">
+          }
+          @if (invoice.responsable) {
+            <td class="mat-mdc-cell mdc-data-table__cell  td-info">
               <p>{{getCustomerOrderName(invoice)}} <mat-icon color="accent" matTooltip="Voir le donneur d'ordre"
-                  color="accent" class="pointer" (click)="openCustomerOrderLink($event )"
-                  (auxclick)="openCustomerOrderLink($event)">visibility</mat-icon></p>
+                color="accent" class="pointer" (click)="openCustomerOrderLink($event )"
+              (auxclick)="openCustomerOrderLink($event)">visibility</mat-icon></p>
               <p>{{getCustomerOrder(invoice).address}}</p>
               <p>{{getCustomerOrder(invoice).postalCode}}
                 {{getCustomerOrder(invoice).city?getCustomerOrder(invoice).city.label:""}}{{getCustomerOrder(invoice).country?getCustomerOrder(invoice).country.label:""}}
               </p>
-              <p *ngIf="invoice.responsable">Compte client :
-                {{invoice.responsable.tiers.accountingAccountCustomer.principalAccountingAccount.code}}{{invoice.responsable.tiers.accountingAccountCustomer.accountingAccountSubNumber}}
-              </p>
-              <p *ngIf="invoice.provider">Compte fournisseur :
-                {{invoice.provider.accountingAccountProvider.principalAccountingAccount.code}}{{invoice.provider.accountingAccountProvider.accountingAccountSubNumber}}
-              </p>
+              @if (invoice.responsable) {
+                <p>Compte client :
+                  {{invoice.responsable.tiers.accountingAccountCustomer.principalAccountingAccount.code}}{{invoice.responsable.tiers.accountingAccountCustomer.accountingAccountSubNumber}}
+                </p>
+              }
+              @if (invoice.provider) {
+                <p>Compte fournisseur :
+                  {{invoice.provider.accountingAccountProvider.principalAccountingAccount.code}}{{invoice.provider.accountingAccountProvider.accountingAccountSubNumber}}
+                </p>
+              }
             </td>
-            <td class="mat-mdc-cell mdc-data-table__cell  td-info" *ngIf="invoice.provider">
+          }
+          @if (invoice.provider) {
+            <td class="mat-mdc-cell mdc-data-table__cell  td-info">
               <p>Fournisseur : {{invoice.provider.label}}
               </p>
             </td>
-          </tr>
-        </table>
+          }
+        </tr>
+      </table>
+      @if (invoice.provider) {
         <table class="mat-table mat-mdc-table mdc-data-table__table full-width  description-table "
-          *ngIf="invoice.provider">
+          >
           <thead>
             <tr class="mat-mdc-header-row mdc-data-table__header-row ">
               <th class="mat-mdc-header-cell mdc-data-table__header-cell ">Fournisseur</th>
@@ -113,9 +163,9 @@
           <tr class="mat-mdc-row mdc-data-table__row ">
             <td class="mat-mdc-cell mdc-data-table__cell  td-info">
               <p>{{invoice.provider.label}} <mat-icon color="accent" matTooltip="Voir le fournisseur" color="accent"
-                  class="pointer" (click)="openRoute($event,'/administration/provider/'+invoice.provider.id)"
-                  (auxclick)="openRoute($event,'/administration/provider/'+invoice.provider.id)">visibility
-                </mat-icon></p>
+                class="pointer" (click)="openRoute($event,'/administration/provider/'+invoice.provider.id)"
+                (auxclick)="openRoute($event,'/administration/provider/'+invoice.provider.id)">visibility
+              </mat-icon></p>
               <p>IBAN : {{invoice.provider.iban}} </p>
               <p>Compte fournisseur :
                 {{invoice.provider.accountingAccountProvider.principalAccountingAccount.code}}{{invoice.provider.accountingAccountProvider.accountingAccountSubNumber}}
@@ -123,234 +173,286 @@
             </td>
           </tr>
         </table>
+      }
+      @if (invoice.customerOrder && invoice.invoiceStatus.id!=invoiceStatusCancelled.id) {
         <table class="mat-table mat-mdc-table mdc-data-table__table full-width container-affaire "
-          *ngIf="invoice.customerOrder && invoice.invoiceStatus.id!=invoiceStatusCancelled.id">
+          >
           <thead>
             <tr class="mat-mdc-header-row mdc-data-table__header-row ">
               <th class="mat-mdc-header-cell mdc-data-table__header-cell " colspan="2">Facture</th>
             </tr>
           </thead>
-          <ng-container *ngFor="let asso of invoice.customerOrder.assoAffaireOrders;let indexAsso = index">
+          @for (asso of invoice.customerOrder.assoAffaireOrders; track asso; let indexAsso = $index) {
             <tr class="mat-mdc-row mdc-data-table__row ">
-              <td class="mat-mdc-cell mdc-data-table__cell  affaire affaire-align" colspan="2"
-                *ngIf="asso.affaire && asso.affaire.denomination">
-                {{asso.affaire.denomination}}
-              </td>
-              <td class="mat-mdc-cell mdc-data-table__cell  affaire affaire-align" colspan="2"
-                *ngIf="asso.affaire && asso.affaire.firstname">
-                {{asso.affaire.firstname}} - {{asso.affaire.lastname}} -
-              </td>
+              @if (asso.affaire && asso.affaire.denomination) {
+                <td class="mat-mdc-cell mdc-data-table__cell  affaire affaire-align" colspan="2"
+                  >
+                  {{asso.affaire.denomination}}
+                </td>
+              }
+              @if (asso.affaire && asso.affaire.firstname) {
+                <td class="mat-mdc-cell mdc-data-table__cell  affaire affaire-align" colspan="2"
+                  >
+                  {{asso.affaire.firstname}} - {{asso.affaire.lastname}} -
+                </td>
+              }
             </tr>
-            <ng-container *ngFor="let service of asso.services">
+            @for (service of asso.services; track service) {
               <tr class="mat-mdc-row mdc-data-table__row ">
                 <td class="mat-mdc-cell mdc-data-table__cell  affaire affaire-align" colspan="2">
                   {{service.serviceLabelToDisplay}}
                 </td>
               </tr>
-              <ng-container *ngFor="let provision of service.provisions">
-                <tr class="mat-mdc-row mdc-data-table__row " *ngIf="provision.provisionType">
-                  <td class="mat-mdc-cell mdc-data-table__cell  affaire" colspan="2">
-                    {{provision.provisionType.label}}
-                  </td>
-                </tr>
-                <ng-container *ngFor="let invoiceItem of provision.invoiceItems;let indexInvoiceItem = index">
+              @for (provision of service.provisions; track provision) {
+                @if (provision.provisionType) {
+                  <tr class="mat-mdc-row mdc-data-table__row ">
+                    <td class="mat-mdc-cell mdc-data-table__cell  affaire" colspan="2">
+                      {{provision.provisionType.label}}
+                    </td>
+                  </tr>
+                }
+                @for (invoiceItem of provision.invoiceItems; track invoiceItem; let indexInvoiceItem = $index) {
                   <tr class="mat-mdc-row mdc-data-table__row ">
                     <td class="mat-mdc-cell mdc-data-table__cell">
                       <span class="invoice-item">{{invoiceItem.label}} -
-                        {{invoiceItem.billingItem.billingType.label}}</span>
+                      {{invoiceItem.billingItem.billingType.label}}</span>
                     </td>
                     <td class="mat-mdc-cell mdc-data-table__cell  td-price ">
                       {{invoiceItem.preTaxPrice|number}} €
                     </td>
                   </tr>
-                  <tr class="mat-mdc-row mdc-data-table__row "
-                    *ngIf="invoiceItem.discountAmount && invoiceItem.discountAmount>0">
-                    <td class="mat-mdc-cell mdc-data-table__cell ">
-                      <span class="invoice-item">Remise</span>
-                    </td>
-                    <td class="mat-mdc-cell mdc-data-table__cell  td-price remise ">
-                      - {{invoiceItem.discountAmount|number}} €
-                    </td>
-                  </tr>
-                  <tr class="mat-mdc-row mdc-data-table__row " *ngIf="invoiceItem.vat">
-                    <td class="mat-mdc-cell mdc-data-table__cell ">
-                      <span class="invoice-item">{{invoiceItem.vat.label}}</span>
-                    </td>
-                    <td class="mat-mdc-cell mdc-data-table__cell  td-price ">
-                      {{invoiceItem.vatPrice|number}} €
-                    </td>
-                  </tr>
-                </ng-container>
-              </ng-container>
-            </ng-container>
-          </ng-container>
+                  @if (invoiceItem.discountAmount && invoiceItem.discountAmount>0) {
+                    <tr class="mat-mdc-row mdc-data-table__row "
+                      >
+                      <td class="mat-mdc-cell mdc-data-table__cell ">
+                        <span class="invoice-item">Remise</span>
+                      </td>
+                      <td class="mat-mdc-cell mdc-data-table__cell  td-price remise ">
+                        - {{invoiceItem.discountAmount|number}} €
+                      </td>
+                    </tr>
+                  }
+                  @if (invoiceItem.vat) {
+                    <tr class="mat-mdc-row mdc-data-table__row ">
+                      <td class="mat-mdc-cell mdc-data-table__cell ">
+                        <span class="invoice-item">{{invoiceItem.vat.label}}</span>
+                      </td>
+                      <td class="mat-mdc-cell mdc-data-table__cell  td-price ">
+                        {{invoiceItem.vatPrice|number}} €
+                      </td>
+                    </tr>
+                  }
+                }
+              }
+            }
+          }
         </table>
+      }
+      @if (!invoice.customerOrder || invoice.invoiceStatus.id==invoiceStatusCancelled.id) {
         <table class="mat-table mat-mdc-table mdc-data-table__table full-width container-affaire"
-          *ngIf="!invoice.customerOrder || invoice.invoiceStatus.id==invoiceStatusCancelled.id">
+          >
           <thead>
             <tr class="mat-mdc-header-row mdc-data-table__header-row ">
               <th class="mat-mdc-header-cell mdc-data-table__header-cell " colspan="2">Facture</th>
             </tr>
           </thead>
-          <ng-container *ngFor="let invoiceItem of invoice.invoiceItems;let indexInvoiceItem = index">
+          @for (invoiceItem of invoice.invoiceItems; track invoiceItem; let indexInvoiceItem = $index) {
             <tr class="mat-mdc-row mdc-data-table__row ">
               <td class="mat-mdc-cell mdc-data-table__cell ">
                 <span class="invoice-item">{{invoiceItem.label}} -
-                  {{invoiceItem.billingItem.billingType.label}}</span> <mat-icon
-                  *ngIf="invoiceItem && invoice.provider && canEditAmountInvoice()" color="accent"
+                {{invoiceItem.billingItem.billingType.label}}</span> @if (invoiceItem && invoice.provider && canEditAmountInvoice()) {
+                <mat-icon
+                  color="accent"
                   matTooltip="Modifier le montant à refacturer" color="accent" class="pointer"
                   (click)="openEditAmountDialog(invoiceItem)">edit
                 </mat-icon>
-              </td>
-              <td class="mat-mdc-cell mdc-data-table__cell  td-price ">
-                {{invoiceItem.preTaxPrice|number}} € <span *ngIf="invoice.provider">(refacturé :
-                  {{invoiceItem.preTaxPriceReinvoiced}} €)</span>
-              </td>
-            </tr>
-            <tr class="mat-mdc-row mdc-data-table__row "
-              *ngIf="invoiceItem.discountAmount && invoiceItem.discountAmount>0">
-              <td class="mat-mdc-cell mdc-data-table__cell ">
-                Remise
-              </td>
-              <td class="mat-mdc-cell mdc-data-table__cell  td-price remise ">
-                - {{invoiceItem.discountAmount|number}} €
-              </td>
-            </tr>
-            <tr class="mat-mdc-row mdc-data-table__row " *ngIf="invoiceItem.vat">
-              <td class="mat-mdc-cell mdc-data-table__cell ">
-                {{invoiceItem.vat.label}}
-              </td>
-              <td class="mat-mdc-cell mdc-data-table__cell  td-price">
-                {{invoiceItem.vatPrice|number}} €
-              </td>
-            </tr>
-          </ng-container>
-        </table>
-        <table class="mat-table mat-mdc-table mdc-data-table__table total-table full-width">
-          <thead>
-            <tr class="mat-mdc-header-row mdc-data-table__header-row ">
-              <th class="mat-mdc-header-cell mdc-data-table__header-cell " colspan="2">Total</th>
-            </tr>
-          </thead>
+              }
+            </td>
+            <td class="mat-mdc-cell mdc-data-table__cell  td-price ">
+              {{invoiceItem.preTaxPrice|number}} € @if (invoice.provider) {
+              <span>(refacturé :
+              {{invoiceItem.preTaxPriceReinvoiced}} €)</span>
+            }
+          </td>
+        </tr>
+        @if (invoiceItem.discountAmount && invoiceItem.discountAmount>0) {
+          <tr class="mat-mdc-row mdc-data-table__row "
+            >
+            <td class="mat-mdc-cell mdc-data-table__cell ">
+              Remise
+            </td>
+            <td class="mat-mdc-cell mdc-data-table__cell  td-price remise ">
+              - {{invoiceItem.discountAmount|number}} €
+            </td>
+          </tr>
+        }
+        @if (invoiceItem.vat) {
           <tr class="mat-mdc-row mdc-data-table__row ">
             <td class="mat-mdc-cell mdc-data-table__cell ">
-              Prix total HT
+              {{invoiceItem.vat.label}}
             </td>
-            <td class="mat-mdc-cell mdc-data-table__cell  td-price ">
-              {{getPreTaxPriceTotal() |number}} €
-            </td>
-          </tr>
-          <tr class="mat-mdc-row mdc-data-table__row " *ngIf="getDiscountTotal() && getDiscountTotal()>0">
-            <td class="mat-mdc-cell mdc-data-table__cell ">
-              Remise totale
-            </td>
-            <td class="mat-mdc-cell mdc-data-table__cell td-price remise ">
-              - {{getDiscountTotal()|number}} €
+            <td class="mat-mdc-cell mdc-data-table__cell  td-price">
+              {{invoiceItem.vatPrice|number}} €
             </td>
           </tr>
-          <tr class="mat-mdc-row mdc-data-table__row " *ngIf="getDiscountTotal() && getDiscountTotal()>0">
-            <td class="mat-mdc-cell mdc-data-table__cell ">
-              Total HT avec remise
-            </td>
-            <td class="mat-mdc-cell mdc-data-table__cell  td-price ">
-              {{getPreTaxPriceTotal()-getDiscountTotal()|number}} €
-            </td>
-          </tr>
-          <ng-container *ngIf="getApplicableVat().length>0">
-            <tr *ngFor="let vat of getApplicableVat()">
-              <td class="mat-mdc-cell mdc-data-table__cell ">
-                Total {{vat.label}} sur la base de {{vat.base |number}} €
-              </td>
-              <td class="mat-mdc-cell mdc-data-table__cell  td-price ">
-                {{vat.total|number}} €
-              </td>
-            </tr>
-          </ng-container>
-          <tr class="mat-mdc-row mdc-data-table__row ">
-            <td class="mat-mdc-cell mdc-data-table__cell ">
-              Total TTC
-            </td>
-            <td class="mat-mdc-cell mdc-data-table__cell  td-price ">
-              {{getPriceTotal()|number}} €
-            </td>
-          </tr>
-        </table>
-        <invoice-payment-table [invoice]="invoice"></invoice-payment-table>
-      </div>
-    </mat-tab>
-    <mat-tab label="Associer un paiement" *ngIf="getAmountRemaining(invoice)>0 && (invoice.invoiceStatus.id==invoiceStatusSend.id ||invoice.invoiceStatus.id==invoiceStatusReceived.id
-      ||invoice.invoiceStatus.id==invoiceStatusCreditNoteReceived.id)">
-      <ng-template matTabContent>
-        <invoice-payment (stateChanged)=" onStateChange()" [invoice]="invoice">
-        </invoice-payment>
-      </ng-template>
-    </mat-tab>
-    <mat-tab label="Suivi"
-      *ngIf="invoice.id && (invoice.invoiceStatus.id==invoiceStatusSend.id || invoice.invoiceStatus.id==invoiceStatusPayed.id) ">
-      <ng-template matTabContent>
-        <div>
-          <ul>
-            <li [ngClass]="{'color-warn':beforeToday(invoice.dueDate)}">Echéance de paiement : {{invoice.dueDate |
-              date:'dd/MM/yyyy'}}</li>
-            <li *ngIf="invoice.firstReminderDateTime && beforeToday(invoice.firstReminderDateTime)">Relance n°1 :
+        }
+      }
+    </table>
+  }
+  <table class="mat-table mat-mdc-table mdc-data-table__table total-table full-width">
+    <thead>
+      <tr class="mat-mdc-header-row mdc-data-table__header-row ">
+        <th class="mat-mdc-header-cell mdc-data-table__header-cell " colspan="2">Total</th>
+      </tr>
+    </thead>
+    <tr class="mat-mdc-row mdc-data-table__row ">
+      <td class="mat-mdc-cell mdc-data-table__cell ">
+        Prix total HT
+      </td>
+      <td class="mat-mdc-cell mdc-data-table__cell  td-price ">
+        {{getPreTaxPriceTotal() |number}} €
+      </td>
+    </tr>
+    @if (getDiscountTotal() && getDiscountTotal()>0) {
+      <tr class="mat-mdc-row mdc-data-table__row ">
+        <td class="mat-mdc-cell mdc-data-table__cell ">
+          Remise totale
+        </td>
+        <td class="mat-mdc-cell mdc-data-table__cell td-price remise ">
+          - {{getDiscountTotal()|number}} €
+        </td>
+      </tr>
+    }
+    @if (getDiscountTotal() && getDiscountTotal()>0) {
+      <tr class="mat-mdc-row mdc-data-table__row ">
+        <td class="mat-mdc-cell mdc-data-table__cell ">
+          Total HT avec remise
+        </td>
+        <td class="mat-mdc-cell mdc-data-table__cell  td-price ">
+          {{getPreTaxPriceTotal()-getDiscountTotal()|number}} €
+        </td>
+      </tr>
+    }
+    @if (getApplicableVat().length>0) {
+      @for (vat of getApplicableVat(); track vat) {
+        <tr>
+          <td class="mat-mdc-cell mdc-data-table__cell ">
+            Total {{vat.label}} sur la base de {{vat.base |number}} €
+          </td>
+          <td class="mat-mdc-cell mdc-data-table__cell  td-price ">
+            {{vat.total|number}} €
+          </td>
+        </tr>
+      }
+    }
+    <tr class="mat-mdc-row mdc-data-table__row ">
+      <td class="mat-mdc-cell mdc-data-table__cell ">
+        Total TTC
+      </td>
+      <td class="mat-mdc-cell mdc-data-table__cell  td-price ">
+        {{getPriceTotal()|number}} €
+      </td>
+    </tr>
+  </table>
+  <invoice-payment-table [invoice]="invoice"></invoice-payment-table>
+</div>
+</mat-tab>
+@if (getAmountRemaining(invoice)>0 && (invoice.invoiceStatus.id==invoiceStatusSend.id ||invoice.invoiceStatus.id==invoiceStatusReceived.id
+  ||invoice.invoiceStatus.id==invoiceStatusCreditNoteReceived.id)) {
+  <mat-tab label="Associer un paiement">
+    <ng-template matTabContent>
+      <invoice-payment (stateChanged)=" onStateChange()" [invoice]="invoice">
+      </invoice-payment>
+    </ng-template>
+  </mat-tab>
+}
+@if (invoice.id && (invoice.invoiceStatus.id==invoiceStatusSend.id || invoice.invoiceStatus.id==invoiceStatusPayed.id) ) {
+  <mat-tab label="Suivi"
+    >
+    <ng-template matTabContent>
+      <div>
+        <ul>
+          <li [ngClass]="{'color-warn':beforeToday(invoice.dueDate)}">Echéance de paiement : {{invoice.dueDate |
+          date:'dd/MM/yyyy'}}</li>
+          @if (invoice.firstReminderDateTime && beforeToday(invoice.firstReminderDateTime)) {
+            <li>Relance n°1 :
               {{invoice.firstReminderDateTime |date:'dd/MM/yyyy'}}
               <chips-status class="chips-reminder"
                 [status]="beforeToday(invoice.firstReminderDateTime)?'SENT':'WAITING'"
-                [value]="beforeToday(invoice.firstReminderDateTime)?'Envoyée':'En attente'"></chips-status>
+              [value]="beforeToday(invoice.firstReminderDateTime)?'Envoyée':'En attente'"></chips-status>
             </li>
-            <li *ngIf="invoice.secondReminderDateTime && beforeToday(invoice.secondReminderDateTime)">Relance n°2 :
+          }
+          @if (invoice.secondReminderDateTime && beforeToday(invoice.secondReminderDateTime)) {
+            <li>Relance n°2 :
               {{invoice.secondReminderDateTime|date:'dd/MM/yyyy'}}
               <chips-status class="chips-reminder"
                 [status]="beforeToday(invoice.secondReminderDateTime)?'SENT':'WAITING'"
-                [value]="beforeToday(invoice.secondReminderDateTime)?'Envoyée':'En attente'"></chips-status>
+              [value]="beforeToday(invoice.secondReminderDateTime)?'Envoyée':'En attente'"></chips-status>
             </li>
-            <li *ngIf="invoice.thirdReminderDateTime && beforeToday(invoice.thirdReminderDateTime)">Relance n°3 :
+          }
+          @if (invoice.thirdReminderDateTime && beforeToday(invoice.thirdReminderDateTime)) {
+            <li>Relance n°3 :
               {{invoice.thirdReminderDateTime|date:'dd/MM/yyyy'}}
               <chips-status class="chips-reminder"
                 [status]="beforeToday(invoice.thirdReminderDateTime)?'SENT':'WAITING'"
-                [value]="beforeToday(invoice.thirdReminderDateTime)?'Envoyée':'En attente'"></chips-status>
+              [value]="beforeToday(invoice.thirdReminderDateTime)?'Envoyée':'En attente'"></chips-status>
             </li>
-          </ul>
-        </div>
-        <tiers-followup [invoice]="invoice" [editMode]="true"></tiers-followup>
+          }
+        </ul>
+      </div>
+      <tiers-followup [invoice]="invoice" [editMode]="true"></tiers-followup>
+      @if (invoice.invoiceStatus.code==invoiceStatusSend.code) {
         <button matTooltip="Renvoyer le mail de relance" mat-fab color="accent" class="third-fab-button"
-          *ngIf="invoice.invoiceStatus.code==invoiceStatusSend.code" (click)="sendMailReminder()">
+          (click)="sendMailReminder()">
           <mat-icon>mail</mat-icon>
         </button>
-      </ng-template>
-    </mat-tab>
-    <mat-tab label="Historique" *ngIf="invoice.id">
-      <ng-template matTabContent>
-        <history [entity]="invoice" [entityType]="INVOICE_ENTITY_TYPE"></history>
-      </ng-template>
-    </mat-tab>
-  </mat-tab-group>
+      }
+    </ng-template>
+  </mat-tab>
+}
+@if (invoice.id) {
+  <mat-tab label="Historique">
+    <ng-template matTabContent>
+      <history [entity]="invoice" [entityType]="INVOICE_ENTITY_TYPE"></history>
+    </ng-template>
+  </mat-tab>
+}
+</mat-tab-group>
 </div>
-<button matTooltip="Editer la facture" mat-fab color="accent" class="fab-button" (click)="editInvoice($event)"
-  *ngIf="false" (auxclick)="editInvoice($event)">
-  <mat-icon>edit</mat-icon>
-</button>
-<button *ngIf="canCancelInvoice() && canAddCreditNote() && invoice && (invoice.invoiceStatus.code==invoiceStatusReceived.code
+}
+@if (false) {
+  <button matTooltip="Editer la facture" mat-fab color="accent" class="fab-button" (click)="editInvoice($event)"
+    (auxclick)="editInvoice($event)">
+    <mat-icon>edit</mat-icon>
+  </button>
+}
+@if (canCancelInvoice() && canAddCreditNote() && invoice && (invoice.invoiceStatus.code==invoiceStatusReceived.code
   || invoice.invoiceStatus.code==invoiceStatusSend.code
   || invoice.invoiceStatus.code==invoiceStatusCreditNoteReceived.code
-  || !invoice.isCreditNote &&   invoice.invoiceStatus.code == invoiceStatusPayed.code) && !invoice.customerOrder"
-  matTooltip="Annuler la facture" mat-fab color="accent" class="second-fab-button" (click)="cancelInvoice($event)">
-  <mat-icon>close</mat-icon>
-</button>
-<button
-  *ngIf="canAddCreditNote() && invoice && (invoice.invoiceStatus.code==invoiceStatusReceived.code || invoice.provider && invoice.invoiceStatus.code==invoiceStatusPayed.code )"
-  matTooltip="Saisir un avoir" mat-fab color="accent" class="third-fab-button" (click)="addCreditNote($event)">
-  <mat-icon>payments</mat-icon>
-</button>
-<button
-  *ngIf="canAddCreditNoteForCustomerOrderInvoice() && invoice && invoice.customerOrder && (invoice.invoiceStatus.code==invoiceStatusSend.code  )"
-  matTooltip="Générer un avoir" mat-fab color="accent" class="fourth-fab-button"
-  (click)="generateCreditNoteForCustomerOrderInvoice($event)">
-  <mat-icon>shopping_cart_checkout</mat-icon>
-</button>
-<button matTooltip="Ajouter une notification sur cette facture" mat-fab color="accent" class="fifth-fab-button"
-  *ngIf="getNotificationForInvoice() && canDisplayNotifications()" [matBadge]="getNotificationForInvoice()!.length"
-  [matBadgeHidden]="getNotificationForInvoice()!.length<=0" matBadgePosition="below after" matBadgeColor="warn"
-  (click)="addNewNotification()">
-  <mat-icon>notifications</mat-icon>
-</button>
+  || !invoice.isCreditNote &&   invoice.invoiceStatus.code == invoiceStatusPayed.code) && !invoice.customerOrder) {
+  <button
+    matTooltip="Annuler la facture" mat-fab color="accent" class="second-fab-button" (click)="cancelInvoice($event)">
+    <mat-icon>close</mat-icon>
+  </button>
+}
+@if (canAddCreditNote() && invoice && (invoice.invoiceStatus.code==invoiceStatusReceived.code || invoice.provider && invoice.invoiceStatus.code==invoiceStatusPayed.code )) {
+  <button
+    matTooltip="Saisir un avoir" mat-fab color="accent" class="third-fab-button" (click)="addCreditNote($event)">
+    <mat-icon>payments</mat-icon>
+  </button>
+}
+@if (canAddCreditNoteForCustomerOrderInvoice() && invoice && invoice.customerOrder && (invoice.invoiceStatus.code==invoiceStatusSend.code  )) {
+  <button
+    matTooltip="Générer un avoir" mat-fab color="accent" class="fourth-fab-button"
+    (click)="generateCreditNoteForCustomerOrderInvoice($event)">
+    <mat-icon>shopping_cart_checkout</mat-icon>
+  </button>
+}
+@if (getNotificationForInvoice() && canDisplayNotifications()) {
+  <button matTooltip="Ajouter une notification sur cette facture" mat-fab color="accent" class="fifth-fab-button"
+    [matBadge]="getNotificationForInvoice()!.length"
+    [matBadgeHidden]="getNotificationForInvoice()!.length<=0" matBadgePosition="below after" matBadgeColor="warn"
+    (click)="addNewNotification()">
+    <mat-icon>notifications</mat-icon>
+  </button>
+}

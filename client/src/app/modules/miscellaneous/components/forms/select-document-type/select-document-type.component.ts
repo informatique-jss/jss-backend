@@ -6,9 +6,10 @@ import { GenericSelectComponent } from '../generic-select/generic-select.compone
 import { AppService } from 'src/app/services/app.service';
 
 @Component({
-  selector: 'select-document-type',
-  templateUrl: './select-document-type.component.html',
-  styleUrls: ['./select-document-type.component.css']
+    selector: 'select-document-type',
+    templateUrl: './select-document-type.component.html',
+    styleUrls: ['./select-document-type.component.css'],
+    standalone: false
 })
 export class SelectDocumentTypeComponent extends GenericSelectComponent<DocumentType> implements OnInit {
 

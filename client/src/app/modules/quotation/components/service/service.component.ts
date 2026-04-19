@@ -23,9 +23,10 @@ import { ServiceType } from '../../model/ServiceType';
 import { SelectAttachmentTypeDialogComponent } from '../select-attachment-type-dialog/select-attachment-type-dialog.component';
 
 @Component({
-  selector: 'service',
-  templateUrl: './service.component.html',
-  styleUrls: ['./service.component.css']
+    selector: 'service',
+    templateUrl: './service.component.html',
+    styleUrls: ['./service.component.css'],
+    standalone: false
 })
 export class ServiceComponent implements OnInit {
   [x: string]: any;

@@ -1,6 +1,8 @@
-<mat-chip-option matChipRemove *ngIf="employee">
-  <avatar class="chips-avatar pointer" [employee]="employee" [size]="17" (click)="changeEmployee()"></avatar>
-  <span (click)="changeEmployee()" class="chips-text pointer">{{employee.firstname}} {{employee.lastname}}</span>
-  <mat-icon color="accent"  matChipRemove (click)="displayInTeams(employee);$event.stopPropagation();">
+@if (employee) {
+  <mat-chip-option matChipRemove>
+    <avatar class="chips-avatar pointer" [employee]="employee" [size]="17" (click)="changeEmployee()"></avatar>
+    <span (click)="changeEmployee()" class="chips-text pointer">{{employee.firstname}} {{employee.lastname}}</span>
+    <mat-icon color="accent"  matChipRemove (click)="displayInTeams(employee);$event.stopPropagation();">
     chat_bubble</mat-icon>
-</mat-chip-option>
+  </mat-chip-option>
+}

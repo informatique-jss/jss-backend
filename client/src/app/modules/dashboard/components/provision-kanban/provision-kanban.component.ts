@@ -45,10 +45,11 @@ import { AssignNewOrderDialogComponent } from '../assign-new-order-dialog/assign
 import { KanbanComponent, PROVISION_KANBAN } from '../kanban/kanban.component';
 
 @Component({
-  selector: 'provision-kanban',
-  templateUrl: './provision-kanban.component.html',
-  styleUrls: ['./provision-kanban.component.css'],
-  viewProviders: [MatExpansionPanel]
+    selector: 'provision-kanban',
+    templateUrl: './provision-kanban.component.html',
+    styleUrls: ['./provision-kanban.component.css'],
+    viewProviders: [MatExpansionPanel],
+    standalone: false
 })
 export class ProvisionKanbanComponent extends KanbanComponent<Provision, IWorkflowElement<any>> implements OnInit {
 

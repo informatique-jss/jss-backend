@@ -10,9 +10,10 @@ import { WebinarParticipant } from '../../model/WebinarParticipant';
 import { WebinarParticipantService } from '../../services/webinar.participant.service';
 
 @Component({
-  selector: 'webinar-participant',
-  templateUrl: './webinar-participant.component.html',
-  styleUrls: ['./webinar-participant.component.css'],
+    selector: 'webinar-participant',
+    templateUrl: './webinar-participant.component.html',
+    styleUrls: ['./webinar-participant.component.css'],
+    standalone: false
 })
 export class WebinarParticipantComponent implements OnInit {
 

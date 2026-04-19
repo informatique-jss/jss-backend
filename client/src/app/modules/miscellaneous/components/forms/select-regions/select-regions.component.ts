@@ -6,9 +6,10 @@ import { GenericMultipleSelectComponent } from '../generic-select/generic-multip
 import { AppService } from 'src/app/services/app.service';
 
 @Component({
-  selector: 'select-regions',
-  templateUrl: './select-regions.component.html',
-  styleUrls: ['./select-regions.component.css']
+    selector: 'select-regions',
+    templateUrl: './select-regions.component.html',
+    styleUrls: ['./select-regions.component.css'],
+    standalone: false
 })
 export class SelectRegionsComponent extends GenericMultipleSelectComponent<Region> implements OnInit {
 

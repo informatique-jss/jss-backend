@@ -6,9 +6,10 @@ import { ActiveDirectoryGroupService } from '../../../services/active.directory.
 import { GenericMultipleSelectComponent } from '../generic-select/generic-multiple-select.component';
 
 @Component({
-  selector: 'select-active-directory-group-multiple',
-  templateUrl: './../generic-select/generic-multiple-select.component.html',
-  styleUrls: ['./../generic-select/generic-select.component.html']
+    selector: 'select-active-directory-group-multiple',
+    templateUrl: './../generic-select/generic-multiple-select.component.html',
+    styleUrls: ['./../generic-select/generic-select.component.html'],
+    standalone: false
 })
 export class SelectActiveDirectoryGroupMultipleComponent extends GenericMultipleSelectComponent<ActiveDirectoryGroup> implements OnInit {
 

@@ -4,7 +4,7 @@
       <tr>
         <td>
           <generic-input [(model)]="textSearch" label="Rechercher" [form]="bodaccSearchForm" propertyName="textSearch"
-            [isDisabled]="false"></generic-input>
+          [isDisabled]="false"></generic-input>
         </td>
       </tr>
     </table>
@@ -12,14 +12,16 @@
 
 
   <mat-stepper orientation="vertical">
-    <mat-step *ngFor="let bodacc of getBodaccToDisplay()">
-      <ng-template matStepLabel>
-        <p>{{bodacc.id}} - {{bodacc.dateparution |date:'dd/MM/yyyy'}} - {{bodacc.familleavis_lib}}</p>
-      </ng-template>
-      <p>{{bodacc.typeavis_lib}} - {{bodacc.tribunal}}</p>
-      <p>{{getModificationsGenerales(bodacc)}}
-        {{getDepot(bodacc)}}
+    @for (bodacc of getBodaccToDisplay(); track bodacc) {
+      <mat-step>
+        <ng-template matStepLabel>
+          <p>{{bodacc.id}} - {{bodacc.dateparution |date:'dd/MM/yyyy'}} - {{bodacc.familleavis_lib}}</p>
+        </ng-template>
+        <p>{{bodacc.typeavis_lib}} - {{bodacc.tribunal}}</p>
+        <p>{{getModificationsGenerales(bodacc)}}
+          {{getDepot(bodacc)}}
         {{getActe(bodacc)}}</p>
-      <button mat-fab extended color="primary" (click)="openOnBodacc(bodacc)">Voir sur le BODACC</button>
-    </mat-step>
+        <button mat-fab extended color="primary" (click)="openOnBodacc(bodacc)">Voir sur le BODACC</button>
+      </mat-step>
+    }
   </mat-stepper>

@@ -8,9 +8,10 @@ import { RejectionCause } from '../../model/RejectionCause';
 import { AddAffaireDialogComponent } from '../add-affaire-dialog/add-affaire-dialog.component';
 
 @Component({
-  selector: 'choose-rejection-cause-dialog',
-  templateUrl: './choose-rejection-cause-dialog.component.html',
-  styleUrls: ['./choose-rejection-cause-dialog.component.css']
+    selector: 'choose-rejection-cause-dialog',
+    templateUrl: './choose-rejection-cause-dialog.component.html',
+    styleUrls: ['./choose-rejection-cause-dialog.component.css'],
+    standalone: false
 })
 export class ChooseRejectionCauseDialogComponent implements OnInit {
 

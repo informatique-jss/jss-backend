@@ -6,9 +6,10 @@ import { GenericLocalAutocompleteComponent } from '../generic-local-autocomplete
 import { AppService } from 'src/app/services/app.service';
 
 @Component({
-  selector: 'autocomplete-region',
-  templateUrl: '../generic-local-autocomplete/generic-local-autocomplete.component.html',
-  styleUrls: ['../generic-local-autocomplete/generic-local-autocomplete.component.css'],
+    selector: 'autocomplete-region',
+    templateUrl: '../generic-local-autocomplete/generic-local-autocomplete.component.html',
+    styleUrls: ['../generic-local-autocomplete/generic-local-autocomplete.component.css'],
+    standalone: false
 })
 export class AutocompleteRegionComponent extends GenericLocalAutocompleteComponent<Region> implements OnInit {
 

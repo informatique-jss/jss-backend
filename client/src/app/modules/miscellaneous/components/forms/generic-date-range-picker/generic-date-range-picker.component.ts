@@ -3,9 +3,10 @@ import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@
 import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
 
 @Component({
-  selector: 'generic-date-range-picker',
-  templateUrl: './generic-date-range-picker.component.html',
-  styleUrls: ['./generic-date-range-picker.component.css']
+    selector: 'generic-date-range-picker',
+    templateUrl: './generic-date-range-picker.component.html',
+    styleUrls: ['./generic-date-range-picker.component.css'],
+    standalone: false
 })
 export class GenericDateRangePickerComponent implements OnInit {
 

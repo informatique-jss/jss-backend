@@ -7,9 +7,10 @@ import { Document } from '../../model/Document';
 import { Mail } from '../../model/Mail';
 
 @Component({
-  selector: 'addressing',
-  templateUrl: './addressing.component.html',
-  styleUrls: ['./addressing.component.css']
+    selector: 'addressing',
+    templateUrl: './addressing.component.html',
+    styleUrls: ['./addressing.component.css'],
+    standalone: false
 })
 export class AddressingComponent implements OnInit {
   @Input() document: Document = {} as Document;

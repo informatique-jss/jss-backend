@@ -1,132 +1,164 @@
-<mat-expansion-panel expanded="false" *ngIf="provision && service">
-  <mat-expansion-panel-header>
-    <mat-panel-title>Détails de l'affaire
-      {{getAffaireFromAssoAffaireOrder(service.assoAffaireOrder)}}
-    </mat-panel-title>
-    <mat-panel-description>
-      <mat-icon color="accent" matTooltip="Ajouter une notification sur cette affaire"
-        (click)="addNewNotificationOnAffaire(service.assoAffaireOrder.affaire);$event.stopPropagation();"
-        [matBadge]="getNotificationForAffaire(service.assoAffaireOrder.affaire).length"
-        *ngIf="canDisplayNotifications()"
-        [matBadgeHidden]="getNotificationForAffaire(service.assoAffaireOrder.affaire).length<=0"
-        matBadgePosition="below after" matBadgeColor="warn" matBadgeSize="small"
-        class="pointer">notifications</mat-icon>
-      <mat-icon color="accent" matTooltip="Voir/éditer l'affaire"
-        (click)="displayAffaire($event, service.assoAffaireOrder);$event.stopPropagation();"
-        (auxclick)="displayAffaire($event,service.assoAffaireOrder);$event.stopPropagation();"
-        class="pointer status-text">
+@if (provision && service) {
+  <mat-expansion-panel expanded="false">
+    <mat-expansion-panel-header>
+      <mat-panel-title>Détails de l'affaire
+        {{getAffaireFromAssoAffaireOrder(service.assoAffaireOrder)}}
+      </mat-panel-title>
+      <mat-panel-description>
+        @if (canDisplayNotifications()) {
+          <mat-icon color="accent" matTooltip="Ajouter une notification sur cette affaire"
+            (click)="addNewNotificationOnAffaire(service.assoAffaireOrder.affaire);$event.stopPropagation();"
+            [matBadge]="getNotificationForAffaire(service.assoAffaireOrder.affaire).length"
+            [matBadgeHidden]="getNotificationForAffaire(service.assoAffaireOrder.affaire).length<=0"
+            matBadgePosition="below after" matBadgeColor="warn" matBadgeSize="small"
+          class="pointer">notifications</mat-icon>
+        }
+        <mat-icon color="accent" matTooltip="Voir/éditer l'affaire"
+          (click)="displayAffaire($event, service.assoAffaireOrder);$event.stopPropagation();"
+          (auxclick)="displayAffaire($event,service.assoAffaireOrder);$event.stopPropagation();"
+          class="pointer status-text">
         edit</mat-icon>
-      <ng-template></ng-template>
-    </mat-panel-description>
-  </mat-expansion-panel-header>
-  <add-affaire [affaire]="service.assoAffaireOrder.affaire" [editMode]="false"></add-affaire>
-</mat-expansion-panel>
-<mat-expansion-panel *ngIf="service" [expanded]="isExpanded">
-  <mat-expansion-panel-header>
-    <mat-panel-title>
-      Détails du service {{service.serviceLabelToDisplay}}
-    </mat-panel-title>
-    <mat-panel-description>
-      <mat-icon *ngIf="service.hasMissingInformations" color="warn"
-        matTooltip="Des informations manquent sur ce service">warning</mat-icon>
-      <mat-icon color="accent" matTooltip="Ajouter une notification sur ce service"
-        (click)="addNewNotificationOnService(service);$event.stopPropagation();"
-        [matBadge]="getNotificationForService(service).length" matBadgeSize="small" *ngIf="canDisplayNotifications()"
-        [matBadgeHidden]="getNotificationForService(service).length<=0" matBadgePosition="below after"
-        matBadgeColor="warn" class="pointer">notifications</mat-icon>
-      <button mat-icon-button [matMenuTriggerFor]="menuService" (click)="$event.stopPropagation()">
-        <mat-icon>more_vert</mat-icon>
-      </button>
-      <mat-menu #menuService="matMenu">
-        <button mat-menu-item (click)="modifyService(service)">
-          <span>Modifier le service</span>
+        <ng-template></ng-template>
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+    <add-affaire [affaire]="service.assoAffaireOrder.affaire" [editMode]="false"></add-affaire>
+  </mat-expansion-panel>
+}
+@if (service) {
+  <mat-expansion-panel [expanded]="isExpanded">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        Détails du service {{service.serviceLabelToDisplay}}
+      </mat-panel-title>
+      <mat-panel-description>
+        @if (service.hasMissingInformations) {
+          <mat-icon color="warn"
+          matTooltip="Des informations manquent sur ce service">warning</mat-icon>
+        }
+        @if (canDisplayNotifications()) {
+          <mat-icon color="accent" matTooltip="Ajouter une notification sur ce service"
+            (click)="addNewNotificationOnService(service);$event.stopPropagation();"
+            [matBadge]="getNotificationForService(service).length" matBadgeSize="small"
+            [matBadgeHidden]="getNotificationForService(service).length<=0" matBadgePosition="below after"
+          matBadgeColor="warn" class="pointer">notifications</mat-icon>
+        }
+        <button mat-icon-button [matMenuTriggerFor]="menuService" (click)="$event.stopPropagation()">
+          <mat-icon>more_vert</mat-icon>
         </button>
-        <button mat-menu-item (click)="deleteService(service)">
-          <span>Supprimer le service</span>
-        </button>
-      </mat-menu>
-    </mat-panel-description>
-  </mat-expansion-panel-header>
-  <mat-accordion class="custom-panel">
-    <mat-expansion-panel expanded="false"
-      *ngIf="serviceAttachments && serviceAttachments.attachments && serviceAttachments.attachments.length>0">
-      <mat-expansion-panel-header>
-        <mat-panel-title>
-          Pièces
-        </mat-panel-title>
-      </mat-expansion-panel-header>
-      <attachments [entity]="serviceAttachments" [editMode]="false" [forIntegration]="true">
-      </attachments>
-    </mat-expansion-panel>
-    <mat-expansion-panel expanded="false"
-      *ngIf=" service.assoServiceFieldTypes &&  service.assoServiceFieldTypes.length>0">
-      <mat-expansion-panel-header>
-        <mat-panel-title>
-          Informations complémentaires
-        </mat-panel-title>
-      </mat-expansion-panel-header>
-      <table class="full-width" *ngIf="service">
-        <ng-container *ngFor="let assoServiceFieldType of service.assoServiceFieldTypes; let i = index">
-          <tr>
-            <td *ngIf="assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_TEXT">
-              <generic-input [(model)]="assoServiceFieldType.stringValue"
-                [label]="assoServiceFieldType.serviceFieldType.label" [form]="serviceForm"
-                [propertyName]='"stringFieldType"+i' [isDisabled]="true"
-                [isMandatory]="assoServiceFieldType.isMandatory" [maxLength]="255"></generic-input>
-            </td>
-            <td *ngIf="assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_TEXTAREA">
-              <generic-textarea [(model)]="assoServiceFieldType.textAreaValue"
-                [label]="assoServiceFieldType.serviceFieldType.label" [form]="serviceForm"
-                [propertyName]='"textAreaFieldType"+i' [isDisabled]="true"
-                [isMandatory]="assoServiceFieldType.isMandatory"></generic-textarea>
-            </td>
-            <td *ngIf="assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_DATE">
-              <generic-datepicker [(model)]="assoServiceFieldType.dateValue"
-                [label]="assoServiceFieldType.serviceFieldType.label" [form]="serviceForm"
-                [propertyName]='"dateFieldType"+i' [isMandatory]="assoServiceFieldType.isMandatory"
-                [isDisabled]="true"></generic-datepicker>
-            </td>
-            <td *ngIf="assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_INTEGER">
-              <generic-input [(model)]="assoServiceFieldType.integerValue"
-                [label]="assoServiceFieldType.serviceFieldType.label" [form]="serviceForm"
-                [propertyName]='"integerFieldType"+i' [isMandatory]="assoServiceFieldType.isMandatory"
-                [isDisabled]=" true" type="number"></generic-input>
-            </td>
-            <td *ngIf="assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_SELECT">
-              <select-value-service-field-type [(model)]="assoServiceFieldType.selectValue"
-                [label]="assoServiceFieldType.serviceFieldType.label" [form]="serviceForm"
-                [propertyName]='"selectFieldType"+i' [serviceFieldType]="assoServiceFieldType.serviceFieldType"
-                [isMandatory]="assoServiceFieldType.isMandatory" [isDisabled]="true"></select-value-service-field-type>
-            </td>
-          </tr>
-        </ng-container>
-      </table>
-    </mat-expansion-panel>
-  </mat-accordion>
-  <div class="custom-panel" style="margin-bottom: 15px;" *ngIf="service">
-    <div class="field-row" *ngIf="service.serviceTotalPrice">
-      <div class="label">Montant du service</div>
-      <div class="value">
-        {{service.serviceTotalPrice | currency:'EUR'}}
+        <mat-menu #menuService="matMenu">
+          <button mat-menu-item (click)="modifyService(service)">
+            <span>Modifier le service</span>
+          </button>
+          <button mat-menu-item (click)="deleteService(service)">
+            <span>Supprimer le service</span>
+          </button>
+        </mat-menu>
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+    <mat-accordion class="custom-panel">
+      @if (serviceAttachments && serviceAttachments.attachments && serviceAttachments.attachments.length>0) {
+        <mat-expansion-panel expanded="false"
+          >
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Pièces
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <attachments [entity]="serviceAttachments" [editMode]="false" [forIntegration]="true">
+          </attachments>
+        </mat-expansion-panel>
+      }
+      @if ( service.assoServiceFieldTypes &&  service.assoServiceFieldTypes.length>0) {
+        <mat-expansion-panel expanded="false"
+          >
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Informations complémentaires
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          @if (service) {
+            <table class="full-width">
+              @for (assoServiceFieldType of service.assoServiceFieldTypes; track assoServiceFieldType; let i = $index) {
+                <tr>
+                  @if (assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_TEXT) {
+                    <td>
+                      <generic-input [(model)]="assoServiceFieldType.stringValue"
+                        [label]="assoServiceFieldType.serviceFieldType.label" [form]="serviceForm"
+                        [propertyName]='"stringFieldType"+i' [isDisabled]="true"
+                      [isMandatory]="assoServiceFieldType.isMandatory" [maxLength]="255"></generic-input>
+                    </td>
+                  }
+                  @if (assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_TEXTAREA) {
+                    <td>
+                      <generic-textarea [(model)]="assoServiceFieldType.textAreaValue"
+                        [label]="assoServiceFieldType.serviceFieldType.label" [form]="serviceForm"
+                        [propertyName]='"textAreaFieldType"+i' [isDisabled]="true"
+                      [isMandatory]="assoServiceFieldType.isMandatory"></generic-textarea>
+                    </td>
+                  }
+                  @if (assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_DATE) {
+                    <td>
+                      <generic-datepicker [(model)]="assoServiceFieldType.dateValue"
+                        [label]="assoServiceFieldType.serviceFieldType.label" [form]="serviceForm"
+                        [propertyName]='"dateFieldType"+i' [isMandatory]="assoServiceFieldType.isMandatory"
+                      [isDisabled]="true"></generic-datepicker>
+                    </td>
+                  }
+                  @if (assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_INTEGER) {
+                    <td>
+                      <generic-input [(model)]="assoServiceFieldType.integerValue"
+                        [label]="assoServiceFieldType.serviceFieldType.label" [form]="serviceForm"
+                        [propertyName]='"integerFieldType"+i' [isMandatory]="assoServiceFieldType.isMandatory"
+                      [isDisabled]=" true" type="number"></generic-input>
+                    </td>
+                  }
+                  @if (assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_SELECT) {
+                    <td>
+                      <select-value-service-field-type [(model)]="assoServiceFieldType.selectValue"
+                        [label]="assoServiceFieldType.serviceFieldType.label" [form]="serviceForm"
+                        [propertyName]='"selectFieldType"+i' [serviceFieldType]="assoServiceFieldType.serviceFieldType"
+                      [isMandatory]="assoServiceFieldType.isMandatory" [isDisabled]="true"></select-value-service-field-type>
+                    </td>
+                  }
+                </tr>
+              }
+            </table>
+          }
+        </mat-expansion-panel>
+      }
+    </mat-accordion>
+    @if (service) {
+      <div class="custom-panel" style="margin-bottom: 15px;">
+        @if (service.serviceTotalPrice) {
+          <div class="field-row">
+            <div class="label">Montant du service</div>
+            <div class="value">
+              {{service.serviceTotalPrice | currency:'EUR'}}
+            </div>
+          </div>
+        }
+        @if (service.lastMissingAttachmentQueryDateTime) {
+          <div class="field-row">
+            <div class="label">Date de la dernière PM</div>
+            <div class="value">
+              {{service.lastMissingAttachmentQueryDateTime | date:'EEEE d MMMM HH:mm'}}
+            </div>
+          </div>
+        }
       </div>
-    </div>
-    <div class="field-row" *ngIf="service.lastMissingAttachmentQueryDateTime">
-      <div class="label">Date de la dernière PM</div>
-      <div class="value">
-        {{service.lastMissingAttachmentQueryDateTime | date:'EEEE d MMMM HH:mm'}}
-      </div>
-    </div>
-  </div>
-
-  <ng-container *ngIf="service && !provision">
-    <ng-container *ngFor="let provisionLoop of service.provisions; let index = index">
-      <provision-side-panel-details [provision]="provisionLoop"
+    }
+    @if (service && !provision) {
+      @for (provisionLoop of service.provisions; track provisionLoop; let index = $index) {
+        <provision-side-panel-details [provision]="provisionLoop"
         [assoAffaireOrder]="service.assoAffaireOrder"></provision-side-panel-details>
-      <hr *ngIf="index<service.provisions.length-1" />
-    </ng-container>
-  </ng-container>
-  <ng-container *ngIf="service && provision">
-    <provision-side-panel-details [provision]="provision"
+        @if (index<service.provisions.length-1) {
+          <hr />
+        }
+      }
+    }
+    @if (service && provision) {
+      <provision-side-panel-details [provision]="provision"
       [assoAffaireOrder]="service.assoAffaireOrder"></provision-side-panel-details>
-  </ng-container>
-</mat-expansion-panel>
+    }
+  </mat-expansion-panel>
+}

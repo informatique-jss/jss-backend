@@ -20,8 +20,8 @@ import org.springframework.util.StringUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.datatype.hibernate5.jakarta.Hibernate5JakartaModule;
-import com.fasterxml.jackson.datatype.hibernate5.jakarta.Hibernate5JakartaModule.Feature;
+import com.fasterxml.jackson.datatype.hibernate6.Hibernate6Module;
+import com.fasterxml.jackson.datatype.hibernate6.Hibernate6Module.Feature;
 import com.jss.osiris.libs.audit.model.Audit;
 import com.jss.osiris.libs.audit.service.AuditService;
 import com.jss.osiris.libs.exception.OsirisException;
@@ -56,7 +56,7 @@ public class IndexEntityServiceImpl implements IndexEntityService {
         simpleModule.addSerializer(LocalDateTime.class, new JacksonLocalDateTimeSerializer());
         simpleModule.addSerializer(LocalDate.class, new JacksonLocalDateSerializer());
         objectMapper.registerModule(simpleModule);
-        Hibernate5JakartaModule module = new Hibernate5JakartaModule();
+        Hibernate6Module module = new Hibernate6Module();
         module.enable(Feature.FORCE_LAZY_LOADING);
         objectMapper.registerModule(module);
 

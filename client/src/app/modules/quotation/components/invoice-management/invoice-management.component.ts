@@ -30,9 +30,10 @@ import { InvoiceLabelResultService } from '../../services/invoice.label.result.s
 import { QuotationComponent } from '../quotation/quotation.component';
 
 @Component({
-  selector: 'invoice-management',
-  templateUrl: './invoice-management.component.html',
-  styleUrls: ['./invoice-management.component.css']
+    selector: 'invoice-management',
+    templateUrl: './invoice-management.component.html',
+    styleUrls: ['./invoice-management.component.css'],
+    standalone: false
 })
 export class InvoiceManagementComponent implements OnInit {
 

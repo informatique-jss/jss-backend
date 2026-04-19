@@ -11,17 +11,20 @@
     </sort-table>
   </div>
 </div>
-<div class="mat-elevation-z2 form-div" *ngIf="selectedEntity ">
+@if (selectedEntity ) {
+<div class="mat-elevation-z2 form-div">
   <form [formGroup]="entityForm">
     <div class="full-width">
       <fieldset [disabled]="editMode==false" class="fieldset-no-border">
         <table class="full-width">
-          <tr *ngIf="selectedEntity.id">
+          @if (selectedEntity.id) {
+          <tr>
             <td>
               <generic-input [(model)]="selectedEntity.id" label="Identifiant technique" [form]="entityForm"
                 propertyName="id" [isMandatory]="true" [isDisabled]="true"></generic-input>
             </td>
           </tr>
+          }
           <tr>
             <td>
               <generic-input [(model)]="selectedEntity.code" label="Codification" [maxLength]="20" [form]="entityForm"
@@ -72,14 +75,14 @@
           <tr>
             <td>
           <tr>
-            <td *ngIf="selectedEntity && selectedEntity.id">
-              <single-attachment [entity]="selectedEntity" [entityType]="ATTACHMENT_TYPE_ATTACHMENT_TYPE.entityType"
-                [editMode]="true" [attachmentTypeToDisplay]="attachmentTypeTemplate"
-                (onUploadedFile)="updateAttachments($event)"></single-attachment>
+            @if (selectedEntity && selectedEntity.id) {
+            <td>
             </td>
+            }
           </tr>
         </table>
       </fieldset>
     </div>
   </form>
 </div>
+}

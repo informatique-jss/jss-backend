@@ -1,97 +1,123 @@
 <h1 mat-dialog-title>Associer un paiement </h1>
-<div mat-dialog-content *ngIf="payment ">
-  <sort-table [columns]="displayedColumns" [values]="associations" tableName="Association paiement / facture"
-    [noMaxHeight]="true" [noPaddingBottom]="true" [actions]="tableAction" [refreshTable]="refreshTable.asObservable()">
-  </sort-table>
-
-  <div class="big-chip">
-    <chips-status [value]="'Solde '+getBalance()+' €'"></chips-status>
-  </div>
-  <div>
-    <mat-vertical-stepper [linear]="false" #stepper animationDuration="500">
-      <mat-step *ngIf="(invoice || customerOrder) && !doNotInitializeAsso">
-        <ng-template matStepLabel>Validation de l'association</ng-template>
-        <p>Validez-vous l'association présentée ci-dessus ?</p>
-        <div class="top">
-          <button mat-raised-button color="accent" (click)="onClose()">Annuler</button>
-          <button mat-raised-button color="warn" matStepperNext>Suivant</button>
-        </div>
-      </mat-step>
-      <mat-step>
-        <ng-template matStepLabel>Choix d'une commande / facture suplémentaire</ng-template>
-        <p>Merci de choisir ci-dessous, la commande et /ou la facture à associer avec ce solde.</p>
-        <mat-tab-group animationDuration="0ms">
-          <mat-tab label="Factures" bodyClass="tab-height-limit">
-            <invoice-list (actionBypass)="associateInvoiceFromSearch($event)" [overrideIconAction]="'merge_type'"
-              [invoiceSearch]="invoiceSearch" [overrideTooltipAction]="'Associer cette facture au paiement'"
-              [isForPaymentAssocationIntegration]="true" [defaultStatusFilter]="[invoiceStatusSend]"></invoice-list>
-          </mat-tab>
-          <mat-tab label="Commandes" bodyClass="tab-height-limit">
-            <ordering-list (actionBypass)="associateOrderFromSearch($event)" [overrideIconAction]="'merge_type'"
-              [overrideTooltipAction]="'Associer cette commande au paiement'" [isForPaymentAssocationIntegration]="true"
-              [defaultStatusFilter]="[CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT,CUSTOMER_ORDER_STATUS_OPEN]"></ordering-list>
-          </mat-tab>
-          <mat-tab label="Multiple" bodyClass="tab-height-limit">
-            <generic-input [(model)]="multipleInvoices" label="Multiples factures à associer (séparé par ',')"
-              [form]="refundForm" propertyName="multipleInvoices" [isMandatory]="false"
-              [isDisabled]="false"></generic-input>
+@if (payment ) {
+  <div mat-dialog-content>
+    <sort-table [columns]="displayedColumns" [values]="associations" tableName="Association paiement / facture"
+      [noMaxHeight]="true" [noPaddingBottom]="true" [actions]="tableAction" [refreshTable]="refreshTable.asObservable()">
+    </sort-table>
+    <div class="big-chip">
+      <chips-status [value]="'Solde '+getBalance()+' €'"></chips-status>
+    </div>
+    <div>
+      <mat-vertical-stepper [linear]="false" #stepper animationDuration="500">
+        @if ((invoice || customerOrder) && !doNotInitializeAsso) {
+          <mat-step>
+            <ng-template matStepLabel>Validation de l'association</ng-template>
+            <p>Validez-vous l'association présentée ci-dessus ?</p>
             <div class="top">
-              <button mat-raised-button color="warn" (click)="multipleAssociateInvoices()">Associer</button>
+              <button mat-raised-button color="accent" (click)="onClose()">Annuler</button>
+              <button mat-raised-button color="warn" matStepperNext>Suivant</button>
             </div>
-          </mat-tab>
-        </mat-tab-group>
-        <div class="top">
-          <button mat-raised-button color="accent" matStepperPrevious>Précédent</button>
-          <button mat-raised-button color="warn" matStepperNext>Suivant</button>
-        </div>
-      </mat-step>
-      <mat-step *ngIf="getBalance()>INVOICING_PAYMENT_LIMIT_REFUND_EUROS">
-        <ng-template matStepLabel>Remboursement</ng-template>
-        <p>Le solde n'est pas nul. A qui souhaitez-vous rembourser la somme de {{getBalance()}} € ?
-        </p>
-        <div *ngIf="!selectedRefundAffaire && !selectedRefundConfrere && !selectedRefundTiers">
-          <span *ngIf="getRefundCustomerOrder()==null">Impossible de rembourser le donneur d'ordre, l'IBAN de
-            remboursement n'a pas été renseigné dans la fiche Tiers</span>
-          <p>
-            Sélectionner le tiers à rembourser :
+          </mat-step>
+        }
+        <mat-step>
+          <ng-template matStepLabel>Choix d'une commande / facture suplémentaire</ng-template>
+          <p>Merci de choisir ci-dessous, la commande et /ou la facture à associer avec ce solde.</p>
+          <mat-tab-group animationDuration="0ms">
+            <mat-tab label="Factures" bodyClass="tab-height-limit">
+              <invoice-list (actionBypass)="associateInvoiceFromSearch($event)" [overrideIconAction]="'merge_type'"
+                [invoiceSearch]="invoiceSearch" [overrideTooltipAction]="'Associer cette facture au paiement'"
+              [isForPaymentAssocationIntegration]="true" [defaultStatusFilter]="[invoiceStatusSend]"></invoice-list>
+            </mat-tab>
+            <mat-tab label="Commandes" bodyClass="tab-height-limit">
+              <ordering-list (actionBypass)="associateOrderFromSearch($event)" [overrideIconAction]="'merge_type'"
+                [overrideTooltipAction]="'Associer cette commande au paiement'" [isForPaymentAssocationIntegration]="true"
+              [defaultStatusFilter]="[CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT,CUSTOMER_ORDER_STATUS_OPEN]"></ordering-list>
+            </mat-tab>
+            <mat-tab label="Multiple" bodyClass="tab-height-limit">
+              <generic-input [(model)]="multipleInvoices" label="Multiples factures à associer (séparé par ',')"
+                [form]="refundForm" propertyName="multipleInvoices" [isMandatory]="false"
+              [isDisabled]="false"></generic-input>
+              <div class="top">
+                <button mat-raised-button color="warn" (click)="multipleAssociateInvoices()">Associer</button>
+              </div>
+            </mat-tab>
+          </mat-tab-group>
+          <div class="top">
+            <button mat-raised-button color="accent" matStepperPrevious>Précédent</button>
+            <button mat-raised-button color="warn" matStepperNext>Suivant</button>
+          </div>
+        </mat-step>
+        @if (getBalance()>INVOICING_PAYMENT_LIMIT_REFUND_EUROS) {
+          <mat-step>
+            <ng-template matStepLabel>Remboursement</ng-template>
+            <p>Le solde n'est pas nul. A qui souhaitez-vous rembourser la somme de {{getBalance()}} € ?
+            </p>
+            @if (!selectedRefundAffaire && !selectedRefundConfrere && !selectedRefundTiers) {
+              <div>
+                @if (getRefundCustomerOrder()==null) {
+                  <span>Impossible de rembourser le donneur d'ordre, l'IBAN de
+                  remboursement n'a pas été renseigné dans la fiche Tiers</span>
+                }
+                <p>
+                  Sélectionner le tiers à rembourser :
+                </p>
+                <ul>
+                  @if (getRefundCustomerOrder()!=null) {
+                    <li class="pointer" (click)="selectRefundTiers()">
+                    {{getCustomerOrderNameForITiers(getRefundCustomerOrder()!)}}</li>
+                  }
+                  @for (affaire of getAllAffaireRefundable(); track affaire) {
+                    <li class="pointer" [value]="affaire"
+                      (click)="selectRefundAffaire(affaire)">
+                    {{affaire.denomination?affaire.denomination:(affaire.firstname+" "+affaire.lastname)}}</li>
+                  }
+                </ul>
+              </div>
+            }
+            @if (selectedRefundAffaire || selectedRefundConfrere  || selectedRefundTiers) {
+              <div>
+                @if (selectedRefundAffaire) {
+                  <p>
+                    Remboursement à
+                    {{selectedRefundAffaire.denomination?selectedRefundAffaire.denomination:(selectedRefundAffaire.firstname+"
+                    "+selectedRefundAffaire.lastname)}} <span (click)="cancelRefundChoice()" class="pointer">(annuler)</span>
+                  </p>
+                }
+                @if (selectedRefundTiers) {
+                  <p>
+                    Remboursement à {{getCustomerOrderNameForITiers(selectedRefundTiers)}} <span (click)="cancelRefundChoice()"
+                  class="pointer">(annuler)</span>
+                </p>
+              }
+            </div>
+          }
+          <div class="top">
+            <button mat-raised-button color="accent" matStepperPrevious>Précédent</button>
+            @if (selectedRefundAffaire || selectedRefundConfrere  || selectedRefundTiers) {
+              <button mat-raised-button color="warn" matStepperNext
+              >Suivant</button>
+            }
+          </div>
+        </mat-step>
+      }
+      @if (payment.paymentAmount>0 &&  getBalance()!=0 &&  getBalance()<=INVOICING_PAYMENT_LIMIT_REFUND_EUROS  && getBalance()>=-INVOICING_PAYMENT_LIMIT_REFUND_EUROS) {
+        <mat-step
+          >
+          <ng-template matStepLabel>Appoint</ng-template>
+          <p>Le solde n'est pas nul.
           </p>
-          <ul>
-            <li class="pointer" *ngIf="getRefundCustomerOrder()!=null" (click)="selectRefundTiers()">
-              {{getCustomerOrderNameForITiers(getRefundCustomerOrder()!)}}</li>
-            <li class="pointer" *ngFor="let affaire of getAllAffaireRefundable()" [value]="affaire"
-              (click)="selectRefundAffaire(affaire)">
-              {{affaire.denomination?affaire.denomination:(affaire.firstname+" "+affaire.lastname)}}</li>
-          </ul>
-        </div>
-        <div *ngIf="selectedRefundAffaire || selectedRefundConfrere  || selectedRefundTiers">
-          <p *ngIf="selectedRefundAffaire">
-            Remboursement à
-            {{selectedRefundAffaire.denomination?selectedRefundAffaire.denomination:(selectedRefundAffaire.firstname+"
-            "+selectedRefundAffaire.lastname)}} <span (click)="cancelRefundChoice()" class="pointer">(annuler)</span>
-          </p>
-          <p *ngIf="selectedRefundTiers">
-            Remboursement à {{getCustomerOrderNameForITiers(selectedRefundTiers)}} <span (click)="cancelRefundChoice()"
-              class="pointer">(annuler)</span>
-          </p>
-        </div>
-        <div class="top">
-          <button mat-raised-button color="accent" matStepperPrevious>Précédent</button>
-          <button mat-raised-button color="warn" matStepperNext
-            *ngIf="selectedRefundAffaire || selectedRefundConfrere  || selectedRefundTiers">Suivant</button>
-        </div>
-      </mat-step>
-      <mat-step
-        *ngIf="payment.paymentAmount>0 &&  getBalance()!=0 &&  getBalance()<=INVOICING_PAYMENT_LIMIT_REFUND_EUROS  && getBalance()>=-INVOICING_PAYMENT_LIMIT_REFUND_EUROS">
-        <ng-template matStepLabel>Appoint</ng-template>
-        <p>Le solde n'est pas nul.
-        </p>
-        <p *ngIf="getBalance()>0">La somme de {{getBalance()}} € sera placée sur le compte de profit</p>
-        <p *ngIf=" getBalance()>0">La somme de {{getBalance()}} € sera prise sur le compte de perte</p>
-        <div class="top">
-          <button mat-raised-button color="accent" matStepperPrevious>Précédent</button>
-          <button mat-raised-button color="warn" matStepperNext>Suivant</button>
-        </div>
-      </mat-step>
+          @if (getBalance()>0) {
+            <p>La somme de {{getBalance()}} € sera placée sur le compte de profit</p>
+          }
+          @if ( getBalance()>0) {
+            <p>La somme de {{getBalance()}} € sera prise sur le compte de perte</p>
+          }
+          <div class="top">
+            <button mat-raised-button color="accent" matStepperPrevious>Précédent</button>
+            <button mat-raised-button color="warn" matStepperNext>Suivant</button>
+          </div>
+        </mat-step>
+      }
       <mat-step>
         <ng-template matStepLabel>Récapitulatif</ng-template>
         <p>Validez-vous les associations présentées ci-dessus ?</p>
@@ -103,3 +129,4 @@
     </mat-vertical-stepper>
   </div>
 </div>
+}

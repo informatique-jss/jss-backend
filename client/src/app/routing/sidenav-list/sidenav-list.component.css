@@ -94,5 +94,5 @@ mat-nav-list a span {
 }
 
 .mat-mdc-list-base {
-  --mdc-list-list-item-label-text-size: 13px !important;
+  --mat-list-list-item-label-text-size: 13px !important;
 }

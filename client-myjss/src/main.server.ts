@@ -1,12 +1,13 @@
+import { provideZoneChangeDetection } from "@angular/core";
 import { registerLocaleData } from '@angular/common';
 import localeFr from '@angular/common/locales/fr';
-import { bootstrapApplication } from '@angular/platform-browser';
+import { bootstrapApplication, BootstrapContext } from '@angular/platform-browser';
 import 'source-map-support/register';
 import { AppComponent } from './app/app.component';
 import { config } from './app/app.config.server';
 
 registerLocaleData(localeFr, 'fr');
 
-const bootstrap = () => bootstrapApplication(AppComponent, config);
+const bootstrap = (context: BootstrapContext) => bootstrapApplication(AppComponent, {...config, providers: [provideZoneChangeDetection(), ...config.providers]}, context);
 
 export default bootstrap;

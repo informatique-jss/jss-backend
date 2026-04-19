@@ -6,9 +6,10 @@ import { AppService } from 'src/app/services/app.service';
 import { GenericMultipleSelectComponent } from '../generic-select/generic-multiple-select.component';
 
 @Component({
-  selector: 'select-customer-order-status',
-  templateUrl: './../generic-select/generic-multiple-select.component.html',
-  styleUrls: ['./../generic-select/generic-select.component.html']
+    selector: 'select-customer-order-status',
+    templateUrl: './../generic-select/generic-multiple-select.component.html',
+    styleUrls: ['./../generic-select/generic-select.component.html'],
+    standalone: false
 })
 
 export class SelectCustomerOrderStatusComponent extends GenericMultipleSelectComponent<CustomerOrderStatus> implements OnInit {

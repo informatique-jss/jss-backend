@@ -28,9 +28,10 @@ import { AccountingRecordSearchResultService } from '../../services/accounting.r
 import { AccountingRecordService } from '../../services/accounting.record.service';
 
 @Component({
-  selector: 'accounting-record',
-  templateUrl: './accounting-record.component.html',
-  styleUrls: ['./accounting-record.component.css']
+    selector: 'accounting-record',
+    templateUrl: './accounting-record.component.html',
+    styleUrls: ['./accounting-record.component.css'],
+    standalone: false
 })
 export class AccountingRecordComponent implements OnInit {
 

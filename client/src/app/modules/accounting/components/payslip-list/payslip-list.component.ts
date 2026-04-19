@@ -6,9 +6,10 @@ import { AccountingRecord } from '../../model/AccountingRecord';
 import { AccountingRecordService } from '../../services/accounting.record.service';
 
 @Component({
-  selector: 'payslip-list',
-  templateUrl: './payslip-list.component.html',
-  styleUrls: ['./payslip-list.component.css']
+    selector: 'payslip-list',
+    templateUrl: './payslip-list.component.html',
+    styleUrls: ['./payslip-list.component.css'],
+    standalone: false
 })
 export class PayslipListComponent implements OnInit {
   fnpForm = this.formBuilder.group({});

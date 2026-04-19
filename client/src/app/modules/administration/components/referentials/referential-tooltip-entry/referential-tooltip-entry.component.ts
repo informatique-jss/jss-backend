@@ -7,9 +7,10 @@ import { AppService } from 'src/app/services/app.service';
 import { GenericReferentialComponent } from '../generic-referential/generic-referential-component';
 
 @Component({
-  selector: 'referential-tooltip-entry',
-  templateUrl: './referential-tooltip-entry.component.html',
-  styleUrls: ['./../generic-referential/generic-referential.component.css']
+    selector: 'referential-tooltip-entry',
+    templateUrl: './referential-tooltip-entry.component.html',
+    styleUrls: ['./../generic-referential/generic-referential.component.css'],
+    standalone: false
 })
 export class ReferentialTooltipEntryComponent extends GenericReferentialComponent<TooltipEntry> implements OnInit {
   constructor(private tooltipEntryService: TooltipEntryService,

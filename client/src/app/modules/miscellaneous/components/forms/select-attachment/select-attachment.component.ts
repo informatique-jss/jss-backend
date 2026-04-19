@@ -6,9 +6,10 @@ import { UploadAttachmentService } from '../../../services/upload.attachment.ser
 import { GenericSelectComponent } from '../generic-select/generic-select.component';
 
 @Component({
-  selector: 'select-attachment',
-  templateUrl: './select-attachment.component.html',
-  styleUrls: ['./select-attachment.component.css']
+    selector: 'select-attachment',
+    templateUrl: './select-attachment.component.html',
+    styleUrls: ['./select-attachment.component.css'],
+    standalone: false
 })
 export class SelectAttachmentComponent extends GenericSelectComponent<Attachment> implements OnInit {
 

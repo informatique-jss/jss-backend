@@ -27,9 +27,10 @@ import { InvocingStatisticsService } from '../../services/invoicing.statistics.s
 import { getResponsableLabelIQuotation, getTiersLabelIQuotation } from '../invoice-tools';
 
 @Component({
-  selector: 'kanban-invoicing',
-  templateUrl: './kanban-invoicing.component.html',
-  styleUrls: ['./kanban-invoicing.component.css']
+    selector: 'kanban-invoicing',
+    templateUrl: './kanban-invoicing.component.html',
+    styleUrls: ['./kanban-invoicing.component.css'],
+    standalone: false
 })
 export class KanbanInvoicingComponent extends KanbanComponent<CustomerOrder, InvoicingBlockage> implements OnInit {
 

@@ -8,9 +8,10 @@ import { SpecialOffer } from '../../model/SpecialOffer';
 import { SpecialOfferService } from '../../services/special.offer.service';
 
 @Component({
-  selector: 'app-special-offers-dialog',
-  templateUrl: './special-offers-dialog.component.html',
-  styleUrls: ['./special-offers-dialog.component.css']
+    selector: 'app-special-offers-dialog',
+    templateUrl: './special-offers-dialog.component.html',
+    styleUrls: ['./special-offers-dialog.component.css'],
+    standalone: false
 })
 export class SpecialOffersDialogComponent implements OnInit {
 

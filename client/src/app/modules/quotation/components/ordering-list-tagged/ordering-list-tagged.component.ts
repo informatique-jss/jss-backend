@@ -14,9 +14,10 @@ import { CustomerOrderStatusService } from '../../services/customer.order.status
 import { OrderingSearchTaggedResultService } from '../../services/ordering.search.tagged.result.service';
 
 @Component({
-  selector: 'ordering-list-tagged',
-  templateUrl: './ordering-list-tagged.component.html',
-  styleUrls: ['./ordering-list-tagged.component.css']
+    selector: 'ordering-list-tagged',
+    templateUrl: './ordering-list-tagged.component.html',
+    styleUrls: ['./ordering-list-tagged.component.css'],
+    standalone: false
 })
 export class OrderingListTaggedComponent implements OnInit {
 

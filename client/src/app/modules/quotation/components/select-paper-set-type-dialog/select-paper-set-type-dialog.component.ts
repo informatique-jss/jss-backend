@@ -5,9 +5,10 @@ import { PaperSetType } from 'src/app/modules/miscellaneous/model/PaperSetType';
 import { PaperSet } from '../../model/PaperSet';
 
 @Component({
-  selector: 'app-select-paper-set-type-dialog',
-  templateUrl: './select-paper-set-type-dialog.component.html',
-  styleUrls: ['./select-paper-set-type-dialog.component.css']
+    selector: 'app-select-paper-set-type-dialog',
+    templateUrl: './select-paper-set-type-dialog.component.html',
+    styleUrls: ['./select-paper-set-type-dialog.component.css'],
+    standalone: false
 })
 export class SelectPaperSetTypeDialogComponent implements OnInit {
   selectedPaperSetType: PaperSetType | undefined;

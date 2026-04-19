@@ -23,9 +23,10 @@ import { DEFAULT_USER_PREFERENCE } from '../../model/UserPreference';
 import { KanbanComponent, QUOTATION_KANBAN } from '../kanban/kanban.component';
 
 @Component({
-  selector: 'quotation-kanban',
-  templateUrl: './quotation-kanban.component.html',
-  styleUrls: ['./quotation-kanban.component.css']
+    selector: 'quotation-kanban',
+    templateUrl: './quotation-kanban.component.html',
+    styleUrls: ['./quotation-kanban.component.css'],
+    standalone: false
 })
 export class QuotationKanbanComponent extends KanbanComponent<Quotation, QuotationStatus> implements OnInit {
 

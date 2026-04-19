@@ -7,9 +7,10 @@ import { Provision } from '../../model/Provision';
 import { DebourDelService } from '../../services/debour.del.service';
 
 @Component({
-  selector: 'debour',
-  templateUrl: './debour.component.html',
-  styleUrls: ['./debour.component.css']
+    selector: 'debour',
+    templateUrl: './debour.component.html',
+    styleUrls: ['./debour.component.css'],
+    standalone: false
 })
 export class DebourComponent implements OnInit {
 

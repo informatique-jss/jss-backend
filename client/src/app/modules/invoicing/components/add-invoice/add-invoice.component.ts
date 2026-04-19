@@ -31,9 +31,10 @@ import { ResponsableService } from '../../../tiers/services/responsable.service'
 import { InvoiceService } from '../../services/invoice.service';
 
 @Component({
-  selector: 'add-invoice',
-  templateUrl: './add-invoice.component.html',
-  styleUrls: ['./add-invoice.component.css']
+    selector: 'add-invoice',
+    templateUrl: './add-invoice.component.html',
+    styleUrls: ['./add-invoice.component.css'],
+    standalone: false
 })
 export class AddInvoiceComponent implements OnInit {
 

@@ -14,9 +14,10 @@ import { BatchTimeStatisticsService } from '../../services/batch.time.statistics
 import { MonitoringSummaryComponent } from '../monitoring-summary/monitoring-summary.component';
 
 @Component({
-  selector: 'monitoring-details',
-  templateUrl: './monitoring-details.component.html',
-  styleUrls: ['./monitoring-details.component.css']
+    selector: 'monitoring-details',
+    templateUrl: './monitoring-details.component.html',
+    styleUrls: ['./monitoring-details.component.css'],
+    standalone: false
 })
 export class MonitoringDetailsComponent implements OnInit {
 

@@ -48,9 +48,10 @@ import { SelectMultiServiceTypeDialogComponent } from '../select-multi-service-t
 import { SiretDialogComponent } from '../siren-dialog/siren-dialog.component';
 
 @Component({
-  selector: 'provision',
-  templateUrl: './provision.component.html',
-  styleUrls: ['./provision.component.css']
+    selector: 'provision',
+    templateUrl: './provision.component.html',
+    styleUrls: ['./provision.component.css'],
+    standalone: false
 })
 export class ProvisionComponent implements OnInit, AfterContentChecked {
 

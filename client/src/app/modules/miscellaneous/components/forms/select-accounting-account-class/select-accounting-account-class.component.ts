@@ -6,9 +6,10 @@ import { GenericSelectComponent } from '../generic-select/generic-select.compone
 import { AppService } from 'src/app/services/app.service';
 
 @Component({
-  selector: 'select-accounting-account-class',
-  templateUrl: './select-accounting-account-class.component.html',
-  styleUrls: ['./select-accounting-account-class.component.css']
+    selector: 'select-accounting-account-class',
+    templateUrl: './select-accounting-account-class.component.html',
+    styleUrls: ['./select-accounting-account-class.component.css'],
+    standalone: false
 })
 export class SelectAccountingAccountClassComponent extends GenericSelectComponent<AccountingAccountClass> implements OnInit {
 

@@ -30,9 +30,10 @@ import { KanbanComponent, PROVISION_AFFECTATION_KANBAN } from '../kanban/kanban.
 
 
 @Component({
-  selector: 'provision-affectation-kanban',
-  templateUrl: './provision-affectation-kanban.component.html',
-  styleUrls: ['./provision-affectation-kanban.component.css']
+    selector: 'provision-affectation-kanban',
+    templateUrl: './provision-affectation-kanban.component.html',
+    styleUrls: ['./provision-affectation-kanban.component.css'],
+    standalone: false
 })
 export class ProvisionAffectationKanbanComponent extends KanbanComponent<CustomerOrder, AffectationEmployee<CustomerOrder>> implements OnInit {
   @ViewChild('bottom') private bottom!: ElementRef;

@@ -12,9 +12,10 @@ import { BatchSettingsService } from '../../services/batch.settings.service';
 import { BatchStatisticsService } from '../../services/batch.statistics.settings.service';
 
 @Component({
-  selector: 'monitoring-summary',
-  templateUrl: './monitoring-summary.component.html',
-  styleUrls: ['./monitoring-summary.component.css']
+    selector: 'monitoring-summary',
+    templateUrl: './monitoring-summary.component.html',
+    styleUrls: ['./monitoring-summary.component.css'],
+    standalone: false
 })
 export class MonitoringSummaryComponent implements OnInit {
 

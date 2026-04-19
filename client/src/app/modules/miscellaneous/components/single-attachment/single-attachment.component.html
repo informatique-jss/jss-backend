@@ -1,16 +1,20 @@
-<div class="upload-div" *ngIf="entity && attachmentType">
-  <mat-chip-option color="accent"
-    [matTooltip]="(currentAttachment!=null?(currentAttachment!.uploadedFile.filename+' - '):'')+attachmentType.description">
-    {{attachmentType.label}}</mat-chip-option> : <span *ngIf="currentAttachment!=null">
-    <mat-icon color="accent" class="pointer" (click)="previewFile(currentAttachment!)" color="accent"
-      matTooltip="Prévisualiser le fichier">visibility
-    </mat-icon>
-    <mat-icon color="accent" class="pointer" (click)="downloadFile(currentAttachment!)" color="accent"
-      matTooltip="Télécharger le fichier">download
-    </mat-icon>
-  </span><span>
+@if (entity && attachmentType) {
+  <div class="upload-div">
+    <mat-chip-option color="accent"
+      [matTooltip]="(currentAttachment!=null?(currentAttachment!.uploadedFile.filename+' - '):'')+attachmentType.description">
+    {{attachmentType.label}}</mat-chip-option> : @if (currentAttachment!=null) {
+    <span>
+      <mat-icon color="accent" class="pointer" (click)="previewFile(currentAttachment!)" color="accent"
+        matTooltip="Prévisualiser le fichier">visibility
+      </mat-icon>
+      <mat-icon color="accent" class="pointer" (click)="downloadFile(currentAttachment!)" color="accent"
+        matTooltip="Télécharger le fichier">download
+      </mat-icon>
+    </span>
+    }<span>
     <mat-icon color="accent" class="pointer" (click)="uploadFile()" color="accent"
       matTooltip="Choisir un fichier">upload
     </mat-icon>
   </span>
 </div>
+}

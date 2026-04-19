@@ -7,9 +7,10 @@ import { AgeRange } from '../../../../tiers/model/AgeRange';
 import { GenericSelectComponent } from '../generic-select/generic-select.component';
 
 @Component({
-  selector: 'select-age-range',
-  templateUrl: '../generic-select/generic-select.component.html',
-  styleUrls: ['../generic-select/generic-select.component.css']
+    selector: 'select-age-range',
+    templateUrl: '../generic-select/generic-select.component.html',
+    styleUrls: ['../generic-select/generic-select.component.css'],
+    standalone: false
 })
 
 export class SelectAgeRangeComponent extends GenericSelectComponent<AgeRange> implements OnInit {

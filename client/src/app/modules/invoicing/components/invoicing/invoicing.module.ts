@@ -18,7 +18,6 @@ import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from "@angular/material/tabs";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { RouterModule, Routes } from "@angular/router";
-import { MatTableExporterModule } from "mat-table-exporter";
 import { EditRefundLabelDialogComponent } from "src/app/modules/miscellaneous/components/edit-refund-label-dialog/edit-refund-label-dialog.component";
 import { PaymentListComponent } from "src/app/modules/quotation/components/payment-list/payment-list.component";
 import { QuotationModule } from "src/app/modules/quotation/components/quotation/quotation.module";
@@ -81,7 +80,6 @@ const routes: Routes = [
     MatBadgeModule,
     MatTableModule,
     DragDropModule,
-    MatTableExporterModule,
   ],
   declarations: [InvoiceComponent,
     InvoiceDetailsComponent,

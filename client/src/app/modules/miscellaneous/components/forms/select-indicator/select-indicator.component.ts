@@ -9,9 +9,10 @@ import { AppService } from 'src/app/services/app.service';
 import { GenericSelectComponent } from '../generic-select/generic-select.component';
 
 @Component({
-  selector: 'select-indicator',
-  templateUrl: './select-indicator.component.html',
-  styleUrls: ['./select-indicator.component.css']
+    selector: 'select-indicator',
+    templateUrl: './select-indicator.component.html',
+    styleUrls: ['./select-indicator.component.css'],
+    standalone: false
 })
 export class SelectIndicatorComponent extends GenericSelectComponent<Indicator> implements OnInit {
 

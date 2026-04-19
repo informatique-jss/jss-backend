@@ -8,9 +8,10 @@ import { AppService } from 'src/app/services/app.service';
 import { AddAffaireDialogComponent } from '../add-affaire-dialog/add-affaire-dialog.component';
 
 @Component({
-  selector: 'transfer-responsable-dialog',
-  templateUrl: './transfer-responsable-dialog.component.html',
-  styleUrls: ['./transfer-responsable-dialog.component.css']
+    selector: 'transfer-responsable-dialog',
+    templateUrl: './transfer-responsable-dialog.component.html',
+    styleUrls: ['./transfer-responsable-dialog.component.css'],
+    standalone: false
 })
 export class TransferResponsableDialogComponent {
 

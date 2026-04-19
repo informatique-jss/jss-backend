@@ -10,9 +10,10 @@ import { AppService } from 'src/app/services/app.service';
 import { PhoneSearch } from '../../model/PhoneSearch';
 
 @Component({
-  selector: 'seach-phone',
-  templateUrl: './search-phone.component.html',
-  styleUrls: ['./search-phone.component.css']
+    selector: 'seach-phone',
+    templateUrl: './search-phone.component.html',
+    styleUrls: ['./search-phone.component.css'],
+    standalone: false
 })
 export class SearchPhoneComponent {
   number: string = '';

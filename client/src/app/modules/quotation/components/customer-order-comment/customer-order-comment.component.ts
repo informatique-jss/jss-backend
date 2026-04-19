@@ -17,9 +17,10 @@ import { CustomerOrderCommentService } from '../../services/customer.order.comme
 import { ServiceService } from '../../services/service.service';
 
 @Component({
-  selector: 'customer-order-comment',
-  templateUrl: './customer-order-comment.component.html',
-  styleUrls: ['./customer-order-comment.component.css']
+    selector: 'customer-order-comment',
+    templateUrl: './customer-order-comment.component.html',
+    styleUrls: ['./customer-order-comment.component.css'],
+    standalone: false
 })
 export class CustomerOrderCommentComponent implements OnInit {
   @Input() provision: Provision | undefined;

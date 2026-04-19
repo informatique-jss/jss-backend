@@ -2,10 +2,14 @@
   <mat-label>{{label}}</mat-label>
   <textarea (keyup)="onInputChange()" (keydown)="onInputChange()" (paste)="onInputChange()" [rows]="numberOfLines"
     matInput [formControlName]="propertyName" [placeholder]="label" [maxlength]="maxLength+''"
-    [minlength]="minLength+''"></textarea>
-  <mat-icon color="accent" matSuffix (click)="clearField()" *ngIf="!isDisabled && model!=undefined" class="pointer">
-    close
-  </mat-icon>
-  <mat-hint *ngIf="hint && hint.length>0">
+  [minlength]="minLength+''"></textarea>
+  @if (!isDisabled && model!=undefined) {
+    <mat-icon color="accent" matSuffix (click)="clearField()" class="pointer">
+      close
+    </mat-icon>
+  }
+  @if (hint && hint.length>0) {
+    <mat-hint>
     {{hint}}</mat-hint>
+  }
 </mat-form-field>

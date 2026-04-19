@@ -24,7 +24,9 @@
 
   <ngx-simplebar id="sidenav" class="scrollbar">
     <!-- User -->
-    <app-user-profile *ngIf="layout.sidenavUser" />
+    @if (layout.sidenavUser) {
+      <app-user-profile />
+    }
 
     <!--- Sidenav Menu -->
     <app-menu />

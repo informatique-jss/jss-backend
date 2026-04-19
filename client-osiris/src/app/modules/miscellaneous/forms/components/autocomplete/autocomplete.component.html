@@ -6,7 +6,7 @@
     (selected)='optionSelected($event)' (inputChanged)='onChangeSearch($event)' [itemTemplate]="itemTemplate"
     [notFoundTemplate]="notFoundTemplate" [minQueryLength]="expectedMinLengthInput" [debounceTime]="debounceTime"
     (scrolledToEnd)="fetchNextPage()" #autoComp [historyIdentifier]="fieldName" historyHeading="Choix récents"
-    [isLoading]="isLoading" (inputCleared)="optionSelected(undefined)"></ng-autocomplete>
+  [isLoading]="isLoading" (inputCleared)="optionSelected(undefined)"></ng-autocomplete>
 
   <ng-template #itemTemplate let-item>
     <a [innerHTML]="displayLabel(item)"></a>
@@ -15,5 +15,7 @@
     <div innerHTML="Aucun résultat trouvé"></div>
   </ng-template>
 
-  <div class="invalid-feedback" *ngFor="let error of errors">{{error}}</div>
+  @for (error of errors; track error) {
+    <div class="invalid-feedback">{{error}}</div>
+  }
 </div>

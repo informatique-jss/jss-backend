@@ -7,9 +7,10 @@ import { CompanySizeService } from 'src/app/modules/tiers/services/company.size.
 import { GenericReferentialComponent } from '../generic-referential/generic-referential-component';
 
 @Component({
-  selector: 'referential-company-size',
-  templateUrl: './../generic-referential/generic-referential.component.html',
-  styleUrls: ['./../generic-referential/generic-referential.component.css']
+    selector: 'referential-company-size',
+    templateUrl: './../generic-referential/generic-referential.component.html',
+    styleUrls: ['./../generic-referential/generic-referential.component.css'],
+    standalone: false
 })
 export class ReferentialCompanySizeComponent extends GenericReferentialComponent<CompanySize> implements OnInit {
   constructor(private companySizeService: CompanySizeService,

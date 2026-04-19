@@ -7,14 +7,16 @@
           <td>
             <chips-employee label="Sélectionner les membres de l'équipe à visualiser" [(model)]="employeesSelected"
               [form]="provisionBoardForm" [isMandatory]="true" [isDisabled]="false"
-              (modelChange)="refreshData()"></chips-employee>
+            (modelChange)="refreshData()"></chips-employee>
           </td>
         </tr>
       </table>
     </form>
-    <sort-table *ngIf="provisionBoardResultsAggregatedWithTotal" [columns]="displayedColumns" [actions]="tableActions"
-      [noMaxHeight]="true" [noPaddingBottom]="true" [values]="provisionBoardResultsAggregatedWithTotal"
-      tableName="Dashboard provision">
-    </sort-table>
+    @if (provisionBoardResultsAggregatedWithTotal) {
+      <sort-table [columns]="displayedColumns" [actions]="tableActions"
+        [noMaxHeight]="true" [noPaddingBottom]="true" [values]="provisionBoardResultsAggregatedWithTotal"
+        tableName="Dashboard provision">
+      </sort-table>
+    }
   </div>
 </div>

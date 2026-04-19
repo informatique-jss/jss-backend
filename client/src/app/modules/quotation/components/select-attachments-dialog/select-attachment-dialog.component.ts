@@ -12,9 +12,10 @@ import { Provision } from '../../model/Provision';
 import { AddAffaireDialogComponent } from '../add-affaire-dialog/add-affaire-dialog.component';
 
 @Component({
-  selector: 'app-select-attachment-type-dialog',
-  templateUrl: './select-attachment-dialog.component.html',
-  styleUrls: ['./select-attachment-dialog.component.css']
+    selector: 'app-select-attachment-type-dialog',
+    templateUrl: './select-attachment-dialog.component.html',
+    styleUrls: ['./select-attachment-dialog.component.css'],
+    standalone: false
 })
 export class SelectAttachmentsDialogComponent implements OnInit {
 

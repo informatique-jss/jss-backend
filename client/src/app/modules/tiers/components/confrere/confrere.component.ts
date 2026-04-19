@@ -24,10 +24,11 @@ import { Responsable } from '../../model/Responsable';
 import { ResponsableService } from '../../services/responsable.service';
 
 @Component({
-  selector: 'confrere',
-  templateUrl: './confrere.component.html',
-  styleUrls: ['./confrere.component.css'],
-  encapsulation: ViewEncapsulation.None,
+    selector: 'confrere',
+    templateUrl: './confrere.component.html',
+    styleUrls: ['./confrere.component.css'],
+    encapsulation: ViewEncapsulation.None,
+    standalone: false
 })
 export class ConfrereComponent implements OnInit {
   constructor(private confrereService: ConfrereService,

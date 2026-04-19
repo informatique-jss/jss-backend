@@ -8,9 +8,10 @@ import { CustomerOrderService } from '../../services/customer.order.service';
 import { AddAffaireDialogComponent } from '../add-affaire-dialog/add-affaire-dialog.component';
 
 @Component({
-  selector: 'print-label-dialog',
-  templateUrl: './print-label-dialog.component.html',
-  styleUrls: ['./print-label-dialog.component.css']
+    selector: 'print-label-dialog',
+    templateUrl: './print-label-dialog.component.html',
+    styleUrls: ['./print-label-dialog.component.css'],
+    standalone: false
 })
 export class PrintLabelDialogComponent implements OnInit {
 

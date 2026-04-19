@@ -4,24 +4,34 @@
       <tr>
         <td>
           <autocomplete-affaire [(model)]="selectedAffaire" [form]="affaireForm" propertyName="affaire"
-            label="Récupérer une affaire existante" (onOptionSelected)="fillAffaire($event)"></autocomplete-affaire>
+          label="Récupérer une affaire existante" (onOptionSelected)="fillAffaire($event)"></autocomplete-affaire>
         </td>
       </tr>
     </table>
-    <add-affaire *ngIf="selectedAffaire" [affaire]="selectedAffaire" [editMode]="true"></add-affaire>
+    @if (selectedAffaire) {
+      <add-affaire [affaire]="selectedAffaire" [editMode]="true"></add-affaire>
+    }
   </mat-tab>
-  <mat-tab label="Créer une affaire" *ngIf="!selectedAffaire">
-    <form [formGroup]="affaireForm" *ngIf="affaire">
-      <div class="full-width">
-        <add-affaire [isLabelAffaire]="isLabelAffaire" [(affaire)]="affaire" [editMode]="true"></add-affaire>
-      </div>
-    </form>
-  </mat-tab>
+  @if (!selectedAffaire) {
+    <mat-tab label="Créer une affaire">
+      @if (affaire) {
+        <form [formGroup]="affaireForm">
+          <div class="full-width">
+            <add-affaire [isLabelAffaire]="isLabelAffaire" [(affaire)]="affaire" [editMode]="true"></add-affaire>
+          </div>
+        </form>
+      }
+    </mat-tab>
+  }
 </mat-tab-group>
 <div mat-dialog-actions align="end">
-  <button mat-raised-button *ngIf="selectedAffaire==null" color="accent" (click)="saveAffaire()">Créer
+  @if (selectedAffaire==null) {
+    <button mat-raised-button color="accent" (click)="saveAffaire()">Créer
     l'affaire</button>
-  <button mat-raised-button *ngIf="selectedAffaire!=null" color="accent" (click)="saveAffaire()">Choisir
+  }
+  @if (selectedAffaire!=null) {
+    <button mat-raised-button color="accent" (click)="saveAffaire()">Choisir
     l'affaire</button>
+  }
   <button mat-raised-button color="warn" (click)="closeDialog()">Annuler</button>
 </div>

@@ -8,9 +8,10 @@ import { JoNotice } from '../../model/JoNotice';
 import { JoNoticeService } from '../../services/jo-notice.service';
 
 @Component({
-  selector: 'jo-list',
-  templateUrl: './jo-list.component.html',
-  styleUrls: ['./jo-list.component.css']
+    selector: 'jo-list',
+    templateUrl: './jo-list.component.html',
+    styleUrls: ['./jo-list.component.css'],
+    standalone: false
 })
 export class JoListComponent implements OnInit {
   jos: JoNotice[] | undefined;

@@ -5,23 +5,31 @@
       <li class="breadcrumb-item"><a routerLink="/">Accueil</a></li>
       <li class="breadcrumb-item"><a>Nos services</a></li>
       <li class="breadcrumb-item">
-        <span *ngIf="selectedTab">{{ selectedTab.label }}</span>
+        @if (selectedTab) {
+          <span>{{ selectedTab.label }}</span>
+        }
       </li>
     </ol>
   </nav>
 
   <!-- Nav tabs -->
   <ul class="nav nav-tabs" role="tablist">
-    <li class="nav-item" *ngFor="let item of myJssServicesItems;">
-      <span class="nav-link active" *ngIf="item === selectedTab">
-        <i class="fi-home me-2"></i>
-        {{ item.label }}
-      </span>
-      <a class="nav-link" *ngIf="item !== selectedTab" [routerLink]="item.route">
-        <i class="fi-home me-2"></i>
-        {{ item.label }}
-      </a>
-    </li>
+    @for (item of myJssServicesItems; track item) {
+      <li class="nav-item">
+        @if (item === selectedTab) {
+          <span class="nav-link active">
+            <i class="fi-home me-2"></i>
+            {{ item.label }}
+          </span>
+        }
+        @if (item !== selectedTab) {
+          <a class="nav-link" [routerLink]="item.route">
+            <i class="fi-home me-2"></i>
+            {{ item.label }}
+          </a>
+        }
+      </li>
+    }
   </ul>
 </section>
 

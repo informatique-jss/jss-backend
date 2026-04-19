@@ -9,9 +9,10 @@ import { SpecialOfferService } from 'src/app/modules/miscellaneous/services/spec
 import { AppService } from 'src/app/services/app.service';
 
 @Component({
-  selector: 'referential-special-offer',
-  templateUrl: 'referential-special-offer.component.html',
-  styleUrls: ['referential-special-offer.component.css']
+    selector: 'referential-special-offer',
+    templateUrl: 'referential-special-offer.component.html',
+    styleUrls: ['referential-special-offer.component.css'],
+    standalone: false
 })
 export class ReferentialSpecialOfferComponent implements OnInit {
 

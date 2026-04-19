@@ -9,9 +9,10 @@ import { GenericChipsComponent } from '../generic-chips/generic-chips.component'
 import { AppService } from 'src/app/services/app.service';
 
 @Component({
-  selector: 'chips-attachment-type',
-  templateUrl: './chips-attachment-type.component.html',
-  styleUrls: ['./chips-attachment-type.component.css']
+    selector: 'chips-attachment-type',
+    templateUrl: './chips-attachment-type.component.html',
+    styleUrls: ['./chips-attachment-type.component.css'],
+    standalone: false
 })
 export class ChipsAttachmentTypeComponent extends GenericChipsComponent<AttachmentType> implements OnInit {
 

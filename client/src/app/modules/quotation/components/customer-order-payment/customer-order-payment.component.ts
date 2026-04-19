@@ -16,9 +16,10 @@ import { ConstantService } from '../../../miscellaneous/services/constant.servic
 import { CustomerOrder } from "../../model/CustomerOrder";
 
 @Component({
-  selector: 'customer-order-payment',
-  templateUrl: './customer-order-payment.component.html',
-  styleUrls: ['./customer-order-payment.component.css']
+    selector: 'customer-order-payment',
+    templateUrl: './customer-order-payment.component.html',
+    styleUrls: ['./customer-order-payment.component.css'],
+    standalone: false
 })
 export class CustomerOrderPaymentComponent implements OnInit {
 

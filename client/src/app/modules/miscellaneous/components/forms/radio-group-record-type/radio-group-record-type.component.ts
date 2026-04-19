@@ -6,9 +6,10 @@ import { GenericRadioGroupComponent } from '../generic-radio-group/generic-radio
 import { AppService } from 'src/app/services/app.service';
 
 @Component({
-  selector: 'radio-group-record-type',
-  templateUrl: '../generic-radio-group/generic-radio-group-code.component.html',
-  styleUrls: ['../generic-radio-group/generic-radio-group.component.css']
+    selector: 'radio-group-record-type',
+    templateUrl: '../generic-radio-group/generic-radio-group-code.component.html',
+    styleUrls: ['../generic-radio-group/generic-radio-group.component.css'],
+    standalone: false
 })
 export class RadioGroupRecordTypeComponent extends GenericRadioGroupComponent<RecordType> implements OnInit {
   types: RecordType[] = [] as Array<RecordType>;

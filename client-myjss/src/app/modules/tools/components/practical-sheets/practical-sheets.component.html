@@ -18,35 +18,46 @@
   </div>
 </section>
 
-<div *ngIf="isServer">
+@if (isServer) {
+<div>
   <div class="seo-fallback" aria-hidden="true">
-    <ul *ngFor="let post of tendencyPosts">
+    @for (post of tendencyPosts; track post) {
+    <ul>
       <li>
         <a [routerLink]="'/post/' + post.slug">{{ post.titleText }}</a>
       </li>
     </ul>
+    }
   </div>
   <div class="seo-fallback" aria-hidden="true">
-    <ul *ngFor="let post of topPosts">
+    @for (post of topPosts; track post) {
+    <ul>
       <li>
         <a [routerLink]="'/post/' + post.slug">{{ post.titleText }}</a>
       </li>
     </ul>
+    }
   </div>
   <div class="seo-fallback" aria-hidden="true">
-    <ul *ngFor="let post of mostSeenPosts">
+    @for (post of mostSeenPosts; track post) {
+    <ul>
       <li>
         <a [routerLink]="'/post/' + post.slug">{{ post.titleText }}</a>
       </li>
     </ul>
+    }
   </div>
 </div>
+}
 
-<div *ngIf="!isServer">
+@if (!isServer) {
+<div>
   <section class="background-opacity">
     <div class="container overflow-hidden">
-      <div *ngIf="!tendencyPosts || tendencyPosts.length == 0" class="row">
-        <div class="card col m-3" aria-hidden="true" *ngFor="let _ of [].constructor(3)">
+      @if (!tendencyPosts || tendencyPosts.length == 0) {
+      <div class="row">
+        @for (_ of [].constructor(3); track _) {
+        <div class="card col m-3" aria-hidden="true">
           <div class="position-relative placeholder-wave">
             <div class="card-img-top placeholder ratio ratio-16x9"></div>
             <i class="ai-image position-absolute top-50 start-50 translate-middle fs-1 opacity-50"></i>
@@ -66,23 +77,28 @@
             <p tabindex="-1" class="btn btn-primary disabled placeholder col-6 placeholder-wave"></p>
           </div>
         </div>
+        }
       </div>
-
+      }
       <!-- hiden post url to improve seo - do not use css 'display: none', less performance for seo google -->
-
-      <generic-swiper *ngIf="tendencyPosts && tendencyPosts.length>0" [items]="tendencyPosts" title="Articles à la une">
+      @if (tendencyPosts && tendencyPosts.length>0) {
+      <generic-swiper [items]="tendencyPosts" title="Articles à la une">
         <ng-template let-post>
           <div class="h-100">
             <div class="card border-0 bg-tertiary">
-              <img class="card-img-top" *ngIf="post.media" [routerLink]="'/post/'+post.slug"
+              @if (post.media) {
+              <img class="card-img-top" [routerLink]="'/post/'+post.slug"
                 [src]="post.media && post.media.urlMediumLarge ? post.media.urlMediumLarge : post.media.urlFull"
                 alt="Post image">
+              }
               <div class="card-body pb-4">
                 <div class="d-flex align-items-center mb-4 mt-n1">
                   <span class="fs-sm text-body-secondary">{{post.date | date:'dd/MM/yyyy'}}</span>
                   <span class="fs-xs opacity-20 mx-3">|</span>
-                  <a class="badge text-nav fs-xs border" *ngIf="post.postTags[0]"
+                  @if (post.postTags[0]) {
+                  <a class="badge text-nav fs-xs border"
                     (click)="openTagSearch(post.postTags[0].slug, $event)">{{post.postTags[0].name}}</a>
+                  }
                 </div>
                 <h3 class="h4 card-title card-title-truncate">
                   <a [routerLink]="'/post/'+post.slug">{{post.titleText}}</a>
@@ -101,12 +117,14 @@
           </div>
         </ng-template>
       </generic-swiper>
+      }
     </div>
   </section>
-
   <section class="container overflow-hidden">
-    <div *ngIf="!topPosts || topPosts.length==0" class="row">
-      <div class="card col m-3" aria-hidden="true" *ngFor="let _ of [].constructor(3)">
+    @if (!topPosts || topPosts.length==0) {
+    <div class="row">
+      @for (_ of [].constructor(3); track _) {
+      <div class="card col m-3" aria-hidden="true">
         <div class="position-relative placeholder-wave">
           <div class="card-img-top placeholder ratio ratio-16x9"></div>
           <i class="ai-image position-absolute top-50 start-50 translate-middle fs-1 opacity-50"></i>
@@ -126,19 +144,26 @@
           <p tabindex="-1" class="btn btn-primary disabled placeholder col-6 placeholder-wave"></p>
         </div>
       </div>
+      }
     </div>
-    <generic-swiper *ngIf="topPosts && topPosts.length>0" [items]="topPosts" title="Nos derniers articles">
+    }
+    @if (topPosts && topPosts.length>0) {
+    <generic-swiper [items]="topPosts" title="Nos derniers articles">
       <ng-template let-post>
         <div class="h-100">
           <div class="card border-0 bg-tertiary">
-            <img class="card-img-top" *ngIf="post.media " [routerLink]="'/post/'+post.slug"
+            @if (post.media ) {
+            <img class="card-img-top" [routerLink]="'/post/'+post.slug"
               [src]="post.media && post.media.urlLarge ? post.media.urlLarge : post.media.urlFull" alt="Post image">
+            }
             <div class="card-body pb-4">
               <div class="d-flex align-items-center mb-4 mt-n1">
                 <span class="fs-sm text-body-secondary">{{post.date | date:'dd/MM/yyyy'}}</span>
                 <span class="fs-xs opacity-20 mx-3">|</span>
-                <a class="badge text-nav fs-xs border" *ngIf="post.postTags[0]"
+                @if (post.postTags[0]) {
+                <a class="badge text-nav fs-xs border"
                   (click)="openTagSearch(post.postTags[0].slug, $event)">{{post.postTags[0].name}}</a>
+                }
               </div>
               <h3 class="h4 card-title card-title-truncate">
                 <a [routerLink]="'/post/'+post.slug">{{post.titleText}}</a>
@@ -157,12 +182,14 @@
         </div>
       </ng-template>
     </generic-swiper>
+    }
   </section>
-
   <section class="background-opacity">
     <div class="container overflow-hidden ">
-      <div *ngIf="!mostSeenPosts || mostSeenPosts.length==0" class="row">
-        <div class="card col m-3" aria-hidden="true" *ngFor="let _ of [].constructor(3)">
+      @if (!mostSeenPosts || mostSeenPosts.length==0) {
+      <div class="row">
+        @for (_ of [].constructor(3); track _) {
+        <div class="card col m-3" aria-hidden="true">
           <div class="position-relative placeholder-wave">
             <div class="card-img-top placeholder ratio ratio-16x9"></div>
             <i class="ai-image position-absolute top-50 start-50 translate-middle fs-1 opacity-50"></i>
@@ -182,21 +209,26 @@
             <p tabindex="-1" class="btn btn-primary disabled placeholder col-6 placeholder-wave"></p>
           </div>
         </div>
+        }
       </div>
-
-      <generic-swiper *ngIf="mostSeenPosts && mostSeenPosts.length>0" [items]="mostSeenPosts"
-        title="Articles les plus vus">
+      }
+      @if (mostSeenPosts && mostSeenPosts.length>0) {
+      <generic-swiper [items]="mostSeenPosts" title="Articles les plus vus">
         <ng-template let-post>
           <div class="h-100">
             <div class="card border-0 bg-tertiary">
-              <img class="card-img-top" *ngIf="post.media" [routerLink]="'/post/'+post.slug"
+              @if (post.media) {
+              <img class="card-img-top" [routerLink]="'/post/'+post.slug"
                 [src]="post.media && post.media.urlLarge ? post.media.urlLarge : post.media.urlFull" alt="Post image">
+              }
               <div class="card-body pb-4">
                 <div class="d-flex align-items-center mb-4 mt-n1">
                   <span class="fs-sm text-body-secondary">{{post.date | date:'dd/MM/yyyy'}}</span>
                   <span class="fs-xs opacity-20 mx-3">|</span>
-                  <a class="badge text-nav fs-xs border" *ngIf="post.postTags[0]"
+                  @if (post.postTags[0]) {
+                  <a class="badge text-nav fs-xs border"
                     (click)="openTagSearch(post.postTags[0].slug, $event)">{{post.postTags[0].name}}</a>
+                  }
                 </div>
                 <h3 class="h4 card-title">
                   <a [routerLink]="'/post/'+post.slug">{{post.titleText}}</a>
@@ -215,9 +247,11 @@
           </div>
         </ng-template>
       </generic-swiper>
+      }
     </div>
   </section>
 </div>
+}
 
 <!-- Second search -->
 <section class="container py-5">
@@ -235,13 +269,17 @@
               [isDisplayLabel]="false" (onFormChange)="searchForSecondPosts()" [icon]="'search'"
               class="btn-search col"></generic-input>
 
-            <div *ngIf="isLoading2" class="col-1 d-flex spinner-border rounded-circle text-dark me-2" role="status">
+            @if (isLoading2) {
+            <div class="col-1 d-flex spinner-border rounded-circle text-dark me-2" role="status">
               <span class="visually-hidden">chargement...</span>
             </div>
+            }
 
-            <button *ngIf="secondSearchText" class="col-1 btn btn-link btn-search" (click)="clearSecondSearch()">
+            @if (secondSearchText) {
+            <button class="col-1 btn btn-link btn-search" (click)="clearSecondSearch()">
               <i class="ai ai-cross-alt"></i>
             </button>
+            }
           </div>
         </div>
         <div class="col-3 justify-content-end">
@@ -254,91 +292,91 @@
     </div>
   </div>
 
-  <ng-container *ngIf="!isServer && !secondSearchText">
-    <ng-container *ngFor="let myJssCategory of myJssCategories;">
-      <div class="accordion-item border-top mb-0"
-        *ngIf="!myJssCategory.id || (myJssCategory.id>=0 && !postsByMyJssCategory[myJssCategory.id]==undefined)">
-        <div class="accordion-header">
-          <p class="card-text placeholder-glow">
-            <span class="placeholder placeholder-sm col-7 me-2"></span>
-            <span class="placeholder placeholder-sm col-4"></span>
-            <span class="placeholder placeholder-sm col-4 me-2"></span>
-            <span class="placeholder placeholder-sm col-6"></span>
-            <span class="placeholder placeholder-sm col-8"></span>
-          </p>
+  @if (!isServer && !secondSearchText) {
+  @for (myJssCategory of myJssCategories; track myJssCategory) {
+  @if (!myJssCategory.id || (myJssCategory.id>=0 && !postsByMyJssCategory[myJssCategory.id]==undefined)) {
+  <div class="accordion-item border-top mb-0">
+    <div class="accordion-header">
+      <p class="card-text placeholder-glow">
+        <span class="placeholder placeholder-sm col-7 me-2"></span>
+        <span class="placeholder placeholder-sm col-4"></span>
+        <span class="placeholder placeholder-sm col-4 me-2"></span>
+        <span class="placeholder placeholder-sm col-6"></span>
+        <span class="placeholder placeholder-sm col-8"></span>
+      </p>
+    </div>
+  </div>
+  }
+  @if (myJssCategory.id && postsByMyJssCategory[myJssCategory.id] && !secondSearchText) {
+  <div class="card dark-blue-dropdown rounded-3 mt-3" [ngClass]="{ 'expanded-card':  isExpanded(myJssCategory.id) }">
+    <div class="card-header d-flex justify-content-between align-items-center p-0 pt-3">
+      <h5 class="card-title mb-0">{{ myJssCategory.name }}</h5>
+      <button type="button" class="btn btn-link rounded-circle custom-btn" (click)="toggleCard(myJssCategory)">
+        <span class="circle-icon">
+          <i [ngClass]=" isExpanded(myJssCategory.id) ? 'ai-chevron-up' : 'ai-chevron-down'" class="fs-4"></i>
+        </span>
+      </button>
+    </div>
+    <div class="drop-down-body">
+      <div class="row ps-4 pe-5 me-5">
+        @for (post of (isExpanded(myJssCategory.id) ? postsByMyJssCategory[myJssCategory.id] :
+        postsByMyJssCategory[myJssCategory.id].slice(0,3)); track post) {
+        <div class="col-12 col-sm-6 col-md-4 g-2">
+          <li class="d-flex pb-2 mb-1">
+            <span class="bg-primary mt-2 checkbox-custom"></span>
+            <a class="text-decoration-none text-gray" [routerLink]="'/post/'+post.slug">{{post.titleText}}</a>
+          </li>
         </div>
+        }
       </div>
-      <ng-container *ngIf="myJssCategory.id && postsByMyJssCategory[myJssCategory.id] && !secondSearchText">
-        <div class="card dark-blue-dropdown rounded-3 mt-3"
-          [ngClass]="{ 'expanded-card':  isExpanded(myJssCategory.id) }">
-          <div class="card-header d-flex justify-content-between align-items-center p-0 pt-3">
-            <h5 class="card-title mb-0">{{ myJssCategory.name }}</h5>
-            <button type="button" class="btn btn-link rounded-circle custom-btn" (click)="toggleCard(myJssCategory)">
-              <span class="circle-icon">
-                <i [ngClass]=" isExpanded(myJssCategory.id) ? 'ai-chevron-up' : 'ai-chevron-down'" class="fs-4"></i>
-              </span>
-            </button>
-          </div>
-
-          <div class="drop-down-body">
-            <div class="row ps-4 pe-5 me-5">
-              <div class="col-12 col-sm-6 col-md-4 g-2"
-                *ngFor="let post of (isExpanded(myJssCategory.id)  ? postsByMyJssCategory[myJssCategory.id] :  postsByMyJssCategory[myJssCategory.id].slice(0,3))">
-                <li class="d-flex pb-2 mb-1">
-                  <span class="bg-primary mt-2 checkbox-custom"></span>
-                  <a class="text-decoration-none text-gray" [routerLink]="'/post/'+post.slug">{{post.titleText}}</a>
-                </li>
-              </div>
-            </div>
-          </div>
-        </div>
-      </ng-container>
-    </ng-container>
-  </ng-container>
+    </div>
+  </div>
+  }
+  }
+  }
 
   <!-- For SEO purpose only -->
-  <ng-container *ngIf="isServer">
-    <div class="row">
-      <div class="col-12" *ngFor="let post of allPostsForSeo">
-        <li>
-          <a [routerLink]="'/post/'+post.slug">{{post.titleText}}</a>
-        </li>
-      </div>
+  @if (isServer) {
+  <div class="row">
+    @for (post of allPostsForSeo; track post) {
+    <div class="col-12">
+      <li>
+        <a [routerLink]="'/post/'+post.slug">{{post.titleText}}</a>
+      </li>
     </div>
-    <div class="d-flex justify-content-center align-items-center gap-2 mt-4" *ngIf="totalPages > 1">
-      <!-- Prev -->
-      <a *ngIf="currentSeoPageNumber > 1" [href]="currentSeoPageNumber === 2 
+    }
+  </div>
+  <div class="d-flex justify-content-center align-items-center gap-2 mt-4" *ngIf="totalPages > 1">
+    <!-- Prev -->
+    <a *ngIf="currentSeoPageNumber > 1" [href]="currentSeoPageNumber === 2 
         ? '/tools/practical-sheets' 
         : '/tools/practical-sheets/page/' + (currentSeoPageNumber - 1)" class="btn btn-outline-secondary btn-sm">
-        ← Page précédente
+      ← Page précédente
+    </a>
+    <!-- Page 1 -->
+    <a href="/tools/practical-sheets" class="btn btn-sm"
+      [ngClass]="currentSeoPageNumber === 1 ? 'btn-primary fw-bold' : 'btn-outline-secondary'">
+      1
+    </a>
+    <!-- dynamic pages -->
+    <ng-container *ngFor="let page of getVisiblePages()">
+      <span *ngIf="page === -1" class="px-1">…</span>
+      <a *ngIf="page !== -1 && page !== 1 && page !== totalPages" [href]="'/tools/practical-sheets/page/' + page"
+        class="btn btn-sm" [ngClass]="currentSeoPageNumber === page ? 'btn-primary fw-bold' : 'btn-outline-secondary'">
+        {{ page }}
       </a>
-      <!-- Page 1 -->
-      <a href="/tools/practical-sheets" class="btn btn-sm"
-        [ngClass]="currentSeoPageNumber === 1 ? 'btn-primary fw-bold' : 'btn-outline-secondary'">
-        1
-      </a>
-      <!-- dynamic pages -->
-      <ng-container *ngFor="let page of getVisiblePages()">
-        <span *ngIf="page === -1" class="px-1">…</span>
-        <a *ngIf="page !== -1 && page !== 1 && page !== totalPages" [href]="'/tools/practical-sheets/page/' + page"
-          class="btn btn-sm"
-          [ngClass]="currentSeoPageNumber === page ? 'btn-primary fw-bold' : 'btn-outline-secondary'">
-          {{ page }}
-        </a>
-      </ng-container>
-      <!-- Last page -->
-      <a *ngIf="totalPages > 1" [href]="'/tools/practical-sheets/page/' + totalPages" class="btn btn-sm"
-        [ngClass]="currentSeoPageNumber === totalPages ? 'btn-primary fw-bold' : 'btn-outline-secondary'">
-        {{ totalPages }}
-      </a>
-      <!-- Next -->
-      <a *ngIf="currentSeoPageNumber < totalPages" [href]="'/tools/practical-sheets/page/' + (currentSeoPageNumber + 1)"
-        class="btn btn-outline-secondary btn-sm">
-        Page suivante →
-      </a>
-
-    </div>
-  </ng-container>
+    </ng-container>
+    <!-- Last page -->
+    <a *ngIf="totalPages > 1" [href]="'/tools/practical-sheets/page/' + totalPages" class="btn btn-sm"
+      [ngClass]="currentSeoPageNumber === totalPages ? 'btn-primary fw-bold' : 'btn-outline-secondary'">
+      {{ totalPages }}
+    </a>
+    <!-- Next -->
+    <a *ngIf="currentSeoPageNumber < totalPages" [href]="'/tools/practical-sheets/page/' + (currentSeoPageNumber + 1)"
+      class="btn btn-outline-secondary btn-sm">
+      Page suivante →
+    </a>
+  </div>
   <!-- End of SEO purpose only -->
 
   <ng-container *ngIf="secondSearchText && secondSelectedMyJssCategory.id == allMyJssCategories.id && !isServer">
@@ -354,54 +392,75 @@
               </span>
             </button>
           </div>
-
-          <div class="card-body">
-            <div class=" row">
-              <div class="col-12 col-sm-6 col-md-4 g-2"
-                *ngFor="let post of (isExpanded(myJssCategory.id)  ? secondSearchResults[myJssCategory.id] :  secondSearchResults[myJssCategory.id].slice(0,3))">
-                <li class="d-flex pb-2 mb-1">
-                  <span class="bg-primary mt-2 checkbox-custom"></span>
-                  <a class="text-decoration-none text-gray text-truncate-custom"
-                    [routerLink]="'/post/'+post.slug">{{post.titleText}}</a>
-                </li>
-              </div>
-            </div>
-          </div>
         </div>
       </ng-container>
     </ng-container>
   </ng-container>
+  }
 
-  <ng-container *ngIf="secondSearchText && secondSelectedMyJssCategory && !isServer">
-    <ng-container
-      *ngIf="secondSelectedMyJssCategory.id && secondSearchResults[secondSelectedMyJssCategory.id] && secondSearchResults[secondSelectedMyJssCategory.id].length>0">
-      <div class="card dark-blue-dropdown rounded-3 mt-3">
-        <div class="card-header d-flex justify-content-between align-items-center p-0  pt-3">
-          <h5 class="card-title mb-0">{{ secondSelectedMyJssCategory.name }}</h5>
-          <button type="button" class="btn btn-link rounded-circle custom-btn"
-            (click)="toggleCard(secondSelectedMyJssCategory)">
-            <span class="circle-icon">
-              <i [ngClass]=" isExpanded(secondSelectedMyJssCategory.id) ? 'ai-chevron-up' : 'ai-chevron-down'"
-                class="fs-4"></i>
-            </span>
-          </button>
+  @if (secondSearchText && secondSelectedMyJssCategory.id == allMyJssCategories.id && !isServer) {
+  @for (myJssCategory of myJssCategories; track myJssCategory) {
+  @if (myJssCategory.id && secondSearchResults[myJssCategory.id] && secondSearchResults[myJssCategory.id].length>0) {
+  <div class="card dark-blue-dropdown rounded-3 mt-3">
+    <div class="card-header d-flex justify-content-between align-items-center p-0  pt-3">
+      <h5 class="card-title mb-0">{{ myJssCategory.name }}</h5>
+      <button type="button" class="btn btn-link rounded-circle custom-btn" (click)="toggleCard(myJssCategory)">
+        <span class="circle-icon">
+          <i [ngClass]=" isExpanded(myJssCategory.id) ? 'ai-chevron-up' : 'ai-chevron-down'" class="fs-4"></i>
+        </span>
+      </button>
+    </div>
+    <div class="card-body">
+      <div class=" row">
+        @for (post of (isExpanded(myJssCategory.id) ? secondSearchResults[myJssCategory.id] :
+        secondSearchResults[myJssCategory.id].slice(0,3)); track post) {
+        <div class="col-12 col-sm-6 col-md-4 g-2">
+          <li class="d-flex pb-2 mb-1">
+            <span class="bg-primary mt-2 checkbox-custom"></span>
+            <a class="text-decoration-none text-gray text-truncate-custom"
+              [routerLink]="'/post/'+post.slug">{{post.titleText}}</a>
+          </li>
         </div>
-
-        <div class="card-body">
-          <div class=" row">
-            <div class="col-4"
-              *ngFor="let post of (isExpanded(secondSelectedMyJssCategory.id)  ? secondSearchResults[secondSelectedMyJssCategory.id] :  secondSearchResults[secondSelectedMyJssCategory.id].slice(0,3))">
-              <li class="d-flex pb-2 mb-1">
-                <span class="bg-primary mt-2 checkbox-custom"></span>
-                <a class="text-decoration-none text-gray text-truncate-custom"
-                  [routerLink]="'/post/'+post.slug">{{post.titleText}}</a>
-              </li>
-            </div>
-          </div>
-        </div>
+        }
       </div>
-    </ng-container>
-  </ng-container>
+    </div>
+  </div>
+  }
+  }
+  }
+
+  @if (secondSearchText && secondSelectedMyJssCategory && !isServer) {
+  @if (secondSelectedMyJssCategory.id && secondSearchResults[secondSelectedMyJssCategory.id] &&
+  secondSearchResults[secondSelectedMyJssCategory.id].length>0) {
+  <div class="card dark-blue-dropdown rounded-3 mt-3">
+    <div class="card-header d-flex justify-content-between align-items-center p-0  pt-3">
+      <h5 class="card-title mb-0">{{ secondSelectedMyJssCategory.name }}</h5>
+      <button type="button" class="btn btn-link rounded-circle custom-btn"
+        (click)="toggleCard(secondSelectedMyJssCategory)">
+        <span class="circle-icon">
+          <i [ngClass]=" isExpanded(secondSelectedMyJssCategory.id) ? 'ai-chevron-up' : 'ai-chevron-down'"
+            class="fs-4"></i>
+        </span>
+      </button>
+    </div>
+    <div class="card-body">
+      <div class=" row">
+        @for (post of (isExpanded(secondSelectedMyJssCategory.id) ?
+        secondSearchResults[secondSelectedMyJssCategory.id] :
+        secondSearchResults[secondSelectedMyJssCategory.id].slice(0,3)); track post) {
+        <div class="col-4">
+          <li class="d-flex pb-2 mb-1">
+            <span class="bg-primary mt-2 checkbox-custom"></span>
+            <a class="text-decoration-none text-gray text-truncate-custom"
+              [routerLink]="'/post/'+post.slug">{{post.titleText}}</a>
+          </li>
+        </div>
+        }
+      </div>
+    </div>
+  </div>
+  }
+  }
 </section>
 
 <div class="pb-5 mb-md-3 mb-lg-4 mb-xxl-5">

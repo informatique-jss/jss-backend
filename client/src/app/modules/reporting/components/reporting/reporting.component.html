@@ -2,8 +2,10 @@
   <div class=" full-width padding-top">
     <div id="output"></div>
   </div>
-  <div class="row-field-container" *ngIf="displayExportButton()">
-    <button mat-raised-button (click)="exportToExcel()" color="primary" class="mini-fab-add">Exporter
-    </button>
-  </div>
+  @if (displayExportButton()) {
+    <div class="row-field-container">
+      <button mat-raised-button (click)="exportToExcel()" color="primary" class="mini-fab-add">Exporter
+      </button>
+    </div>
+  }
 </div>

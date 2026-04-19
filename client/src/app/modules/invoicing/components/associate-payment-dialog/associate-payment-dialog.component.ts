@@ -30,9 +30,10 @@ import { AmountDialogComponent } from '../amount-dialog/amount-dialog.component'
 import { getCustomerOrderNameForTiers, getRemainingToPay } from '../invoice-tools';
 
 @Component({
-  selector: 'associate-payment-dialog',
-  templateUrl: './associate-payment-dialog.component.html',
-  styleUrls: ['./associate-payment-dialog.component.css']
+    selector: 'associate-payment-dialog',
+    templateUrl: './associate-payment-dialog.component.html',
+    styleUrls: ['./associate-payment-dialog.component.css'],
+    standalone: false
 })
 export class AssociatePaymentDialogComponent implements OnInit {
 

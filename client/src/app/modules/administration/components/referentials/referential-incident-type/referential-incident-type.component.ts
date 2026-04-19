@@ -7,9 +7,10 @@ import { IncidentTypeService } from 'src/app/modules/reporting/services/incident
 import { GenericReferentialComponent } from '../generic-referential/generic-referential-component';
 
 @Component({
-  selector: 'referential-incident-type',
-  templateUrl: './../generic-referential/generic-referential.component.html',
-  styleUrls: ['./../generic-referential/generic-referential.component.css']
+    selector: 'referential-incident-type',
+    templateUrl: './../generic-referential/generic-referential.component.html',
+    styleUrls: ['./../generic-referential/generic-referential.component.css'],
+    standalone: false
 })
 export class ReferentialIncidentTypeComponent extends GenericReferentialComponent<IncidentType> implements OnInit {
   constructor(private incidentTypeService: IncidentTypeService,

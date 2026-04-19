@@ -1,11 +1,11 @@
-<ng-container *ngIf="customerOrder">
-  <ng-container *ngFor="let asso of customerOrder.assoAffaireOrders">
+@if (customerOrder) {
+  @for (asso of customerOrder.assoAffaireOrders; track asso) {
     <div class="mat-accordion-container full-width">
       <p> {{asso.affaire.denomination?asso.affaire.denomination:(asso.affaire.firstname + ' '
         +asso.affaire.lastname)}} - {{asso.affaire.address}} - {{asso.affaire.postalCode}} -
-        {{asso.affaire.city.label}}</p>
+      {{asso.affaire.city.label}}</p>
     </div>
-    <ng-container *ngFor="let service of asso.services">
+    @for (service of asso.services; track service) {
       <div class="mat-accordion-container full-width">
         <mat-accordion multi>
           <mat-expansion-panel expanded="false" class="service-tab ">
@@ -18,8 +18,8 @@
       </div>
       <div class="mat-accordion-container">
         <sort-table [columns]="displayedColumns" [actions]="tableActions" [values]="queries[service.id]"
-          tableName="Demandes de PM" [isSmallerHeight]="true"></sort-table>
+        tableName="Demandes de PM" [isSmallerHeight]="true"></sort-table>
       </div>
-    </ng-container>
-  </ng-container>
-</ng-container>
+    }
+  }
+}

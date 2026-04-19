@@ -1,14 +1,20 @@
 <h1 mat-dialog-title>Choix du service</h1>
-<div mat-dialog-content *ngIf="assoAffaireOrder && assoAffaireOrder.services">
-  <p>Choisissez le service où déplacer les prestations restantes :</p>
-  <ul>
-    <ng-container *ngFor="let service of assoAffaireOrder.services">
-      <li class="pointer" *ngIf="!currentService || currentService.id !=service.id" (click)="selectService(service)">
-        {{service.serviceLabelToDisplay}}</li>
-    </ng-container>
-  </ul>
-</div>
+@if (assoAffaireOrder && assoAffaireOrder.services) {
+  <div mat-dialog-content>
+    <p>Choisissez le service où déplacer les prestations restantes :</p>
+    <ul>
+      @for (service of assoAffaireOrder.services; track service) {
+        @if (!currentService || currentService.id !=service.id) {
+          <li class="pointer" (click)="selectService(service)">
+          {{service.serviceLabelToDisplay}}</li>
+        }
+      }
+    </ul>
+  </div>
+}
 <div mat-dialog-actions align="end">
   <button mat-raised-button color="accent" (click)="closeDialog()">Annuler</button>
-  <button mat-raised-button color="warn" *ngIf="selectedService" (click)="validateService()">Valider</button>
+  @if (selectedService) {
+    <button mat-raised-button color="warn" (click)="validateService()">Valider</button>
+  }
 </div>

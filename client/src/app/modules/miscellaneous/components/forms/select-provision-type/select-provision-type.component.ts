@@ -8,9 +8,10 @@ import { ProvisionFamilyType } from '../../../../quotation/model/ProvisionFamily
 import { GenericSelectComponent } from '../generic-select/generic-select.component';
 
 @Component({
-  selector: 'select-provision-type',
-  templateUrl: './select-provision-type.component.html',
-  styleUrls: ['./select-provision-type.component.css']
+    selector: 'select-provision-type',
+    templateUrl: './select-provision-type.component.html',
+    styleUrls: ['./select-provision-type.component.css'],
+    standalone: false
 })
 export class SelectProvisionTypeComponent extends GenericSelectComponent<ProvisionType> implements OnInit {
 

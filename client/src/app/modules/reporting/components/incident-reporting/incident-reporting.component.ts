@@ -25,9 +25,10 @@ import { IncidentReportService } from '../../services/incident.report.service';
 import { IncidentReportStatusService } from '../../services/incident.report.status.service';
 
 @Component({
-  selector: 'incident-reporting',
-  templateUrl: './incident-reporting.component.html',
-  styleUrls: ['./incident-reporting.component.css']
+    selector: 'incident-reporting',
+    templateUrl: './incident-reporting.component.html',
+    styleUrls: ['./incident-reporting.component.css'],
+    standalone: false
 })
 export class IncidentReportingComponent extends KanbanComponent<IncidentReport, IncidentReportStatus> implements OnInit {
 

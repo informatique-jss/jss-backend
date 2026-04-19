@@ -6,9 +6,10 @@ import { Voucher } from '../../model/Voucher';
 import { VoucherService } from '../../services/voucher.service';
 
 @Component({
-  selector: 'new-voucher-dialog',
-  templateUrl: './new-voucher-dialog.component.html',
-  styleUrls: ['./new-voucher-dialog.component.css']
+    selector: 'new-voucher-dialog',
+    templateUrl: './new-voucher-dialog.component.html',
+    styleUrls: ['./new-voucher-dialog.component.css'],
+    standalone: false
 })
 export class NewVoucherDialogComponent implements OnInit {
   constructor(public dialogRef: MatDialogRef<NewVoucherDialogComponent>, private formBuilder: FormBuilder,

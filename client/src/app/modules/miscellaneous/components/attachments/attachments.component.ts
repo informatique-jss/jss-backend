@@ -13,9 +13,10 @@ import { UploadAttachmentService } from '../../services/upload.attachment.servic
 import { UploadAttachementDialogComponent } from '../upload-attachement-dialog/upload-attachement-dialog.component';
 
 @Component({
-  selector: 'attachments',
-  templateUrl: './attachments.component.html',
-  styleUrls: ['./attachments.component.css']
+    selector: 'attachments',
+    templateUrl: './attachments.component.html',
+    styleUrls: ['./attachments.component.css'],
+    standalone: false
 })
 export class AttachmentsComponent implements OnInit {
   @Input() entity: IAttachment = {} as IAttachment;

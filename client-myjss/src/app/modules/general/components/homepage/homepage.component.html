@@ -36,7 +36,7 @@
     <div class="text-center">
       <h2 class="h2 pb-3 mb-lg-4 text-white">Nos services</h2>
       <p>Nous proposons une large gamme de services juridiques, adaptés à vos besoins pour simplifier vos démarches
-        administratives.</p>
+      administratives.</p>
     </div>
     <div
       class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-3 pb-xl-2 pb-xxl-3 justify-content-center align-items-stretch">
@@ -78,7 +78,7 @@
               Légalisations
             </h3>
             <p class="mb-0">Authentification et certification rapides et conformes de vos documents valables à
-              l’international.</p>
+            l’international.</p>
           </div>
           <div class="card-footer border-0 pt-3 mb-3">
             <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle" routerLink="/services/apostille"
@@ -128,174 +128,180 @@
   firstStepText="Accédez à l’ensemble de vos devis, commandes et suivez leur état d’avancement en temps réel."
   secondStepText="Validez vos devis, complétez vos commandes, payez vos factures en ligne."
   thirdtepText="Récupérez facilement tous vos documents : attestations de parution, Kbis et factures en toute sécurité."
-  imageSrc="assets/img/parcourir_mon_compte_accueil.webp"></description-my-account>
+imageSrc="assets/img/parcourir_mon_compte_accueil.webp"></description-my-account>
 
 
 <section class="background-opacity mb-5">
   <div class="container overflow-hidden">
-    <generic-swiper *ngIf="tendencyPosts && tendencyPosts.length>0" [items]="tendencyPosts" title="Articles à la une">
-      <ng-template let-post>
-        <div class="h-100">
-          <div class="card border-0 bg-tertiary">
-            <a [routerLink]="'/post/'+post.slug">
-              <img class="card-img-top" *ngIf="post.media"
-                [src]="post.media && post.media.urlMediumLarge ? post.media.urlMediumLarge : post.media.urlFull"
-                alt="Post image">
-            </a>
-            <div class="card-body pb-4">
-              <div class="d-flex align-items-center mb-4 mt-n1">
-                <span class="fs-sm text-body-secondary">{{post.date | date:'yyyy-MM-dd'}}</span>
-                <span class="fs-xs opacity-20 mx-3">|</span>
-                <a class="badge text-nav fs-xs border" *ngIf="post.postTags[0]">{{post.postTags[0].name}}</a>
+    @if (tendencyPosts && tendencyPosts.length>0) {
+      <generic-swiper [items]="tendencyPosts" title="Articles à la une">
+        <ng-template let-post>
+          <div class="h-100">
+            <div class="card border-0 bg-tertiary">
+              <a [routerLink]="'/post/'+post.slug">
+                @if (post.media) {
+                  <img class="card-img-top"
+                    [src]="post.media && post.media.urlMediumLarge ? post.media.urlMediumLarge : post.media.urlFull"
+                    alt="Post image">
+                }
+              </a>
+              <div class="card-body pb-4">
+                <div class="d-flex align-items-center mb-4 mt-n1">
+                  <span class="fs-sm text-body-secondary">{{post.date | date:'yyyy-MM-dd'}}</span>
+                  <span class="fs-xs opacity-20 mx-3">|</span>
+                  @if (post.postTags[0]) {
+                    <a class="badge text-nav fs-xs border">{{post.postTags[0].name}}</a>
+                  }
+                </div>
+                <span class="h4 card-title card-title-truncate">
+                  <a [routerLink]="'/post/'+post.slug">{{post.titleText}}</a>
+                </span>
+                <p class="card-text card-text-truncate">{{getRawTextFromHtml(post.excerptText)}}</p>
               </div>
-              <span class="h4 card-title card-title-truncate">
-                <a [routerLink]="'/post/'+post.slug">{{post.titleText}}</a>
-              </span>
-              <p class="card-text card-text-truncate">{{getRawTextFromHtml(post.excerptText)}}</p>
+              <div class="card-footer pt-3">
+                <div class="d-flex align-items-center text-decoration-none pb-2">
+                  <img class="rounded-circle"
+                    [src]="post.fullAuthor.avatar_url_size_48 ? post.fullAuthor.avatar_url_size_48 : post.fullAuthor.avatar_url_size_24 ? post.fullAuthor.avatar_url_size_24 : post.fullAuthor.avatar_url_size_96 "
+                    width="48" alt="Post author">
+                    <span class="h6 ps-3 mb-0">{{post.fullAuthor.name}}</span>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div class="card-footer pt-3">
+          </ng-template>
+        </generic-swiper>
+      }
+    </div>
+  </section>
+
+
+  <section class="container py-5 my-5">
+    <div class="row text-center">
+      <h2 class="h2 mb-lg-4 text-white">Témoignages</h2>
+    </div>
+    <div class="row">
+      <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4">
+        <div class="col">
+          <div class="card dark-blue-dropdown h-100 border-0 rounded-5">
+            <div class="card-body">
               <div class="d-flex align-items-center text-decoration-none pb-2">
-                <img class="rounded-circle"
-                  [src]="post.fullAuthor.avatar_url_size_48 ? post.fullAuthor.avatar_url_size_48 : post.fullAuthor.avatar_url_size_24 ? post.fullAuthor.avatar_url_size_24 : post.fullAuthor.avatar_url_size_96 "
-                  width="48" alt="Post author">
-                <span class="h6 ps-3 mb-0">{{post.fullAuthor.name}}</span>
+                <img class="rounded-circle" src="assets/img/testimonial/Photo_LA.jpg" width="48" alt="testimonial">
+                <div class="row ps-3 pt-3">
+                  <span class="h6 mb-0">Luc Athlan</span>
+                  <p>Responsable droit des sociétés</p>
+                </div>
               </div>
+              <p class="mb-0">Je travaille depuis plusieurs années avec le JSS et je dois dire que j'ai toujours apprécié
+                le professionnalisme et la qualité du service qui les animent.
+                A titre d'exemple, lors de l'envoi d'une demande d'insertion vous recevez par retour de mail l'attestation
+                de parution dans un temps record. C'est assez précieux quand vous devez avancer rapidement sur un dossier
+                et que votre partenaire est dans la même lancée.
+                Il en est de même sur la partie formalités sur des dossiers souvent compliqués, nous arrivons à avoir
+                notre Kbis à jour rapidement.
+                On ne change pas une équipe qui gagne. Je recommande vivement.
+              </p>
             </div>
           </div>
         </div>
-      </ng-template>
-    </generic-swiper>
-  </div>
-</section>
-
-
-<section class="container py-5 my-5">
-  <div class="row text-center">
-    <h2 class="h2 mb-lg-4 text-white">Témoignages</h2>
-  </div>
-  <div class="row">
-    <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4">
-      <div class="col">
-        <div class="card dark-blue-dropdown h-100 border-0 rounded-5">
-          <div class="card-body">
-            <div class="d-flex align-items-center text-decoration-none pb-2">
-              <img class="rounded-circle" src="assets/img/testimonial/Photo_LA.jpg" width="48" alt="testimonial">
-              <div class="row ps-3 pt-3">
-                <span class="h6 mb-0">Luc Athlan</span>
-                <p>Responsable droit des sociétés</p>
+        <div class="col">
+          <div class="card dark-blue-dropdown h-100 border-0 rounded-5">
+            <div class="card-body">
+              <div class="d-flex align-items-center text-decoration-none pb-2">
+                <img class="rounded-circle" src="assets/img/testimonial/Photo_NB.jpg" width="48" alt="testimonial">
+                <div class="row ps-3 pt-3">
+                  <span class="h6 mb-0">Nathan Bonnet</span>
+                  <p>Juriste en entreprise</p>
+                </div>
               </div>
-            </div>
-            <p class="mb-0">Je travaille depuis plusieurs années avec le JSS et je dois dire que j'ai toujours apprécié
-              le professionnalisme et la qualité du service qui les animent.
-              A titre d'exemple, lors de l'envoi d'une demande d'insertion vous recevez par retour de mail l'attestation
-              de parution dans un temps record. C'est assez précieux quand vous devez avancer rapidement sur un dossier
-              et que votre partenaire est dans la même lancée.
-              Il en est de même sur la partie formalités sur des dossiers souvent compliqués, nous arrivons à avoir
-              notre Kbis à jour rapidement.
-              On ne change pas une équipe qui gagne. Je recommande vivement.
-            </p>
-          </div>
-        </div>
-      </div>
-      <div class="col">
-        <div class="card dark-blue-dropdown h-100 border-0 rounded-5">
-          <div class="card-body">
-            <div class="d-flex align-items-center text-decoration-none pb-2">
-              <img class="rounded-circle" src="assets/img/testimonial/Photo_NB.jpg" width="48" alt="testimonial">
-              <div class="row ps-3 pt-3">
-                <span class="h6 mb-0">Nathan Bonnet</span>
-                <p>Juriste en entreprise</p>
-              </div>
-            </div>
-            <p class="mb-0">Depuis 2021 maintenant, j'ai l’opportunité de coopérer avec l’équipe du JSS. Leur expertise
-              pratique dans le domaine des démarches légales : annonces légales, immatriculations & modifications RCS
-              est précieuse. Ils ont une connaissance approfondie des aspects techniques de ces procédures avant et
-              après instauration du Guichet unique, avec un gain de temps considérable. Les échanges sont plaisants,
+              <p class="mb-0">Depuis 2021 maintenant, j'ai l’opportunité de coopérer avec l’équipe du JSS. Leur expertise
+                pratique dans le domaine des démarches légales : annonces légales, immatriculations & modifications RCS
+                est précieuse. Ils ont une connaissance approfondie des aspects techniques de ces procédures avant et
+                après instauration du Guichet unique, avec un gain de temps considérable. Les échanges sont plaisants,
               l’équipe expérimentée, fiable et très réactive, y compris dans l'urgence.</p>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="col">
-        <div class="card dark-blue-dropdown h-100 border-0 rounded-5">
-          <div class="card-body">
-            <div class="d-flex align-items-center text-decoration-none pb-2">
-              <img class="rounded-circle" src="assets/img/testimonial/Photo_SG.jpg" width="48" alt="testimonial">
-              <div class="row ps-3 pt-3">
-                <span class="h6 mb-0">Sébastien Gomez</span>
-                <p>Expert-comptable</p>
+        <div class="col">
+          <div class="card dark-blue-dropdown h-100 border-0 rounded-5">
+            <div class="card-body">
+              <div class="d-flex align-items-center text-decoration-none pb-2">
+                <img class="rounded-circle" src="assets/img/testimonial/Photo_SG.jpg" width="48" alt="testimonial">
+                <div class="row ps-3 pt-3">
+                  <span class="h6 mb-0">Sébastien Gomez</span>
+                  <p>Expert-comptable</p>
+                </div>
               </div>
-            </div>
-            <p class="mb-0">Nous collaborons avec le JSS depuis plusieurs années et c’est toujours un réel plaisir. Leur
-              réactivité, leur professionnalisme, ainsi que leur disponibilité sont des atouts précieux, en particulier
-              sur des points techniques parfois complexes. À chaque fois que nous rencontrons une difficulté liée à une
-              formalité, ils savent nous apporter des solutions efficaces et rapides. Forts de cette expérience, nous
-              avons fait le choix de leur confier l’ensemble de nos formalités de publicité et d’immatriculation au RCS.
+              <p class="mb-0">Nous collaborons avec le JSS depuis plusieurs années et c’est toujours un réel plaisir. Leur
+                réactivité, leur professionnalisme, ainsi que leur disponibilité sont des atouts précieux, en particulier
+                sur des points techniques parfois complexes. À chaque fois que nous rencontrons une difficulté liée à une
+                formalité, ils savent nous apporter des solutions efficaces et rapides. Forts de cette expérience, nous
+                avons fait le choix de leur confier l’ensemble de nos formalités de publicité et d’immatriculation au RCS.
               Une collaboration de confiance que nous recommandons vivement. </p>
+            </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4 ">
-      <div class="col">
-        <div class="card dark-blue-dropdown h-100 border-0 rounded-5">
-          <div class="card-body">
-            <div class="d-flex align-items-center text-decoration-none pb-2">
-              <img class="rounded-circle" src="assets/img/testimonial/Photo_IK.jpg" width="48" alt="testimonial">
-              <div class="row ps-3 pt-3">
-                <span class="h6 mb-0">Isabelle de Kerviler</span>
-                <p>Expert-comptable</p>
+      <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4 ">
+        <div class="col">
+          <div class="card dark-blue-dropdown h-100 border-0 rounded-5">
+            <div class="card-body">
+              <div class="d-flex align-items-center text-decoration-none pb-2">
+                <img class="rounded-circle" src="assets/img/testimonial/Photo_IK.jpg" width="48" alt="testimonial">
+                <div class="row ps-3 pt-3">
+                  <span class="h6 mb-0">Isabelle de Kerviler</span>
+                  <p>Expert-comptable</p>
+                </div>
               </div>
-            </div>
-            <p class="mb-0">Je tiens à souligner la réactivité et le professionnalisme du JSS pour les réponses
-              apportées à nos dossiers. Ils m'ont rappelée dès le lendemain matin avec des réponses claires aux 2 points
-              que j’avais abordés. On peut donc parler de vive voix à un correspondant du service client en attendant
+              <p class="mb-0">Je tiens à souligner la réactivité et le professionnalisme du JSS pour les réponses
+                apportées à nos dossiers. Ils m'ont rappelée dès le lendemain matin avec des réponses claires aux 2 points
+                que j’avais abordés. On peut donc parler de vive voix à un correspondant du service client en attendant
               très peu de temps. Un grand bravo !</p>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div class="col">
-        <div class="card dark-blue-dropdown h-100 border-0 rounded-5">
-          <div class="card-body">
-            <div class="d-flex align-items-center text-decoration-none pb-2">
-              <img class="rounded-circle" src="assets/img/testimonial/Photo_PL.jpg" width="48" alt="testimonial">
-              <div class="row ps-3 pt-3">
-                <span class="h6 mb-0">Perrine Latour</span>
-                <p>Chef d'entreprise</p>
+        <div class="col">
+          <div class="card dark-blue-dropdown h-100 border-0 rounded-5">
+            <div class="card-body">
+              <div class="d-flex align-items-center text-decoration-none pb-2">
+                <img class="rounded-circle" src="assets/img/testimonial/Photo_PL.jpg" width="48" alt="testimonial">
+                <div class="row ps-3 pt-3">
+                  <span class="h6 mb-0">Perrine Latour</span>
+                  <p>Chef d'entreprise</p>
+                </div>
               </div>
+              <p class="mb-0">Un service de qualité, pédagogue, réactif et très à l'écoute. <br>
+                Merci !
+              </p>
             </div>
-            <p class="mb-0">Un service de qualité, pédagogue, réactif et très à l'écoute. <br>
-              Merci !
-            </p>
           </div>
         </div>
-      </div>
-      <div class="col">
-        <div class="card dark-blue-dropdown h-100 border-0 rounded-5">
-          <div class="card-body">
-            <div class="d-flex align-items-center text-decoration-none pb-2">
-              <img class="rounded-circle" src="assets/img/testimonial/Photo_SR.jpg" width="48" alt="testimonial">
-              <div class="row ps-3 pt-3">
-                <span class="h6 mb-0">Stanislas Roquebert</span>
-                <p>Avocat à la Cour</p>
+        <div class="col">
+          <div class="card dark-blue-dropdown h-100 border-0 rounded-5">
+            <div class="card-body">
+              <div class="d-flex align-items-center text-decoration-none pb-2">
+                <img class="rounded-circle" src="assets/img/testimonial/Photo_SR.jpg" width="48" alt="testimonial">
+                <div class="row ps-3 pt-3">
+                  <span class="h6 mb-0">Stanislas Roquebert</span>
+                  <p>Avocat à la Cour</p>
+                </div>
               </div>
-            </div>
-            <p class="mb-0">Excellente expérience sur le site du JSS. Une équipe réactive et à l'écoute. J'ai obtenu les
+              <p class="mb-0">Excellente expérience sur le site du JSS. Une équipe réactive et à l'écoute. J'ai obtenu les
               papiers officiels en quelques heures. Sérieux et efficace, je recommande. </p>
+            </div>
           </div>
         </div>
       </div>
     </div>
+  </section>
+
+  <!-- TODO : uncomment when done -->
+  <!-- <generic-testimonial></generic-testimonial> -->
+  <div class="py-5 my-md-3 my-lg-4 my-xxl-5">
+    <newsletter></newsletter>
   </div>
-</section>
 
-<!-- TODO : uncomment when done -->
-<!-- <generic-testimonial></generic-testimonial> -->
-<div class="py-5 my-md-3 my-lg-4 my-xxl-5">
-  <newsletter></newsletter>
-</div>
-
-<div class="py-5 my-5">
-  <our-clients></our-clients>
-</div>
+  <div class="py-5 my-5">
+    <our-clients></our-clients>
+  </div>

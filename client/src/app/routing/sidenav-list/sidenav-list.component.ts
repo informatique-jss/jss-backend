@@ -6,9 +6,10 @@ import { UserPreferenceService } from 'src/app/services/user.preference.service'
 import { NotificationService } from '../../modules/miscellaneous/services/notification.service';
 import { SearchService } from '../../services/search.service';
 @Component({
-  selector: 'app-sidenav-list',
-  templateUrl: './sidenav-list.component.html',
-  styleUrls: ['./sidenav-list.component.css']
+    selector: 'app-sidenav-list',
+    templateUrl: './sidenav-list.component.html',
+    styleUrls: ['./sidenav-list.component.css'],
+    standalone: false
 })
 export class SidenavListComponent implements OnInit {
   logoOsiris: string = '/assets/images/jss_icon.png';

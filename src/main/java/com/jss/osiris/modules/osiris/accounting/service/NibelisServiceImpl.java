@@ -7,8 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.transaction.Transactional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +21,8 @@ import com.jss.osiris.modules.osiris.accounting.model.nibelis.Salarie;
 import com.jss.osiris.modules.osiris.accounting.repository.NibelisEmployeeRepository;
 import com.jss.osiris.modules.osiris.accounting.repository.PaySlipRepository;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
+
+import jakarta.transaction.Transactional;
 
 @Service
 public class NibelisServiceImpl implements NibelisService {

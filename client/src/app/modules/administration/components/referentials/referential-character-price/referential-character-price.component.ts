@@ -8,9 +8,10 @@ import { AppService } from 'src/app/services/app.service';
 import { GenericReferentialComponent } from '../generic-referential/generic-referential-component';
 
 @Component({
-  selector: 'referential-character-price',
-  templateUrl: 'referential-character-price.component.html',
-  styleUrls: ['./../generic-referential/generic-referential.component.css']
+    selector: 'referential-character-price',
+    templateUrl: 'referential-character-price.component.html',
+    styleUrls: ['./../generic-referential/generic-referential.component.css'],
+    standalone: false
 })
 export class ReferentialCharacterPriceComponent extends GenericReferentialComponent<CharacterPrice> implements OnInit {
 

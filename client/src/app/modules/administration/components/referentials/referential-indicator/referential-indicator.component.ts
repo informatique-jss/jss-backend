@@ -10,9 +10,10 @@ import { AppService } from 'src/app/services/app.service';
 import { GenericReferentialComponent } from '../generic-referential/generic-referential-component';
 
 @Component({
-  selector: 'referential-indicator',
-  templateUrl: './referential-indicator.component.html',
-  styleUrls: ['./../generic-referential/generic-referential.component.css']
+    selector: 'referential-indicator',
+    templateUrl: './referential-indicator.component.html',
+    styleUrls: ['./../generic-referential/generic-referential.component.css'],
+    standalone: false
 })
 export class ReferentialIndicatorComponent extends GenericReferentialComponent<Indicator> implements OnInit {
   constructor(private indicatorService: IndicatorService,

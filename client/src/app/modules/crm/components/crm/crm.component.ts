@@ -4,9 +4,10 @@ import { AppService } from 'src/app/services/app.service';
 import { UserPreferenceService } from 'src/app/services/user.preference.service';
 
 @Component({
-  selector: 'app-crm',
-  templateUrl: './crm.component.html',
-  styleUrls: ['./crm.component.css']
+    selector: 'app-crm',
+    templateUrl: './crm.component.html',
+    styleUrls: ['./crm.component.css'],
+    standalone: false
 })
 export class CrmComponent implements OnInit {
 

@@ -9,9 +9,10 @@ import { GenericAutocompleteComponent } from '../generic-autocomplete/generic-au
 import { AppService } from 'src/app/services/app.service';
 
 @Component({
-  selector: 'autocomplete-affaire',
-  templateUrl: './autocomplete-affaire.component.html',
-  styleUrls: ['../generic-autocomplete/generic-autocomplete.component.css'],
+    selector: 'autocomplete-affaire',
+    templateUrl: './autocomplete-affaire.component.html',
+    styleUrls: ['../generic-autocomplete/generic-autocomplete.component.css'],
+    standalone: false
 })
 export class AutocompleteAffaireComponent extends GenericAutocompleteComponent<IndexEntity, IndexEntity> implements OnInit {
   @ViewChild('affaireInput') affaireInput: ElementRef<HTMLInputElement> | undefined;

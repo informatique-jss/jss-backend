@@ -6,9 +6,10 @@ import { GenericMultipleSelectComponent } from '../generic-select/generic-multip
 import { AppService } from 'src/app/services/app.service';
 
 @Component({
-  selector: 'select-invoice-status',
-  templateUrl: './select-invoice-status.component.html',
-  styleUrls: ['./select-invoice-status.component.css']
+    selector: 'select-invoice-status',
+    templateUrl: './select-invoice-status.component.html',
+    styleUrls: ['./select-invoice-status.component.css'],
+    standalone: false
 })
 export class SelectInvoiceStatusComponent extends GenericMultipleSelectComponent<InvoiceStatus> implements OnInit {
 

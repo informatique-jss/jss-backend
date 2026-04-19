@@ -5,9 +5,10 @@ import { AttachmentType } from 'src/app/modules/miscellaneous/model/AttachmentTy
 import { SelectMultiServiceTypeDialogComponent } from '../select-multi-service-type-dialog/select-multi-service-type-dialog.component';
 
 @Component({
-  selector: 'app-select-attachment-type-dialog',
-  templateUrl: './select-attachment-type-dialog.component.html',
-  styleUrls: ['./select-attachment-type-dialog.component.css']
+  selector: 'app-select-document-type-dialog',
+  templateUrl: './select-document-type-dialog.component.html',
+  styleUrls: ['./select-document-type-dialog.component.css'],
+  standalone: false
 })
 export class SelectAttachmentTypeDialogComponent implements OnInit {
 

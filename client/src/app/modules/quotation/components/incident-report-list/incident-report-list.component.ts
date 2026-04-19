@@ -9,9 +9,10 @@ import { HabilitationsService } from 'src/app/services/habilitations.service';
 import { CustomerOrder } from '../../model/CustomerOrder';
 
 @Component({
-  selector: 'incident-report-list',
-  templateUrl: './incident-report-list.component.html',
-  styleUrls: ['./incident-report-list.component.css']
+    selector: 'incident-report-list',
+    templateUrl: './incident-report-list.component.html',
+    styleUrls: ['./incident-report-list.component.css'],
+    standalone: false
 })
 export class IncidentReportListComponent implements OnInit {
 

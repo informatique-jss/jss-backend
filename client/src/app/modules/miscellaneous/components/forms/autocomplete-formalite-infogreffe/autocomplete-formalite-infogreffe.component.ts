@@ -10,9 +10,10 @@ import { FormaliteInfogreffeService } from '../../../services/formalite.infogref
 import { GenericAutocompleteComponent } from '../generic-autocomplete/generic-autocomplete.component';
 
 @Component({
-  selector: 'autocomplete-infogreffe-formalite',
-  templateUrl: './autocomplete-formalite-infogreffe.component.html',
-  styleUrls: ['./autocomplete-formalite-infogreffe.component.css']
+    selector: 'autocomplete-infogreffe-formalite',
+    templateUrl: './autocomplete-formalite-infogreffe.component.html',
+    styleUrls: ['./autocomplete-formalite-infogreffe.component.css'],
+    standalone: false
 })
 export class AutocompleteInfogreffeFormaliteComponent extends GenericAutocompleteComponent<FormaliteInfogreffe, FormaliteInfogreffe> implements OnInit {
   /**

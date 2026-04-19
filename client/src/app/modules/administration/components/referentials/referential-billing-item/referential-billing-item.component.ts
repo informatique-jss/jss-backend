@@ -9,9 +9,10 @@ import { AppService } from 'src/app/services/app.service';
 import { formatEurosForSortTable } from '../../../../../libs/FormatHelper';
 
 @Component({
-  selector: 'referential-billing-item',
-  templateUrl: 'referential-billing-item.component.html',
-  styleUrls: ['referential-billing-item.component.css']
+    selector: 'referential-billing-item',
+    templateUrl: 'referential-billing-item.component.html',
+    styleUrls: ['referential-billing-item.component.css'],
+    standalone: false
 })
 export class ReferentialBillingItemComponent implements OnInit {
 

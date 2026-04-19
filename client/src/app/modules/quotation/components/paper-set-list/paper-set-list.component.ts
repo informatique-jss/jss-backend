@@ -14,9 +14,10 @@ import { PaperSetResultService } from '../../services/paper.set.result.service';
 import { PaperSetService } from '../../services/paper.set.service';
 
 @Component({
-  selector: 'app-paper-set-list',
-  templateUrl: './paper-set-list.component.html',
-  styleUrls: ['./paper-set-list.component.css']
+    selector: 'app-paper-set-list',
+    templateUrl: './paper-set-list.component.html',
+    styleUrls: ['./paper-set-list.component.css'],
+    standalone: false
 })
 export class PaperSetListComponent implements OnInit {
 

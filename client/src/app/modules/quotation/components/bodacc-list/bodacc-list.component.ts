@@ -9,9 +9,10 @@ import { BodaccNotice } from '../../model/BodaccNotice';
 import { BodaccNoticeService } from '../../services/bodacc-notice.service';
 
 @Component({
-  selector: 'bodacc-list',
-  templateUrl: './bodacc-list.component.html',
-  styleUrls: ['./bodacc-list.component.css']
+    selector: 'bodacc-list',
+    templateUrl: './bodacc-list.component.html',
+    styleUrls: ['./bodacc-list.component.css'],
+    standalone: false
 })
 export class BodaccListComponent implements OnInit {
   bodaccs: BodaccNotice[] | undefined;

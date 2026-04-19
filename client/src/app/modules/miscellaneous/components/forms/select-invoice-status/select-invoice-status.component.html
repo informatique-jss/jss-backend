@@ -3,12 +3,16 @@
   <mat-select [formControlName]="propertyName"
     [required]="isMandatory && (conditionnalRequired==undefined || conditionnalRequired)" [compareWith]="compareWithId"
     multiple>
-    <mat-option *ngFor="let type of types" [value]="type">
-      {{displayLabel(type)}}
-    </mat-option>
+    @for (type of types; track type) {
+      <mat-option [value]="type">
+        {{displayLabel(type)}}
+      </mat-option>
+    }
   </mat-select>
-  <mat-icon color="accent" matSuffix (click)="clearField();$event.stopPropagation()"
-    *ngIf="!isDisabled && model!=undefined" class="pointer">
-    close
-  </mat-icon>
+  @if (!isDisabled && model!=undefined) {
+    <mat-icon color="accent" matSuffix (click)="clearField();$event.stopPropagation()"
+      class="pointer">
+      close
+    </mat-icon>
+  }
 </mat-form-field>

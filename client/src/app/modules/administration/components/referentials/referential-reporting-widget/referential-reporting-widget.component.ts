@@ -11,9 +11,10 @@ import { BatchSettingsService } from '../../../../monitoring/services/batch.sett
 import { GenericReferentialComponent } from '../generic-referential/generic-referential-component';
 
 @Component({
-  selector: 'referential-reporting-widget',
-  templateUrl: './referential-reporting-widget.component.html',
-  styleUrls: ['./../generic-referential/generic-referential.component.css']
+    selector: 'referential-reporting-widget',
+    templateUrl: './referential-reporting-widget.component.html',
+    styleUrls: ['./../generic-referential/generic-referential.component.css'],
+    standalone: false
 })
 export class ReferentialReportingWidgetComponent extends GenericReferentialComponent<ReportingWidget> implements OnInit {
 

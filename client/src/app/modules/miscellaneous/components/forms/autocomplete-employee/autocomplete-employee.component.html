@@ -5,21 +5,27 @@
     </avatar>
     <input type="text" matInput [formControlName]="propertyName" [matAutocomplete]="matAutocomplete">
   </div>
-  <mat-icon color="accent" matSuffix matTooltip="Me choisir" (click)="chooseMyself()" *ngIf="!isDisabled"
-    class="pointer ">
-    account_circle
-  </mat-icon>
-  <mat-icon color="accent" matSuffix (click)="clearField()" *ngIf="!isDisabled && model!=undefined" class="pointer">
-    close
-  </mat-icon>
+  @if (!isDisabled) {
+    <mat-icon color="accent" matSuffix matTooltip="Me choisir" (click)="chooseMyself()"
+      class="pointer ">
+      account_circle
+    </mat-icon>
+  }
+  @if (!isDisabled && model!=undefined) {
+    <mat-icon color="accent" matSuffix (click)="clearField()" class="pointer">
+      close
+    </mat-icon>
+  }
   <mat-autocomplete autoActiveFirstOption #matAutocomplete="matAutocomplete" [displayWith]="displayLabel"
     (optionSelected)='optionSelected($event.option.value)'>
-    <mat-option *ngFor="let employee of filteredTypes | async" [value]="employee">
-      <div class="select-with-avatar">
-        <avatar class="avatar-select" [employee]="employee" [size]="20">
-        </avatar>
-        {{displayLabel(employee)}}
-      </div>
-    </mat-option>
+    @for (employee of filteredTypes | async; track employee) {
+      <mat-option [value]="employee">
+        <div class="select-with-avatar">
+          <avatar class="avatar-select" [employee]="employee" [size]="20">
+          </avatar>
+          {{displayLabel(employee)}}
+        </div>
+      </mat-option>
+    }
   </mat-autocomplete>
 </mat-form-field>

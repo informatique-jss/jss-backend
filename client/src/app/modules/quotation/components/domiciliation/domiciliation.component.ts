@@ -20,9 +20,10 @@ import { DomiciliationContractTypeService } from '../../services/domiciliation.c
 import { MailRedirectionTypeService } from '../../services/mail.redirection.type.service';
 
 @Component({
-  selector: 'domiciliation',
-  templateUrl: './domiciliation.component.html',
-  styleUrls: ['./domiciliation.component.css']
+    selector: 'domiciliation',
+    templateUrl: './domiciliation.component.html',
+    styleUrls: ['./domiciliation.component.css'],
+    standalone: false
 })
 export class DomiciliationComponent implements OnInit {
 

@@ -18,9 +18,10 @@ import { OrderingSearchResult } from '../../model/OrderingSearchResult';
 import { CustomerOrderStatusService } from '../../services/customer.order.status.service';
 import { OrderingSearchResultService } from '../../services/ordering.search.result.service';
 @Component({
-  selector: 'ordering-list',
-  templateUrl: './ordering-list.component.html',
-  styleUrls: ['./ordering-list.component.css']
+    selector: 'ordering-list',
+    templateUrl: './ordering-list.component.html',
+    styleUrls: ['./ordering-list.component.css'],
+    standalone: false
 })
 export class OrderingListComponent implements OnInit {
   @Input() orderingSearch: OrderingSearch = {} as OrderingSearch;

@@ -9,9 +9,10 @@ import { AccountingBalanceViewTitle } from '../../model/AccountingBalanceViewTit
 import { AccountingBalanceViewTitleService } from '../../services/accounting.balance.view.title.service';
 
 @Component({
-  selector: 'accounting-profit-lost',
-  templateUrl: './accounting-profit-lost.component.html',
-  styleUrls: ['./accounting-profit-lost.component.css']
+    selector: 'accounting-profit-lost',
+    templateUrl: './accounting-profit-lost.component.html',
+    styleUrls: ['./accounting-profit-lost.component.css'],
+    standalone: false
 })
 export class AccountingProfitLostComponent implements OnInit {
 

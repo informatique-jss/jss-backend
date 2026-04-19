@@ -6,9 +6,10 @@ import { PublishingDepartmentService } from '../../../services/publishing.depart
 import { GenericSelectComponent } from '../generic-select/generic-select.component';
 
 @Component({
-  selector: 'select-publishing-department',
-  templateUrl: './select-publishing-department.component.html',
-  styleUrls: ['./select-publishing-department.component.css']
+    selector: 'select-publishing-department',
+    templateUrl: './select-publishing-department.component.html',
+    styleUrls: ['./select-publishing-department.component.css'],
+    standalone: false
 })
 export class SelectPublishingDepartmentComponent extends GenericSelectComponent<PublishingDepartment> implements OnInit {
 

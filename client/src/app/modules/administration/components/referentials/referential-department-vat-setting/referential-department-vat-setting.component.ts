@@ -7,9 +7,10 @@ import { AppService } from 'src/app/services/app.service';
 import { GenericReferentialComponent } from '../generic-referential/generic-referential-component';
 
 @Component({
-  selector: 'referential-department-vat-setting',
-  templateUrl: './referential-department-vat-setting.component.html',
-  styleUrls: ['./../generic-referential/generic-referential.component.css']
+    selector: 'referential-department-vat-setting',
+    templateUrl: './referential-department-vat-setting.component.html',
+    styleUrls: ['./../generic-referential/generic-referential.component.css'],
+    standalone: false
 })
 export class ReferentialDepartmentVatSettingComponent extends GenericReferentialComponent<DepartmentVatSetting> implements OnInit {
   constructor(private departmentVatSettingService: DepartmentVatSettingService,

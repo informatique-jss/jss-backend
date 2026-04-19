@@ -31,9 +31,10 @@ import { QuotationSearchResultService } from '../../services/quotation.search.re
 import { QuotationService } from '../../services/quotation.service';
 
 @Component({
-  selector: 'ordering-customer',
-  templateUrl: './ordering-customer.component.html',
-  styleUrls: ['./ordering-customer.component.css']
+    selector: 'ordering-customer',
+    templateUrl: './ordering-customer.component.html',
+    styleUrls: ['./ordering-customer.component.css'],
+    standalone: false
 })
 export class OrderingCustomerComponent implements OnInit {
 

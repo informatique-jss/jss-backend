@@ -15,9 +15,10 @@ import { PaperSetService } from '../../services/paper.set.service';
 import { SelectPaperSetTypeDialogComponent } from '../select-paper-set-type-dialog/select-paper-set-type-dialog.component';
 
 @Component({
-  selector: 'paper-set',
-  templateUrl: './paper-set.component.html',
-  styleUrls: ['./paper-set.component.css']
+    selector: 'paper-set',
+    templateUrl: './paper-set.component.html',
+    styleUrls: ['./paper-set.component.css'],
+    standalone: false
 })
 export class PaperSetComponent implements OnInit {
 

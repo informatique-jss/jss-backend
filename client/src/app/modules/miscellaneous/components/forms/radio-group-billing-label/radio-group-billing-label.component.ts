@@ -6,9 +6,10 @@ import { GenericRadioGroupComponent } from '../generic-radio-group/generic-radio
 import { AppService } from 'src/app/services/app.service';
 
 @Component({
-  selector: 'radio-group-billing-label',
-  templateUrl: '../generic-radio-group/generic-radio-group-code.component.html',
-  styleUrls: ['../generic-radio-group/generic-radio-group.component.css']
+    selector: 'radio-group-billing-label',
+    templateUrl: '../generic-radio-group/generic-radio-group-code.component.html',
+    styleUrls: ['../generic-radio-group/generic-radio-group.component.css'],
+    standalone: false
 })
 export class RadioGroupBillingLabelComponent extends GenericRadioGroupComponent<BillingLabelType> implements OnInit {
   types: BillingLabelType[] = [] as Array<BillingLabelType>;

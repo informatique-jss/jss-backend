@@ -1,47 +1,59 @@
 <table class="mat-table mat-mdc-table mdc-data-table__table middle-width">
   <thead>
-    <tr class="mat-mdc-header-row mdc-data-table__header-row " *ngIf="invoice.payments && invoice.payments.length>0  ">
-      <th class="mat-mdc-header-cell mdc-data-table__header-cell " colspan="2">Paiements associés</th>
-    </tr>
+    @if (invoice.payments && invoice.payments.length>0  ) {
+      <tr class="mat-mdc-header-row mdc-data-table__header-row ">
+        <th class="mat-mdc-header-cell mdc-data-table__header-cell " colspan="2">Paiements associés</th>
+      </tr>
+    }
   </thead>
-  <ng-container *ngIf="invoice.payments && invoice.payments.length>0 ">
-    <tr class="mat-mdc-row mdc-data-table__row " *ngFor="let payment of invoice.payments">
-      <ng-container *ngIf="!payment.isCancelled">
-        <td class="mat-mdc-cell mdc-data-table__cell ">
-          <button matTooltip="Actions" mat-button color="accent" [matMenuTriggerFor]="menu">
-            <mat-icon>more_vert</mat-icon>
-            <mat-menu #menu="matMenu" style="min-height: 0px;padding: 0;" xPosition="before">
-              <button mat-menu-item (click)="movePayment(payment)">
-                <mat-icon>move_up</mat-icon><span>Déplacer le paiement</span>
-              </button>
-              <button mat-menu-item (click)="openPaymentDialog(payment)">
-                <mat-icon>visibility</mat-icon><span>Voir le détail du paiement</span>
-              </button>
-              <button mat-menu-item (click)="movePaymentToWaitingAccount(payment)"
-                *ngIf="canMovePaymentToWaitingAccount()">
-                <mat-icon>hourglass_empty</mat-icon><span>Déplacer dans le compte d'attente</span>
-              </button>
-            </mat-menu>
-          </button>
-          N°{{payment.id}} du {{formatDate(payment.paymentDate)}} - {{payment.label}}
+  @if (invoice.payments && invoice.payments.length>0 ) {
+    @for (payment of invoice.payments; track payment) {
+      <tr class="mat-mdc-row mdc-data-table__row ">
+        @if (!payment.isCancelled) {
+          <td class="mat-mdc-cell mdc-data-table__cell ">
+            <button matTooltip="Actions" mat-button color="accent" [matMenuTriggerFor]="menu">
+              <mat-icon>more_vert</mat-icon>
+              <mat-menu #menu="matMenu" style="min-height: 0px;padding: 0;" xPosition="before">
+                <button mat-menu-item (click)="movePayment(payment)">
+                  <mat-icon>move_up</mat-icon><span>Déplacer le paiement</span>
+                </button>
+                <button mat-menu-item (click)="openPaymentDialog(payment)">
+                  <mat-icon>visibility</mat-icon><span>Voir le détail du paiement</span>
+                </button>
+                @if (canMovePaymentToWaitingAccount()) {
+                  <button mat-menu-item (click)="movePaymentToWaitingAccount(payment)"
+                    >
+                    <mat-icon>hourglass_empty</mat-icon><span>Déplacer dans le compte d'attente</span>
+                  </button>
+                }
+              </mat-menu>
+            </button>
+            N°{{payment.id}} du {{formatDate(payment.paymentDate)}} - {{payment.label}}
+          </td>
+          <td class="mat-mdc-cell mdc-data-table__cell  td-price ">
+            {{payment.isAppoint ? -payment.paymentAmount : payment.paymentAmount}} € @if (payment.isAppoint && payment.paymentAmount>0) {
+            <span class="pointer"
+            (click)="refundAppoint(payment)">(rembourser)</span>
+          }
         </td>
-        <td class="mat-mdc-cell mdc-data-table__cell  td-price ">
-          {{payment.isAppoint ? -payment.paymentAmount : payment.paymentAmount}} € <span class="pointer"
-            *ngIf="payment.isAppoint && payment.paymentAmount>0" (click)="refundAppoint(payment)">(rembourser)</span>
-        </td>
-      </ng-container>
+      }
     </tr>
-  </ng-container>
-  <tr class="mat-mdc-row mdc-data-table__row " *ngIf="invoice.payments && invoice.payments.length>0 ">
+  }
+}
+@if (invoice.payments && invoice.payments.length>0 ) {
+  <tr class="mat-mdc-row mdc-data-table__row ">
     <td class="mat-mdc-cell mdc-data-table__cell ">
     </td>
     <td class="mat-mdc-cell mdc-data-table__cell  td-price ">
     </td>
   </tr>
-  <tr class="mat-mdc-row mdc-data-table__row " *ngIf="!invoice.isCreditNote">
+}
+@if (!invoice.isCreditNote) {
+  <tr class="mat-mdc-row mdc-data-table__row ">
     <td class="mat-mdc-cell mdc-data-table__cell ">Reste à payer
     </td>
     <td class="mat-mdc-cell mdc-data-table__cell  td-price ">{{getAmountRemaining(invoice)}} €
     </td>
   </tr>
+}
 </table>

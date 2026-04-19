@@ -12,9 +12,10 @@ import { DirectDebitTransfertSearchResult } from '../../model/DirectDebitTransfe
 import { DirectDebitTransfertSearchResultService } from '../../services/direct.debit.transfert.search.result.service';
 
 @Component({
-  selector: 'direct-debit-transfer-list',
-  templateUrl: './direct-debit-transfert-list.component.html',
-  styleUrls: ['./direct-debit-transfert-list.component.css']
+    selector: 'direct-debit-transfer-list',
+    templateUrl: './direct-debit-transfert-list.component.html',
+    styleUrls: ['./direct-debit-transfert-list.component.css'],
+    standalone: false
 })
 export class DirectDebitTransfertListComponent implements OnInit, AfterContentChecked {
 

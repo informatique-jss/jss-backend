@@ -7,9 +7,10 @@ import { GenericSelectComponent } from '../generic-select/generic-select.compone
 
 
 @Component({
-  selector: 'select-building-domiciliation',
-  templateUrl: './select-building-domicilation.component.html',
-  styleUrls: ['./select-building-domicilation.component.css']
+    selector: 'select-building-domiciliation',
+    templateUrl: './select-building-domicilation.component.html',
+    styleUrls: ['./select-building-domicilation.component.css'],
+    standalone: false
 })
 export class SelectBuildingDomicilationComponent extends GenericSelectComponent<BuildingDomiciliation> implements OnInit {
 

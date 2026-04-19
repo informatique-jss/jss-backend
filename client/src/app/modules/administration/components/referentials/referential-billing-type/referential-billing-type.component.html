@@ -11,128 +11,134 @@
     </sort-table>
   </div>
 </div>
-<div class="mat-elevation-z2 form-div" *ngIf="selectedEntity ">
-  <form [formGroup]="entityForm">
-    <div class="full-width">
-      <fieldset [disabled]="editMode==false" class="fieldset-no-border">
-        <table class="full-width">
-          <tr *ngIf="selectedEntity.id">
-            <td>
-              <generic-input [(model)]="selectedEntity.id" label="Identifiant technique" [form]="entityForm"
-                propertyName="id" [isMandatory]="true" [isDisabled]="true"></generic-input>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <generic-input [(model)]="selectedEntity.code" label="Codification" [maxLength]="20" [form]="entityForm"
+@if (selectedEntity ) {
+  <div class="mat-elevation-z2 form-div">
+    <form [formGroup]="entityForm">
+      <div class="full-width">
+        <fieldset [disabled]="editMode==false" class="fieldset-no-border">
+          <table class="full-width">
+            @if (selectedEntity.id) {
+              <tr>
+                <td>
+                  <generic-input [(model)]="selectedEntity.id" label="Identifiant technique" [form]="entityForm"
+                  propertyName="id" [isMandatory]="true" [isDisabled]="true"></generic-input>
+                </td>
+              </tr>
+            }
+            <tr>
+              <td>
+                <generic-input [(model)]="selectedEntity.code" label="Codification" [maxLength]="20" [form]="entityForm"
                 propertyName="code" [isMandatory]="true" [isDisabled]="!editMode"></generic-input>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <generic-input [(model)]="selectedEntity.label" label="Nom fonctionnel" [maxLength]="255"
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <generic-input [(model)]="selectedEntity.label" label="Nom fonctionnel" [maxLength]="255"
                 [form]="entityForm" propertyName="label" [isMandatory]="true" [isDisabled]="!editMode"></generic-input>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <generic-toggle [(model)]="selectedEntity.canOverridePrice"
-                label="Possibilité pour l'utilisateur de surcharger le prix ?" [form]="entityForm"
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <generic-toggle [(model)]="selectedEntity.canOverridePrice"
+                  label="Possibilité pour l'utilisateur de surcharger le prix ?" [form]="entityForm"
                 propertyName="canOverridePrice"></generic-toggle>
-            </td>
-            <td>
-              <generic-toggle [(model)]="selectedEntity.isPriceBasedOnCharacterNumber"
-                label="Prix basé sur le nombre de charactères ?" [form]="entityForm"
+              </td>
+              <td>
+                <generic-toggle [(model)]="selectedEntity.isPriceBasedOnCharacterNumber"
+                  label="Prix basé sur le nombre de charactères ?" [form]="entityForm"
                 propertyName="isPriceBasedOnCharacterNumber"></generic-toggle>
-            </td>
-          </tr>
-        </table>
-        <table class="full-width">
-          <tr>
-            <td>
-              <generic-toggle [(model)]="selectedEntity.isOverrideVat" label="Déroger à la TVA géographique ?"
+              </td>
+            </tr>
+          </table>
+          <table class="full-width">
+            <tr>
+              <td>
+                <generic-toggle [(model)]="selectedEntity.isOverrideVat" label="Déroger à la TVA géographique ?"
                 [form]="entityForm" propertyName="isOverrideVat"></generic-toggle>
-            </td>
-            <td *ngIf="selectedEntity.isOverrideVat">
-              <select-vat [(model)]="selectedEntity.vat" label="TVA utilisée" [form]="entityForm" propertyName="vat"
-                [isMandatory]="true" [isDisabled]="!editMode" [conditionnalRequired]="selectedEntity.isOverrideVat">
-              </select-vat>
-            </td>
-          <tr>
-        </table>
-        <table class="full-width">
-          <tr>
-            <td>
-              <generic-toggle [(model)]="selectedEntity.isOptionnal" label="Est optionnel ?" [form]="entityForm"
-                propertyName="isOptionnal"></generic-toggle>
-            </td>
-            <td>
-              <generic-toggle [(model)]="selectedEntity.isNonTaxable" label="Est non taxable à l'achat ?"
-                [form]="entityForm" propertyName="isNonTaxable"></generic-toggle>
-            </td>
-            <td>
-              <generic-toggle [(model)]="selectedEntity.isDebour" label="Est un débours ?" [form]="entityForm"
-                propertyName="isDebour" (onToggleChange)="toggleDebour()"></generic-toggle>
-            </td>
-            <td>
-              <generic-toggle [(model)]="selectedEntity.isFee" label="Est un frais ?" [form]="entityForm"
-                propertyName="isFee" (onToggleChange)="toggleFees()"></generic-toggle>
-            </td>
-          </tr>
-        </table>
-        <table class="full-width">
-          <tr>
-            <td>
-              <generic-toggle [(model)]="selectedEntity.isVacation" label="Est une vacation ?" [form]="entityForm"
-                propertyName="isVacation"></generic-toggle>
-            </td>
-            <td>
-              <generic-toggle [(model)]="selectedEntity.isTraitement" label="Est un traitement ?" [form]="entityForm"
-                propertyName="isTraitement"></generic-toggle>
-            </td>
-          </tr>
-        </table>
-        <table class="full-width">
-          <tr>
-            <td>
-              <generic-toggle [(model)]="selectedEntity.isUsedForFormaliteRff"
-                label="Est utilisé dans le calcul des RFF de formalités ?" [form]="entityForm"
-                propertyName="isUsedForFormaliteRff"></generic-toggle>
-            </td>
-            <td>
-              <generic-toggle [(model)]="selectedEntity.isUsedForInsertionRff"
-                label="Est utilisé dans le calcul des RFF d'annonces légales ?" [form]="entityForm"
-                propertyName="isUsedForInsertionRff"></generic-toggle>
-            </td>
-          </tr>
-        </table>
-        <table class="full-width">
-          <tr>
-            <td>
-              <generic-toggle [(model)]="selectedEntity.isGenerateAccountProduct"
-                label="Auto-générer un compte de produit ?" [form]="entityForm"
-                propertyName="isGenerateAccountProduct"></generic-toggle>
-            </td>
-            <td><generic-toggle [(model)]="selectedEntity.isGenerateAccountCharge"
-                label="Auto-générer un compte de charge ?" [form]="entityForm"
-                propertyName="isGenerateAccountCharge"></generic-toggle></td>
-          </tr>
-          <tr>
-            <td>
-              <autocomplete-accounting-account [(model)]="selectedEntity.accountingAccountProduct" [form]="entityForm"
-                propertyName="accountingAccountProduct" [isMandatory]="false"
-                [isDisabled]="selectedEntity.isGenerateAccountProduct" label="Compte comptable produit">
-              </autocomplete-accounting-account>
-            </td>
-            <td>
-              <autocomplete-accounting-account [(model)]="selectedEntity.accountingAccountCharge" [form]="entityForm"
-                propertyName="accountingAccountCharge" [isMandatory]="false"
-                [isDisabled]="selectedEntity.isGenerateAccountCharge" label="Compte comptable charge">
-              </autocomplete-accounting-account>
-            </td>
-          </tr>
-        </table>
-      </fieldset>
-    </div>
-  </form>
-</div>
+              </td>
+              @if (selectedEntity.isOverrideVat) {
+                <td>
+                  <select-vat [(model)]="selectedEntity.vat" label="TVA utilisée" [form]="entityForm" propertyName="vat"
+                    [isMandatory]="true" [isDisabled]="!editMode" [conditionnalRequired]="selectedEntity.isOverrideVat">
+                  </select-vat>
+                </td>
+              }
+              <tr>
+              </table>
+              <table class="full-width">
+                <tr>
+                  <td>
+                    <generic-toggle [(model)]="selectedEntity.isOptionnal" label="Est optionnel ?" [form]="entityForm"
+                    propertyName="isOptionnal"></generic-toggle>
+                  </td>
+                  <td>
+                    <generic-toggle [(model)]="selectedEntity.isNonTaxable" label="Est non taxable à l'achat ?"
+                    [form]="entityForm" propertyName="isNonTaxable"></generic-toggle>
+                  </td>
+                  <td>
+                    <generic-toggle [(model)]="selectedEntity.isDebour" label="Est un débours ?" [form]="entityForm"
+                    propertyName="isDebour" (onToggleChange)="toggleDebour()"></generic-toggle>
+                  </td>
+                  <td>
+                    <generic-toggle [(model)]="selectedEntity.isFee" label="Est un frais ?" [form]="entityForm"
+                    propertyName="isFee" (onToggleChange)="toggleFees()"></generic-toggle>
+                  </td>
+                </tr>
+              </table>
+              <table class="full-width">
+                <tr>
+                  <td>
+                    <generic-toggle [(model)]="selectedEntity.isVacation" label="Est une vacation ?" [form]="entityForm"
+                    propertyName="isVacation"></generic-toggle>
+                  </td>
+                  <td>
+                    <generic-toggle [(model)]="selectedEntity.isTraitement" label="Est un traitement ?" [form]="entityForm"
+                    propertyName="isTraitement"></generic-toggle>
+                  </td>
+                </tr>
+              </table>
+              <table class="full-width">
+                <tr>
+                  <td>
+                    <generic-toggle [(model)]="selectedEntity.isUsedForFormaliteRff"
+                      label="Est utilisé dans le calcul des RFF de formalités ?" [form]="entityForm"
+                    propertyName="isUsedForFormaliteRff"></generic-toggle>
+                  </td>
+                  <td>
+                    <generic-toggle [(model)]="selectedEntity.isUsedForInsertionRff"
+                      label="Est utilisé dans le calcul des RFF d'annonces légales ?" [form]="entityForm"
+                    propertyName="isUsedForInsertionRff"></generic-toggle>
+                  </td>
+                </tr>
+              </table>
+              <table class="full-width">
+                <tr>
+                  <td>
+                    <generic-toggle [(model)]="selectedEntity.isGenerateAccountProduct"
+                      label="Auto-générer un compte de produit ?" [form]="entityForm"
+                    propertyName="isGenerateAccountProduct"></generic-toggle>
+                  </td>
+                  <td><generic-toggle [(model)]="selectedEntity.isGenerateAccountCharge"
+                    label="Auto-générer un compte de charge ?" [form]="entityForm"
+                  propertyName="isGenerateAccountCharge"></generic-toggle></td>
+                </tr>
+                <tr>
+                  <td>
+                    <autocomplete-accounting-account [(model)]="selectedEntity.accountingAccountProduct" [form]="entityForm"
+                      propertyName="accountingAccountProduct" [isMandatory]="false"
+                      [isDisabled]="selectedEntity.isGenerateAccountProduct" label="Compte comptable produit">
+                    </autocomplete-accounting-account>
+                  </td>
+                  <td>
+                    <autocomplete-accounting-account [(model)]="selectedEntity.accountingAccountCharge" [form]="entityForm"
+                      propertyName="accountingAccountCharge" [isMandatory]="false"
+                      [isDisabled]="selectedEntity.isGenerateAccountCharge" label="Compte comptable charge">
+                    </autocomplete-accounting-account>
+                  </td>
+                </tr>
+              </table>
+            </fieldset>
+          </div>
+        </form>
+      </div>
+    }

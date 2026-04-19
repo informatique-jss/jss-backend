@@ -10,9 +10,10 @@ import { GenericChipsComponent } from '../generic-chips/generic-chips.component'
 import { AppService } from 'src/app/services/app.service';
 
 @Component({
-  selector: 'chips-formalite-guichet-unique',
-  templateUrl: './chips-formalite-guichet-unique.component.html',
-  styleUrls: ['./chips-formalite-guichet-unique.component.css']
+    selector: 'chips-formalite-guichet-unique',
+    templateUrl: './chips-formalite-guichet-unique.component.html',
+    styleUrls: ['./chips-formalite-guichet-unique.component.css'],
+    standalone: false
 })
 export class ChipsFormaliteGuichetUniqueComponent extends GenericChipsComponent<FormaliteGuichetUnique> implements OnInit {
 

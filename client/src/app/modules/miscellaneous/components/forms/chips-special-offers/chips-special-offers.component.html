@@ -2,28 +2,38 @@
   <mat-label>Tarifs spéciaux</mat-label>
   <mat-chip-grid class="mat-chip-list-stacked" #chipListSpecialOffers cdkDropList cdkDropListOrientation="vertical"
     [formControlName]="propertyName" (cdkDropListDropped)="changeSpecialOfferOrder($event)">
-    <mat-chip-row *ngFor="let specialOffer of model" cdkDrag (removed)="removeElement(specialOffer)">
-      {{specialOffer.label}}
-      <button matChipRemove *ngIf="!isDisabled">
-        <mat-icon>cancel</mat-icon>
-      </button>
-    </mat-chip-row>
+    @for (specialOffer of model; track specialOffer) {
+      <mat-chip-row cdkDrag (removed)="removeElement(specialOffer)">
+        {{specialOffer.label}}
+        @if (!isDisabled) {
+          <button matChipRemove>
+            <mat-icon>cancel</mat-icon>
+          </button>
+        }
+      </mat-chip-row>
+    }
     <input class="input-vertical" matInput placeholder="Saisir une offre spéciale" #specialOfferInput
       [matChipInputFor]="chipListSpecialOffers" [matChipInputSeparatorKeyCodes]="SEPARATOR_KEY_CODES"
       [disabled]="isDisabled" [matAutocomplete]="autoComplete">
-    <button matTooltip="Rechercher un tarif spécial" *ngIf="!isDisabled" matSuffix mat-icon-button
-      (click)="openSpecialOffersDialog()">
-      <mat-icon>search</mat-icon>
-    </button>
-    <button matTooltip="Effacer tous les tarifs spéciaux" (click)="deleteAllSpecialOffers()" *ngIf="!isDisabled"
-      matSuffix mat-icon-button>
-      <mat-icon>close</mat-icon>
-    </button>
-  </mat-chip-grid>
-  <mat-autocomplete autoActiveFirstOption #autoComplete="matAutocomplete" [displayWith]="displayLabel"
-    (optionSelected)="addSpecialOffer($event)">
-    <mat-option *ngFor="let specialOffer of filteredSpecialOffers | async" [value]="specialOffer">
-      {{specialOffer.label}}
-    </mat-option>
-  </mat-autocomplete>
-</mat-form-field>
+      @if (!isDisabled) {
+        <button matTooltip="Rechercher un tarif spécial" matSuffix mat-icon-button
+          (click)="openSpecialOffersDialog()">
+          <mat-icon>search</mat-icon>
+        </button>
+      }
+      @if (!isDisabled) {
+        <button matTooltip="Effacer tous les tarifs spéciaux" (click)="deleteAllSpecialOffers()"
+          matSuffix mat-icon-button>
+          <mat-icon>close</mat-icon>
+        </button>
+      }
+    </mat-chip-grid>
+    <mat-autocomplete autoActiveFirstOption #autoComplete="matAutocomplete" [displayWith]="displayLabel"
+      (optionSelected)="addSpecialOffer($event)">
+      @for (specialOffer of filteredSpecialOffers | async; track specialOffer) {
+        <mat-option [value]="specialOffer">
+          {{specialOffer.label}}
+        </mat-option>
+      }
+    </mat-autocomplete>
+  </mat-form-field>

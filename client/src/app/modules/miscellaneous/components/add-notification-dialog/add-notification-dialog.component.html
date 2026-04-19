@@ -1,22 +1,38 @@
 <h1 mat-dialog-title>Programmer/éditer une notification</h1>
 <div mat-dialog-content>
   <p>Décrivez / commentez ci-dessous la notification.</p>
-  <div *ngIf="notification.customerOrder">Commande n°{{notification.customerOrder.id}}</div>
-  <div *ngIf="notification.quotation">Devis n°{{notification.quotation.id}}</div>
-  <div *ngIf="notification.service">Service {{notification.service.serviceLabelToDisplay}}</div>
-  <div *ngIf="notification.provision">Prestation {{notification.provision.provisionType.label}}</div>
-  <div *ngIf="notification.invoice">Facture {{notification.invoice.id}}</div>
-  <div *ngIf="notification.tiers">Tiers {{notification.tiers.denomination ?notification.tiers.denomination :
+  @if (notification.customerOrder) {
+    <div>Commande n°{{notification.customerOrder.id}}</div>
+  }
+  @if (notification.quotation) {
+    <div>Devis n°{{notification.quotation.id}}</div>
+  }
+  @if (notification.service) {
+    <div>Service {{notification.service.serviceLabelToDisplay}}</div>
+  }
+  @if (notification.provision) {
+    <div>Prestation {{notification.provision.provisionType.label}}</div>
+  }
+  @if (notification.invoice) {
+    <div>Facture {{notification.invoice.id}}</div>
+  }
+  @if (notification.tiers) {
+    <div>Tiers {{notification.tiers.denomination ?notification.tiers.denomination :
     (notification.tiers.firstname +' '+notification.tiers.lastname)}}</div>
-  <div *ngIf="notification.responsable">Responsable {{ (notification.responsable.firstname +'
+  }
+  @if (notification.responsable) {
+    <div>Responsable {{ (notification.responsable.firstname +'
     '+notification.responsable.lastname)}}</div>
-  <div *ngIf="notification.affaire">Affaire {{notification.affaire.denomination ?notification.affaire.denomination :
+  }
+  @if (notification.affaire) {
+    <div>Affaire {{notification.affaire.denomination ?notification.affaire.denomination :
     (notification.affaire.firstname +' '+notification.affaire.lastname)}}</div>
+  }
   <table class="full-width" style="padding-top: 15px;">
     <tr>
       <td>
         <generic-textarea [(model)]="notification.detail1" label="Contenu de la notification" [form]="notificationForm"
-          propertyName="detail1" [isMandatory]="true" [isDisabled]="false" [numberOfLines]="5"></generic-textarea>
+        propertyName="detail1" [isMandatory]="true" [isDisabled]="false" [numberOfLines]="5"></generic-textarea>
       </td>
     </tr>
     <tr>
@@ -25,11 +41,13 @@
           [form]="notificationForm" propertyName="updatedDateTime" [isMandatory]="false" [isDisabled]="false">
         </generic-datetime-picker>
       </td>
-  </table>
-</div>
-<div mat-dialog-actions align="end">
-  <button mat-raised-button color="accent" (click)="onClose()">Annuler</button>
-  <button mat-raised-button color="warn" (click)="onConfirm()">Enregistrer</button>
-</div>
-<notification-list [isForIntegration]="true" [notifications]="preLoadedNotifications"
-  *ngIf="preLoadedNotifications && preLoadedNotifications.length>0"></notification-list>
+    </table>
+  </div>
+  <div mat-dialog-actions align="end">
+    <button mat-raised-button color="accent" (click)="onClose()">Annuler</button>
+    <button mat-raised-button color="warn" (click)="onConfirm()">Enregistrer</button>
+  </div>
+  @if (preLoadedNotifications && preLoadedNotifications.length>0) {
+    <notification-list [isForIntegration]="true" [notifications]="preLoadedNotifications"
+    ></notification-list>
+  }
