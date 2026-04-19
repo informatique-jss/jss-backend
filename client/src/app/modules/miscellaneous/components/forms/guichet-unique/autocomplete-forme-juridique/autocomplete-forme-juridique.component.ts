@@ -6,9 +6,10 @@ import { GenericLocalAutocompleteComponent } from '../../generic-local-autocompl
 import { AppService } from 'src/app/services/app.service';
 
 @Component({
-  selector: 'autocomplete-forme-juridique',
-  templateUrl: '../../generic-local-autocomplete/generic-local-autocomplete.component.html',
-  styleUrls: ['../../generic-local-autocomplete/generic-local-autocomplete.component.css']
+    selector: 'autocomplete-forme-juridique',
+    templateUrl: '../../generic-local-autocomplete/generic-local-autocomplete.component.html',
+    styleUrls: ['../../generic-local-autocomplete/generic-local-autocomplete.component.css'],
+    standalone: false
 })
 export class AutocompleteFormeJuridiqueComponent extends GenericLocalAutocompleteComponent<FormeJuridique> implements OnInit {
 

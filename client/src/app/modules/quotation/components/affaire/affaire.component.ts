@@ -17,9 +17,10 @@ import { AffaireService } from '../../services/affaire.service';
 import { AddAffaireComponent } from '../add-affaire/add-affaire.component';
 
 @Component({
-  selector: 'app-affaire',
-  templateUrl: './affaire.component.html',
-  styleUrls: ['./affaire.component.css']
+    selector: 'app-affaire',
+    templateUrl: './affaire.component.html',
+    styleUrls: ['./affaire.component.css'],
+    standalone: false
 })
 export class AffaireComponent implements OnInit {
 

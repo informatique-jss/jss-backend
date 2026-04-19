@@ -9,9 +9,10 @@ import { GenericChipsComponent } from '../generic-chips/generic-chips.component'
 import { AppService } from 'src/app/services/app.service';
 
 @Component({
-  selector: 'chips-provision-family',
-  templateUrl: './chips-provision-family.component.html',
-  styleUrls: ['./chips-provision-family.component.css']
+    selector: 'chips-provision-family',
+    templateUrl: './chips-provision-family.component.html',
+    styleUrls: ['./chips-provision-family.component.css'],
+    standalone: false
 })
 export class ChipsProvisionFamilyTypeComponent extends GenericChipsComponent<ProvisionFamilyType> implements OnInit {
   ProvisionFamilyTypes: ProvisionFamilyType[] = [] as Array<ProvisionFamilyType>;

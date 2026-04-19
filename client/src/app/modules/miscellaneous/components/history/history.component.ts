@@ -17,9 +17,10 @@ import { SortTableColumn } from '../../model/SortTableColumn';
 import { AuditService } from '../../services/audit.service';
 
 @Component({
-  selector: 'history',
-  templateUrl: './history.component.html',
-  styleUrls: ['./history.component.css']
+    selector: 'history',
+    templateUrl: './history.component.html',
+    styleUrls: ['./history.component.css'],
+    standalone: false
 })
 export class HistoryComponent implements OnInit {
 

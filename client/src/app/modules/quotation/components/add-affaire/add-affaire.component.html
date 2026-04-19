@@ -3,72 +3,88 @@
     <tr>
       <td>
         <generic-toggle [(model)]="affaire.isIndividual" label="Particulier ?" [form]="affaireForm"
-          propertyName="isIndividual"></generic-toggle>
+        propertyName="isIndividual"></generic-toggle>
       </td>
-      <td *ngIf="affaire && affaire.isIndividual==true">
-        <radio-group-civility [(model)]="affaire.civility" [form]="affaireForm" propertyName="civility"
+      @if (affaire && affaire.isIndividual==true) {
+        <td>
+          <radio-group-civility [(model)]="affaire.civility" [form]="affaireForm" propertyName="civility"
           [isDisabled]="!editMode" label="Civilité"></radio-group-civility>
-      </td>
-      <td *ngIf="affaire && affaire.isIndividual==true">
-        <generic-input [(model)]="affaire.lastname" label="Nom" [form]="affaireForm" propertyName="lastname"
+        </td>
+      }
+      @if (affaire && affaire.isIndividual==true) {
+        <td>
+          <generic-input [(model)]="affaire.lastname" label="Nom" [form]="affaireForm" propertyName="lastname"
           [isMandatory]="true" [conditionnalRequired]="affaire.isIndividual" [maxLength]="40"></generic-input>
-      </td>
-      <td *ngIf="affaire && affaire.isIndividual==true">
-        <generic-input [(model)]="affaire.firstname" label="Prénom" [form]="affaireForm" propertyName="firstname"
+        </td>
+      }
+      @if (affaire && affaire.isIndividual==true) {
+        <td>
+          <generic-input [(model)]="affaire.firstname" label="Prénom" [form]="affaireForm" propertyName="firstname"
           [isMandatory]="true" [conditionnalRequired]="affaire.isIndividual" [maxLength]="40"></generic-input>
-      </td>
+        </td>
+      }
     </tr>
   </table>
-  <table class="full-width" *ngIf="affaire && affaire.isIndividual==false">
-    <tr>
-      <td>
-        <generic-toggle [(model)]="affaire.isUnregistered" label="Société non enregistrée ?" [form]="affaireForm"
+  @if (affaire && affaire.isIndividual==false) {
+    <table class="full-width">
+      <tr>
+        <td>
+          <generic-toggle [(model)]="affaire.isUnregistered" label="Société non enregistrée ?" [form]="affaireForm"
           propertyName="isUnregistered"></generic-toggle>
-      </td>
-      <td *ngIf=" !affaire.isUnregistered">
-        <autocomplete-siren [(model)]="affaire.siren" [form]="affaireForm" propertyName="siren" [isMandatory]="true"
-          label="SIREN" [isDisabled]="!editMode" [byPassAutocompletValidator]="true"
-          [fieldToCheckAgainstForValidation]="'siren'"
-          [conditionnalRequired]="!this.affaire.isIndividual && !affaire.isUnregistered && !this.affaire.siret && !this.affaire.rna"
-          (onOptionSelected)="fillAffaire($event)">
-        </autocomplete-siren>
-      </td>
-      <td *ngIf=" !affaire.isUnregistered">
-        <autocomplete-siret [(model)]="affaire.siret" [form]="affaireForm" propertyName="siret" [isMandatory]="true"
-          label="SIRET" [isDisabled]="!editMode" [byPassAutocompletValidator]="true"
-          [fieldToCheckAgainstForValidation]="'siret'"
-          [conditionnalRequired]="!this.affaire.isIndividual && !affaire.isUnregistered && !this.affaire.siren && !this.affaire.rna"
-          (onOptionSelected)="fillAffaire($event)">
-        </autocomplete-siret>
-      </td>
-      <td *ngIf=" !affaire.isUnregistered">
-        <autocomplete-rna [(model)]="affaire.rna" [form]="affaireForm" propertyName="rna" [isMandatory]="true"
-          label="RNA" [isDisabled]="!editMode" [byPassAutocompletValidator]="true"
-          [fieldToCheckAgainstForValidation]="'rna'"
-          [conditionnalRequired]="!this.affaire.isIndividual && !affaire.isUnregistered && !this.affaire.siren && !this.affaire.siret"
-          (onOptionSelected)="fillAffaire($event)"></autocomplete-rna>
-      </td>
-    </tr>
-  </table>
+        </td>
+        @if ( !affaire.isUnregistered) {
+          <td>
+            <autocomplete-siren [(model)]="affaire.siren" [form]="affaireForm" propertyName="siren" [isMandatory]="true"
+              label="SIREN" [isDisabled]="!editMode" [byPassAutocompletValidator]="true"
+              [fieldToCheckAgainstForValidation]="'siren'"
+              [conditionnalRequired]="!this.affaire.isIndividual && !affaire.isUnregistered && !this.affaire.siret && !this.affaire.rna"
+              (onOptionSelected)="fillAffaire($event)">
+            </autocomplete-siren>
+          </td>
+        }
+        @if ( !affaire.isUnregistered) {
+          <td>
+            <autocomplete-siret [(model)]="affaire.siret" [form]="affaireForm" propertyName="siret" [isMandatory]="true"
+              label="SIRET" [isDisabled]="!editMode" [byPassAutocompletValidator]="true"
+              [fieldToCheckAgainstForValidation]="'siret'"
+              [conditionnalRequired]="!this.affaire.isIndividual && !affaire.isUnregistered && !this.affaire.siren && !this.affaire.rna"
+              (onOptionSelected)="fillAffaire($event)">
+            </autocomplete-siret>
+          </td>
+        }
+        @if ( !affaire.isUnregistered) {
+          <td>
+            <autocomplete-rna [(model)]="affaire.rna" [form]="affaireForm" propertyName="rna" [isMandatory]="true"
+              label="RNA" [isDisabled]="!editMode" [byPassAutocompletValidator]="true"
+              [fieldToCheckAgainstForValidation]="'rna'"
+              [conditionnalRequired]="!this.affaire.isIndividual && !affaire.isUnregistered && !this.affaire.siren && !this.affaire.siret"
+            (onOptionSelected)="fillAffaire($event)"></autocomplete-rna>
+          </td>
+        }
+      </tr>
+    </table>
+  }
   <table class="full-width">
-    <tr *ngIf="affaire && affaire.isIndividual==false">
-      <td>
-        <generic-input [(model)]="affaire.denomination" label="Dénomination" [form]="affaireForm"
-          propertyName="denomination" [isMandatory]="true" [isDisabled]="!editMode"
+    @if (affaire && affaire.isIndividual==false) {
+      <tr>
+        <td>
+          <generic-input [(model)]="affaire.denomination" label="Dénomination" [form]="affaireForm"
+            propertyName="denomination" [isMandatory]="true" [isDisabled]="!editMode"
           [conditionnalRequired]="!this.affaire.isIndividual" [maxLength]="150"></generic-input>
-      </td>
-      <td>
-        <generic-input [(model)]="affaire.acronym" label="Sigle" [form]="affaireForm" propertyName="acronym"
+        </td>
+        <td>
+          <generic-input [(model)]="affaire.acronym" label="Sigle" [form]="affaireForm" propertyName="acronym"
           [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="150"></generic-input>
-      </td>
-    </tr>
+        </td>
+      </tr>
+    }
   </table>
   <table class="full-width">
     <tr>
       <td>
         <generic-input [(model)]="affaire.address" label="Adresse" [form]="affaireForm" propertyName="address"
           [isMandatory]="true" [isDisabled]="!editMode" [conditionnalRequired]="!this.affaire.isIndividual"
-          [maxLength]="100"></generic-input>
+        [maxLength]="100"></generic-input>
       </td>
       <td>
         <autocomplete-postal-code [(model)]="affaire.postalCode" [form]="affaireForm" propertyName="postalCode"
@@ -79,39 +95,43 @@
       <td>
         <generic-input [(model)]="affaire.cedexComplement" label="Complément CEDEX" [form]="affaireForm"
           propertyName="cedexComplement" [isMandatory]="false" [isDisabled]="!editMode"
-          [maxLength]="20"></generic-input>
+        [maxLength]="20"></generic-input>
       </td>
       <td>
         <autocomplete-city [(model)]="affaire.city" [modelCountry]="affaire.country" [form]="affaireForm"
           propertyName="city" [isMandatory]="true" [conditionnalRequired]="!affaire.isIndividual"
           [preFilterPostalCode]="affaire.postalCode" [isDisabled]="!editMode" label="Ville"
-          (onOptionSelected)="fillPostalCode($event)"></autocomplete-city>
+        (onOptionSelected)="fillPostalCode($event)"></autocomplete-city>
       </td>
       <td>
         <autocomplete-country [(model)]="affaire.country" [form]="affaireForm" propertyName="country" label="Pays"
-          [isDisabled]="!editMode" [isMandatory]="true" [isDisabled]="!editMode"></autocomplete-country>
+        [isDisabled]="!editMode" [isMandatory]="true" [isDisabled]="!editMode"></autocomplete-country>
       </td>
     </tr>
   </table>
-  <table class="full-width" *ngIf="editMode">
-    <tr>
-      <td class="color-warn" *ngIf="isLabelAffaire">La facture est à adresser à l'affaire, pensez à renseigner un mail
-      </td>
-    </tr>
-  </table>
+  @if (editMode) {
+    <table class="full-width">
+      <tr>
+        @if (isLabelAffaire) {
+          <td class="color-warn">La facture est à adresser à l'affaire, pensez à renseigner un mail
+          </td>
+        }
+      </tr>
+    </table>
+  }
   <table class="full-width">
     <tr>
       <td>
         <chips-mail [(model)]="affaire.mails" label="Mails de facturation" [form]="affaireForm" propertyName="mails"
-          [isDisabled]="!editMode"></chips-mail>
+        [isDisabled]="!editMode"></chips-mail>
       </td>
       <td>
         <chips-phone [(model)]="affaire.phones" label="Téléphones" [form]="affaireForm" propertyName="phones"
-          [isDisabled]="!editMode"></chips-phone>
+        [isDisabled]="!editMode"></chips-phone>
       </td>
       <td>
         <generic-input [(model)]="affaire.externalReference" label="Référence externe" [form]="affaireForm"
-          propertyName="externalReference" [isDisabled]="!editMode" [maxLength]="60"></generic-input>
+        propertyName="externalReference" [isDisabled]="!editMode" [maxLength]="60"></generic-input>
       </td>
     </tr>
   </table>
@@ -119,17 +139,17 @@
     <tr>
       <td>
         <autocomplete-forme-juridique [(model)]="affaire.legalForm" [form]="affaireForm" propertyName="legalForm"
-          [isMandatory]="false" [isDisabled]="!editMode" label="Forme juridique"></autocomplete-forme-juridique>
+        [isMandatory]="false" [isDisabled]="!editMode" label="Forme juridique"></autocomplete-forme-juridique>
       </td>
       <td>
         <select-forme-exercice-activite-principal [(model)]="affaire.mainActivity" label="Forme de l'actvité"
           [form]="affaireForm" propertyName="mainActivity" [isMandatory]="false"
-          [isDisabled]="!editMode"></select-forme-exercice-activite-principal>
+        [isDisabled]="!editMode"></select-forme-exercice-activite-principal>
       </td>
       <td>
         <autocomplete-competent-authority [(model)]="affaire.competentAuthority" [form]="affaireForm"
           propertyName="competentAuthority" [isMandatory]="false" label="RCS"
-          [isDisabled]="!editMode"></autocomplete-competent-authority>
+        [isDisabled]="!editMode"></autocomplete-competent-authority>
       </td>
     </tr>
   </table>
@@ -137,42 +157,46 @@
     <tr>
       <td>
         <generic-input [(model)]="affaire.shareCapital" label="Capital social (€)" [form]="affaireForm"
-          propertyName="shareCapital" [isDisabled]="!editMode" type="number"></generic-input>
+        propertyName="shareCapital" [isDisabled]="!editMode" type="number"></generic-input>
       </td>
       <td>
         <generic-input [(model)]="affaire.employeeNumber" label="Nombre de salariés" [form]="affaireForm"
-          propertyName="employeeNumber" [isDisabled]="!editMode" type="number"></generic-input>
+        propertyName="employeeNumber" [isDisabled]="!editMode" type="number"></generic-input>
       </td>
       <td>
         <generic-input [(model)]="affaire.employeeNumber" label="Codes APE" [form]="affaireForm" propertyName="apeCodes"
-          [isDisabled]="!editMode" type="number"></generic-input>
+        [isDisabled]="!editMode" type="number"></generic-input>
       </td>
       <td>
         <generic-toggle [(model)]="affaire.isMainOffice" label="Siège de la société ?" [form]="affaireForm"
-          propertyName="isMainOffice" [isDisabled]="!editMode"></generic-toggle>
+        propertyName="isMainOffice" [isDisabled]="!editMode"></generic-toggle>
       </td>
     </tr>
   </table>
-  <table class="full-width" *ngIf="editMode">
-    <tr>
-      <td class="color-warn" *ngIf="isLabelAffaire">Le remboursement est à effectuer à l'affaire, pensez à renseigner
-        l'IBAN/BIC</td>
-    </tr>
-  </table>
+  @if (editMode) {
+    <table class="full-width">
+      <tr>
+        @if (isLabelAffaire) {
+          <td class="color-warn">Le remboursement est à effectuer à l'affaire, pensez à renseigner
+          l'IBAN/BIC</td>
+        }
+      </tr>
+    </table>
+  }
   <table class="full-width">
     <tr>
       <td>
         <generic-input [(model)]="affaire.paymentIban" label="IBAN" [form]="affaireForm" propertyName="paymentIban"
-          [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="40"></generic-input>
+        [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="40"></generic-input>
       </td>
       <td>
         <generic-input [(model)]="affaire.paymentBic" label="BIC" [form]="affaireForm" propertyName="paymentBic"
-          [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="40"></generic-input>
+        [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="40"></generic-input>
       </td>
       <td>
         <generic-input [(model)]="affaire.intercommunityVat" label="TVA intercommunaitaire" [form]="affaireForm"
           propertyName="intercommunityVat" [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="40"
-          [customValidators]="[checkVAT('intercommunityVat')]"></generic-input>
+        [customValidators]="[checkVAT('intercommunityVat')]"></generic-input>
       </td>
     </tr>
   </table>
@@ -181,7 +205,7 @@
     <tr>
       <td>
         <generic-textarea [(model)]="affaire.observations" label="Observations" [form]="affaireForm"
-          propertyName="observations" [isDisabled]="!editMode" [numberOfLines]="4"></generic-textarea>
+        propertyName="observations" [isDisabled]="!editMode" [numberOfLines]="4"></generic-textarea>
       </td>
     </tr>
   </table>
@@ -189,13 +213,13 @@
     <tr>
       <td>
         <generic-toggle [(model)]="affaire.isToNotUpdate" label="Ne pas mettre à jour depuis le RNE"
-          [form]="affaireForm" propertyName="isToNotUpdate" [isDisabled]="!editMode"></generic-toggle>
+        [form]="affaireForm" propertyName="isToNotUpdate" [isDisabled]="!editMode"></generic-toggle>
       </td>
     </tr>
     <tr>
       <td>
         <generic-toggle [(model)]="affaire.isProvisionalPaymentMandatory" label="Affaire à l'acompte obligatoire ?"
-          [form]="affaireForm" propertyName="isProvisionalPaymentMandatory" [isDisabled]="!editMode"></generic-toggle>
+        [form]="affaireForm" propertyName="isProvisionalPaymentMandatory" [isDisabled]="!editMode"></generic-toggle>
       </td>
     </tr>
   </table>

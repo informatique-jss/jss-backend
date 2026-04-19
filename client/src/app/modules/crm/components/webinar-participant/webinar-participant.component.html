@@ -4,7 +4,7 @@
       <tr>
         <td>
           <select-webinar [(model)]="selectedWebinar" label="Webinaire" [form]="webinarParticipantForm"
-            propertyName="webinar" [isMandatory]="true" [isDisabled]=false></select-webinar>
+          propertyName="webinar" [isMandatory]="true" [isDisabled]=false></select-webinar>
         </td>
         <td class="fab-td-button">
           <button mat-mini-fab color="warn" matTooltip="Rechercher" (click)="searchWebinarParticipants()"
@@ -15,10 +15,11 @@
       </tr>
     </table>
 
-    <sort-table [actions]="tableActionWebinarParticipant" [columns]="displayedColumnsWebinarParticipants"
-      [values]="webinarParticipants" tableName="webinarParticipants"
-      *ngIf="displayedColumnsWebinarParticipants && displayedColumnsWebinarParticipants.length>0 "
-      [displayTotalLines]="true">
-    </sort-table>
+    @if (displayedColumnsWebinarParticipants && displayedColumnsWebinarParticipants.length>0 ) {
+      <sort-table [actions]="tableActionWebinarParticipant" [columns]="displayedColumnsWebinarParticipants"
+        [values]="webinarParticipants" tableName="webinarParticipants"
+        [displayTotalLines]="true">
+      </sort-table>
+    }
   </div>
 </div>

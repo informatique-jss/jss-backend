@@ -1,25 +1,33 @@
 <mat-form-field class="full-width" [formGroup]="form!">
   <mat-label>{{label}}</mat-label>
   <mat-chip-grid #chipListFormaliteGuichetUnique>
-    <mat-chip-row *ngFor="let formaliteGuichetUnique of model" (removed)="removeElement(formaliteGuichetUnique)">
-      {{getLabel(formaliteGuichetUnique)}}
-      <button matChipRemove *ngIf="!isDisabled">
-        <mat-icon>cancel</mat-icon>
-      </button>
-      <button matTooltip="Voir le dossier sur le GU" *ngIf="isDisabled" matSuffix mat-icon-button
-        (click)="openGuichetUnique($event,formaliteGuichetUnique )">
-        <mat-icon>language</mat-icon>
-      </button>
-    </mat-chip-row>
+    @for (formaliteGuichetUnique of model; track formaliteGuichetUnique) {
+      <mat-chip-row (removed)="removeElement(formaliteGuichetUnique)">
+        {{getLabel(formaliteGuichetUnique)}}
+        @if (!isDisabled) {
+          <button matChipRemove>
+            <mat-icon>cancel</mat-icon>
+          </button>
+        }
+        @if (isDisabled) {
+          <button matTooltip="Voir le dossier sur le GU" matSuffix mat-icon-button
+            (click)="openGuichetUnique($event,formaliteGuichetUnique )">
+            <mat-icon>language</mat-icon>
+          </button>
+        }
+      </mat-chip-row>
+    }
     <input matInput placeholder="Choisir un dossier du GU" [formControlName]="propertyName" #formaliteGuichetUniqueInput
       [matChipInputFor]="chipListFormaliteGuichetUnique" [matChipInputSeparatorKeyCodes]="SEPARATOR_KEY_CODES"
       [disabled]="isDisabled" [matAutocomplete]="autoComplete">
-  </mat-chip-grid>
-  <mat-autocomplete autoActiveFirstOption #autoComplete="matAutocomplete" [displayWith]="displayLabel"
-    (optionSelected)="addFormaliteGuichetUnique($event)">
-    <mat-option *ngFor="let formaliteGuichetUnique of filteredFormaliteGuichetUniques "
-      [value]="formaliteGuichetUnique">
-      {{getLabel(formaliteGuichetUnique)}}
-    </mat-option>
-  </mat-autocomplete>
-</mat-form-field>
+    </mat-chip-grid>
+    <mat-autocomplete autoActiveFirstOption #autoComplete="matAutocomplete" [displayWith]="displayLabel"
+      (optionSelected)="addFormaliteGuichetUnique($event)">
+      @for (formaliteGuichetUnique of filteredFormaliteGuichetUniques ; track formaliteGuichetUnique) {
+        <mat-option
+          [value]="formaliteGuichetUnique">
+          {{getLabel(formaliteGuichetUnique)}}
+        </mat-option>
+      }
+    </mat-autocomplete>
+  </mat-form-field>

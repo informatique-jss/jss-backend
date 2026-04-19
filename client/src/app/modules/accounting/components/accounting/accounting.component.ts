@@ -5,9 +5,10 @@ import { HabilitationsService } from '../../../../services/habilitations.service
 import { UserPreferenceService } from '../../../../services/user.preference.service';
 
 @Component({
-  selector: 'app-accounting',
-  templateUrl: './accounting.component.html',
-  styleUrls: ['./accounting.component.css']
+    selector: 'app-accounting',
+    templateUrl: './accounting.component.html',
+    styleUrls: ['./accounting.component.css'],
+    standalone: false
 })
 export class AccountingComponent implements OnInit {
 

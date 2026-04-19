@@ -7,13 +7,16 @@
       <li class="breadcrumb-item"><a routerLink="/">Accueil</a></li>
       <li class="breadcrumb-item"><a routerLink="/tools">Outils</a></li>
       <li class="breadcrumb-item"><a routerLink="/tools/practical-sheets">Nos fiches pratiques</a>
-      </li>
-      <li class="breadcrumb-item"><a><span *ngIf="post">{{ post.titleText }}</span></a>
-      </li>
-    </ol>
-  </nav>
+    </li>
+    <li class="breadcrumb-item"><a>@if (post) {
+      <span>{{ post.titleText }}</span>
+    }</a>
+  </li>
+</ol>
+</nav>
 
-  <div class="accordion-item border-top mb-0" *ngIf="!post">
+@if (!post) {
+  <div class="accordion-item border-top mb-0">
     <div class="accordion-header">
       <p class="card-text placeholder-glow">
         <span class="placeholder placeholder-sm col-7 me-2"></span>
@@ -24,10 +27,11 @@
       </p>
     </div>
   </div>
+}
 
-  <div class="row " *ngIf="post">
+@if (post) {
+  <div class="row ">
     <div class="col-lg-9 col-xl-8 pe-lg-4 pe-xl-0">
-
       <!-- Post title + post meta -->
       <h1 class="pb-2 pb-lg-3">{{post.titleText}}</h1>
       <div class="d-flex flex-wrap align-items-center justify-content-between border-bottom mb-4">
@@ -38,13 +42,15 @@
               <div>
                 {{post.fullAuthor.name}}
               </div>
-              <div *ngIf="post.postAdditionalAuthors && post.postAdditionalAuthors.length>0">
-                @for(author of post.postAdditionalAuthors; track $index){
-                {{author.name}}
-                }
-              </div>
+              @if (post.postAdditionalAuthors && post.postAdditionalAuthors.length>0) {
+                <div>
+                  @for(author of post.postAdditionalAuthors; track $index){
+                    {{author.name}}
+                  }
+                </div>
+              }
               <span class="d-block position-absolute start-0 bottom-0 w-100"
-                style="background-color: currentColor; height: 1px;"></span>
+              style="background-color: currentColor; height: 1px;"></span>
             </div>
             <div>
               <span>{{post.date | date:'EEEE d MMMM y HH:mm'}} - </span>
@@ -69,367 +75,434 @@
                 viewBox="0 0 16 16">
                 <path
                   d="M3.468 1.948C5.303 3.325 7.276 6.118 8 7.616c.725-1.498 2.698-4.29 4.532-5.668C13.855.955 16 .186 16 2.632c0 .489-.28 4.105-.444 4.692-.572 2.04-2.653 2.561-4.504 2.246 3.236.551 4.06 2.375 2.281 4.2-3.376 3.464-4.852-.87-5.23-1.98-.07-.204-.103-.3-.103-.218 0-.081-.033.014-.102.218-.379 1.11-1.855 5.444-5.231 1.98-1.778-1.825-.955-3.65 2.28-4.2-1.85.315-3.932-.205-4.503-2.246C.28 6.737 0 3.12 0 2.632 0 .186 2.145.955 3.468 1.948" />
-              </svg>
-            </a>
-            <a class="nav-link p-2" (click)="shareByMail()" title="mail" aria-label="mail">
-              <i class="ai-mail"></i>
-            </a>
+                </svg>
+              </a>
+              <a class="nav-link p-2" (click)="shareByMail()" title="mail" aria-label="mail">
+                <i class="ai-mail"></i>
+              </a>
+            </div>
           </div>
         </div>
-      </div>
-
-      <!-- Lire l'article avec Play/Pause et contrôler la vitesse -->
-      <!-- Audio player for article text with controls -->
-      <div class="rounded-1 text-secondary bg-secondary text-color my-4">
-        <div class="p-2">
-          <span class="h4 text-secondary" style="cursor: pointer;" (click)="togglePlayPause()">
-            <i class="bi mx-2" [class]="isPlaying ? 'ai-pause' : 'ai-play-filled'"></i>
-            Ecouter l'article
-          </span>
-          <div class="mx-2 mt-3" *ngIf="isPlaying">
-            <label class="" for="speedControl">Vitesse : </label>
-            <span class="">{{ speechRate }}x</span>
-            <input type="range" class="form-range" min="0.5" max="2" step="0.1" id="speedControl"
-              [(ngModel)]="speechRate" (input)="updateSpeed()">
+        <!-- Lire l'article avec Play/Pause et contrôler la vitesse -->
+        <!-- Audio player for article text with controls -->
+        <div class="rounded-1 text-secondary bg-secondary text-color my-4">
+          <div class="p-2">
+            <span class="h4 text-secondary" style="cursor: pointer;" (click)="togglePlayPause()">
+              <i class="bi mx-2" [class]="isPlaying ? 'ai-pause' : 'ai-play-filled'"></i>
+              Ecouter l'article
+            </span>
+            @if (isPlaying) {
+              <div class="mx-2 mt-3">
+                <label class="" for="speedControl">Vitesse : </label>
+                <span class="">{{ speechRate }}x</span>
+                <input type="range" class="form-range" min="0.5" max="2" step="0.1" id="speedControl"
+                  [(ngModel)]="speechRate" (input)="updateSpeed()">
+                </div>
+              }
+            </div>
           </div>
-        </div>
-      </div>
-
-      <div>
-        <img class="rounded-5" [src]="post.media && post.media && post.media.urlFull ? post.media.urlFull : ''"
-          alt="Post image">
-      </div>
-
-      <!-- Post content -->
-      <span class="fs-lg pt-2 pt-sm-3" [innerHTML]="post.contentText| trustHtml"></span>
-
-      <!-- Submit a formality or contact us -->
-      <div class="mb-3" *ngIf="isPostContainsMyJssCategory(myJssCategoryFormality)">
-        <double-buttons class="text-grey" orderActionLabel=" Déposer une formalité"
-          [orderActionRoute]="'/quotation/new/'+serviceFamilyGroupFormality!.id+'/'+quotationTypeOrder.id"
-          quotationActionLabel="Demander un devis" [fromPageInfo]="{ type: 'tools', name: 'post'}"
-          [quotationActionRoute]="'/quotation/new/'+serviceFamilyGroupFormality!.id+'/'+quotationTypeQuotation.id"
-          [isLightButtons]="true">
-        </double-buttons>
-      </div>
-      <div class="mb-3" *ngIf="isPostContainsMyJssCategory(myJssCategoryAnnouncement)">
-        <double-buttons class="text-grey" orderActionLabel=" Publier une annonce légale"
-          [orderActionRoute]="'/quotation/new/'+serviceFamilyGroupAnnouncement!.id+'/'+quotationTypeOrder.id"
-          quotationActionLabel="Demander un devis" [fromPageInfo]="{ type: 'tools', name: 'post'}"
-          [quotationActionRoute]="'/quotation/new/'+serviceFamilyGroupAnnouncement!.id+'/'+quotationTypeQuotation.id"
-          linkLabel="Consulter les annonces légales" linkRoute="announcement/search" [linkRouteToJssMedia]='true'
-          [isLightButtons]="true">
-        </double-buttons>
-      </div>
-      <div class="mb-3" *ngIf="isPostContainsMyJssCategory(myJssCategoryApostille)">
-        <double-buttons class="text-grey" orderActionLabel=" Demander une apostille ou légalisation"
-          [orderActionRoute]="'/quotation/new/'+serviceFamilyGroupOther!.id+'/'+quotationTypeOrder.id"
-          quotationActionLabel="Demander un devis" [fromPageInfo]="{ type: 'tools', name: 'post'}"
-          [quotationActionRoute]="'/quotation/new/'+serviceFamilyGroupOther!.id+'/'+quotationTypeQuotation.id"
-          [isLightButtons]="true">
-        </double-buttons>
-      </div>
-      <div class="mb-3" *ngIf="isPostContainsMyJssCategory(myJssCategoryDomiciliation)">
-        <double-buttons class="text-grey" orderActionLabel=" Domicilier mon entreprise"
-          [orderActionRoute]="'/quotation/new/'+serviceFamilyGroupOther!.id+'/'+quotationTypeOrder.id"
-          quotationActionLabel="Demander un devis" [fromPageInfo]="{ type: 'tools', name: 'post'}"
-          [quotationActionRoute]="'/quotation/new/'+serviceFamilyGroupOther!.id+'/'+quotationTypeQuotation.id"
-          linkLabel="Bien choisir la domiciliation d'entreprise" [isLightButtons]="true">
-        </double-buttons>
-      </div>
-      <div class="mb-3" *ngIf="isPostContainsMyJssCategory(myJssCategoryDocument)">
-        <double-buttons class="text-grey" orderActionLabel=" Commander des documents"
-          [orderActionRoute]="'/quotation/new/'+serviceFamilyGroupOther!.id+'/'+quotationTypeOrder.id"
-          quotationActionLabel="Demander un devis" [fromPageInfo]="{ type: 'tools', name: 'post'}"
-          [quotationActionRoute]="'/quotation/new/'+serviceFamilyGroupOther!.id+'/'+quotationTypeQuotation.id"
-          [isLightButtons]="true">
-        </double-buttons>
-      </div>
-
-      <!-- Tags -->
-      <div class="d-flex flex-wrap pb-5 pt-3 pt-md-4 pt-xl-5 mt-xl-n2" *ngIf="post.postTags && post.postTags.length>0">
-        <h3 class="h6 py-1 mb-0 me-4">Tags associés :</h3>
-        <div *ngFor="let tag of post.postTags">
-          <a class="nav-link fs-sm py-1 px-0 me-3" style="cursor: pointer;" (click)="openTagSearch(tag.slug, $event)">
-            <span class="text-primary">#</span>{{tag.name}}
-          </a>
-        </div>
-      </div>
-
-      <!-- Author widget -->
-      <div class="border-top border-bottom py-4" id="author">
-        <div class="d-flex align-items-start py-2">
-          <div class="d-md-flex w-100 ps-4 align-items-center">
-            <img class="d-block rounded-circle  me-2" [src]="post.fullAuthor.avatar_url_size_96" width="56"
-              alt="Author image">
-            <div>
-              <h3 class="h5 mb-0">{{post.fullAuthor.name}}</h3>
-              <p *ngIf="post.fullAuthor.description" class="fs-sm">{{post.fullAuthor.description}}</p>
+          <div>
+            <img class="rounded-5" [src]="post.media && post.media && post.media.urlFull ? post.media.urlFull : ''"
+              alt="Post image">
             </div>
-            @for(author of post.postAdditionalAuthors; track $index){
-            <img class="d-block rounded-circle mx-2" [src]="author.avatar_url_size_96" width="56" alt="Author image">
-            <div>
-              <h3 class="h5 mb-0">{{author.name}}</h3>
-              <p *ngIf="author.description" class="fs-sm">{{author.description}}</p>
-            </div>
-            }
-            <div class="pt-4 pt-md-0 ps-md-4 ms-md-auto">
-              <h3 class="h5">Partager le post:</h3>
-              <div class="d-flex">
-                <a class="nav-link p-2 me-2" (click)="shareOnLinkedin()" title="Linkedin" aria-label="Linkedin">
-                  <i class="ai-linkedin fs-sm"></i>
-                </a>
-                <a class="nav-link p-2 me-2" (click)="shareOnInstagram()" title="Instagram" aria-label="Instagram">
-                  <i class="ai-instagram"></i>
-                </a>
-                <a class="nav-link p-2 me-2" (click)="shareOnFacebook()" title="Facebook" aria-label="Facebook">
-                  <i class="ai-facebook"></i>
-                </a>
-                <a class="nav-link p-2 me-2" (click)="shareOnBluesky()" title="Bluesky" aria-label="Bluesky">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                    class="bi bi-bluesky" viewBox="0 0 16 16">
-                    <path
-                      d="M3.468 1.948C5.303 3.325 7.276 6.118 8 7.616c.725-1.498 2.698-4.29 4.532-5.668C13.855.955 16 .186 16 2.632c0 .489-.28 4.105-.444 4.692-.572 2.04-2.653 2.561-4.504 2.246 3.236.551 4.06 2.375 2.281 4.2-3.376 3.464-4.852-.87-5.23-1.98-.07-.204-.103-.3-.103-.218 0-.081-.033.014-.102.218-.379 1.11-1.855 5.444-5.231 1.98-1.778-1.825-.955-3.65 2.28-4.2-1.85.315-3.932-.205-4.503-2.246C.28 6.737 0 3.12 0 2.632 0 .186 2.145.955 3.468 1.948" />
-                  </svg>
-                </a>
-                <a class="nav-link p-2" (click)="shareByMail()" title="Mail" aria-label="Mail">
-                  <i class="ai-mail"></i>
-                </a>
+            <!-- Post content -->
+            <span class="fs-lg pt-2 pt-sm-3" [innerHTML]="post.contentText| trustHtml"></span>
+            <!-- Submit a formality or contact us -->
+            @if (isPostContainsMyJssCategory(myJssCategoryFormality)) {
+              <div class="mb-3">
+                <double-buttons class="text-grey" orderActionLabel=" Déposer une formalité"
+                  [orderActionRoute]="'/quotation/new/'+serviceFamilyGroupFormality!.id+'/'+quotationTypeOrder.id"
+                  quotationActionLabel="Demander un devis" [fromPageInfo]="{ type: 'tools', name: 'post'}"
+                  [quotationActionRoute]="'/quotation/new/'+serviceFamilyGroupFormality!.id+'/'+quotationTypeQuotation.id"
+                  [isLightButtons]="true">
+                </double-buttons>
               </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-lg-3 offset-xl-1  mt-4 mt-lg-0 d-block d-lg-none">
-        <ng-container [ngTemplateOutlet]="asideColumn"></ng-container>
-      </div>
-
-      <!-- Comments -->
-      <div class="pt-4 pt-xl-5 my-4" id="comments">
-        <h2 class="h1 py-lg-1 py-xl-3" *ngIf="!commentsPagination.totalElements">0 Commentaire </h2>
-        <h2 class="h1 py-lg-1 py-xl-3" *ngIf="commentsPagination.totalElements">{{commentsPagination.totalElements <= 1
-            ? commentsPagination.totalElements + " Commentaire" : commentsPagination.totalElements + " Commentaires" }}
-            </h2>
-            <div class="pt-2 pb-4" *ngIf="commentsPagination.totalElements!=0">
-
-              <!-- Comment -->
-              <div *ngFor="let comment of comments" [attr.id]="comment.id">
-                <div class="py-4 mt-2 mb-4 border-bottom">
+            }
+            @if (isPostContainsMyJssCategory(myJssCategoryAnnouncement)) {
+              <div class="mb-3">
+                <double-buttons class="text-grey" orderActionLabel=" Publier une annonce légale"
+                  [orderActionRoute]="'/quotation/new/'+serviceFamilyGroupAnnouncement!.id+'/'+quotationTypeOrder.id"
+                  quotationActionLabel="Demander un devis" [fromPageInfo]="{ type: 'tools', name: 'post'}"
+                  [quotationActionRoute]="'/quotation/new/'+serviceFamilyGroupAnnouncement!.id+'/'+quotationTypeQuotation.id"
+                  linkLabel="Consulter les annonces légales" linkRoute="announcement/search" [linkRouteToJssMedia]='true'
+                  [isLightButtons]="true">
+                </double-buttons>
+              </div>
+            }
+            @if (isPostContainsMyJssCategory(myJssCategoryApostille)) {
+              <div class="mb-3">
+                <double-buttons class="text-grey" orderActionLabel=" Demander une apostille ou légalisation"
+                  [orderActionRoute]="'/quotation/new/'+serviceFamilyGroupOther!.id+'/'+quotationTypeOrder.id"
+                  quotationActionLabel="Demander un devis" [fromPageInfo]="{ type: 'tools', name: 'post'}"
+                  [quotationActionRoute]="'/quotation/new/'+serviceFamilyGroupOther!.id+'/'+quotationTypeQuotation.id"
+                  [isLightButtons]="true">
+                </double-buttons>
+              </div>
+            }
+            @if (isPostContainsMyJssCategory(myJssCategoryDomiciliation)) {
+              <div class="mb-3">
+                <double-buttons class="text-grey" orderActionLabel=" Domicilier mon entreprise"
+                  [orderActionRoute]="'/quotation/new/'+serviceFamilyGroupOther!.id+'/'+quotationTypeOrder.id"
+                  quotationActionLabel="Demander un devis" [fromPageInfo]="{ type: 'tools', name: 'post'}"
+                  [quotationActionRoute]="'/quotation/new/'+serviceFamilyGroupOther!.id+'/'+quotationTypeQuotation.id"
+                  linkLabel="Bien choisir la domiciliation d'entreprise" [isLightButtons]="true">
+                </double-buttons>
+              </div>
+            }
+            @if (isPostContainsMyJssCategory(myJssCategoryDocument)) {
+              <div class="mb-3">
+                <double-buttons class="text-grey" orderActionLabel=" Commander des documents"
+                  [orderActionRoute]="'/quotation/new/'+serviceFamilyGroupOther!.id+'/'+quotationTypeOrder.id"
+                  quotationActionLabel="Demander un devis" [fromPageInfo]="{ type: 'tools', name: 'post'}"
+                  [quotationActionRoute]="'/quotation/new/'+serviceFamilyGroupOther!.id+'/'+quotationTypeQuotation.id"
+                  [isLightButtons]="true">
+                </double-buttons>
+              </div>
+            }
+            <!-- Tags -->
+            @if (post.postTags && post.postTags.length>0) {
+              <div class="d-flex flex-wrap pb-5 pt-3 pt-md-4 pt-xl-5 mt-xl-n2">
+                <h3 class="h6 py-1 mb-0 me-4">Tags associés :</h3>
+                @for (tag of post.postTags; track tag) {
                   <div>
-                    <div class="d-flex align-items-center pb-1 mb-3">
-                      <avatar class="avatar-select rounded-circle" [user]="getResponsableNames(comment)" [size]="50"
-                        [centerAvatar]="true" alt="Comment author"></avatar>
-                      <div class="ps-3">
-                        <h6 class="mb-0">{{comment.authorFirstName}} {{comment.authorLastNameInitials}}.</h6>
-                        <span class="fs-sm text-body-secondary">{{comment.creationDate | date:'dd/MM/yyyy'}}</span>
-                      </div>
-                    </div>
-                    <p class="pb-2 mb-0">{{comment.content}}</p>
-                    <button class="nav-link fs-sm fw-semibold px-0 py-2 " type="button" (click)="replyComment(comment)">
-                      Répondre
-                      <i class="ai-redo fs-xl ms-2"></i>
-                    </button>
+                    <a class="nav-link fs-sm py-1 px-0 me-3" style="cursor: pointer;" (click)="openTagSearch(tag.slug, $event)">
+                      <span class="text-primary">#</span>{{tag.name}}
+                    </a>
                   </div>
-
-                  <!-- Comment reply -->
-                  <div *ngIf="comment.childrenComments && comment.childrenComments.length > 0">
-                    <div *ngFor="let children of comment.childrenComments" [attr.id]="children.id"
-                      class="card card-body border-0 my-3">
-                      <div class="d-flex align-items-center pb-1 mb-3">
-                        <avatar class="avatar-select rounded-circle" [user]="getResponsableNames(children)" [size]="50"
-                          [centerAvatar]="true" alt="Comment author"></avatar>
-                        <div class="ps-3">
-                          <h6 class="mb-0">{{children.authorFirstName}}
-                            {{children.authorLastNameInitials}}.
-                          </h6>
-                          <span class="fs-sm text-body-secondary">{{children.creationDate|
-                            date:'dd/MM/yyyy'}}</span>
+                }
+              </div>
+            }
+            <!-- Author widget -->
+            <div class="border-top border-bottom py-4" id="author">
+              <div class="d-flex align-items-start py-2">
+                <div class="d-md-flex w-100 ps-4 align-items-center">
+                  <img class="d-block rounded-circle  me-2" [src]="post.fullAuthor.avatar_url_size_96" width="56"
+                    alt="Author image">
+                    <div>
+                      <h3 class="h5 mb-0">{{post.fullAuthor.name}}</h3>
+                      @if (post.fullAuthor.description) {
+                        <p class="fs-sm">{{post.fullAuthor.description}}</p>
+                      }
+                    </div>
+                    @for(author of post.postAdditionalAuthors; track $index){
+                      <img class="d-block rounded-circle mx-2" [src]="author.avatar_url_size_96" width="56" alt="Author image">
+                      <div>
+                        <h3 class="h5 mb-0">{{author.name}}</h3>
+                        @if (author.description) {
+                          <p class="fs-sm">{{author.description}}</p>
+                        }
+                      </div>
+                    }
+                    <div class="pt-4 pt-md-0 ps-md-4 ms-md-auto">
+                      <h3 class="h5">Partager le post:</h3>
+                      <div class="d-flex">
+                        <a class="nav-link p-2 me-2" (click)="shareOnLinkedin()" title="Linkedin" aria-label="Linkedin">
+                          <i class="ai-linkedin fs-sm"></i>
+                        </a>
+                        <a class="nav-link p-2 me-2" (click)="shareOnInstagram()" title="Instagram" aria-label="Instagram">
+                          <i class="ai-instagram"></i>
+                        </a>
+                        <a class="nav-link p-2 me-2" (click)="shareOnFacebook()" title="Facebook" aria-label="Facebook">
+                          <i class="ai-facebook"></i>
+                        </a>
+                        <a class="nav-link p-2 me-2" (click)="shareOnBluesky()" title="Bluesky" aria-label="Bluesky">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                            class="bi bi-bluesky" viewBox="0 0 16 16">
+                            <path
+                              d="M3.468 1.948C5.303 3.325 7.276 6.118 8 7.616c.725-1.498 2.698-4.29 4.532-5.668C13.855.955 16 .186 16 2.632c0 .489-.28 4.105-.444 4.692-.572 2.04-2.653 2.561-4.504 2.246 3.236.551 4.06 2.375 2.281 4.2-3.376 3.464-4.852-.87-5.23-1.98-.07-.204-.103-.3-.103-.218 0-.081-.033.014-.102.218-.379 1.11-1.855 5.444-5.231 1.98-1.778-1.825-.955-3.65 2.28-4.2-1.85.315-3.932-.205-4.503-2.246C.28 6.737 0 3.12 0 2.632 0 .186 2.145.955 3.468 1.948" />
+                            </svg>
+                          </a>
+                          <a class="nav-link p-2" (click)="shareByMail()" title="Mail" aria-label="Mail">
+                            <i class="ai-mail"></i>
+                          </a>
                         </div>
                       </div>
-                      <p class="mb-0"><b
-                          class="fw-bold text-decoration-none citing-author">&commat;{{comment.authorFirstName}}
-                          {{children.authorLastNameInitials}}. </b>{{children.content}}</p>
                     </div>
                   </div>
                 </div>
-              </div>
-              <div class="row d-flex justify-content-center align-items-center">
-                <a *ngIf="commentsPagination.totalElements>commentsPagination.pageSize && commentsPagination.totalElements-comments.length > 0"
-                  class="d-flex justify-content-center gap-2 cursor-pointer nav-link p-2" (click)="showMoreComments()">
-                  <span class="fw-semibold">Voir
-                    plus</span><span>({{commentsPagination.totalElements-comments.length}})</span>
-                  <i class="ai-circle-arrow-down fs-xl ms-2"></i>
-                </a>
-                <a *ngIf="commentsPagination.totalElements>commentsPagination.pageSize && commentsPagination.totalElements-comments.length <= 0"
-                  class="d-flex justify-content-center gap-2 cursor-pointer nav-link p-2" (click)="showLessComments()">
-                  <span class="fw-semibold">Voir moins</span>
-                  <i class="ai-circle-arrow-up fs-xl ms-2"></i>
-                </a>
-              </div>
-            </div>
-
-            <!-- Comment form user not connected -->
-            <div *ngIf="!currentUser" id="commentForm"
-              class="card border-0 pt-2 p-md-2 p-xl-3 p-xxl-4 mt-5 mt-md-0 mb-4">
-              <div class="card-body">
-                <div class="row justify-content-between align-items-center">
-                  <h2 class="col-8 pb-2 pb-lg-3 pb-xl-4" *ngIf="!newCommentParent.id">Laisser un commentaire</h2>
-                  <h2 class="col-8 pb-2 pb-lg-3 pb-xl-4" *ngIf="newCommentParent.id">Répondre à
-                    {{newCommentParent.authorFirstName}} {{newCommentParent.authorLastNameInitials}}.</h2>
-                  <div class=" col-4 d-inline-flex justify-content-end pb-2 pb-lg-3 pb-xl-4"
-                    *ngIf="newCommentParent.id">
-                    <a type="button" aria-label="Close" class="fs-sm" (click)="cancelReply()">
-                      Annuler la réponse
-                    </a>
+                <div class="col-lg-3 offset-xl-1  mt-4 mt-lg-0 d-block d-lg-none">
+                  <ng-container [ngTemplateOutlet]="asideColumn"></ng-container>
+                </div>
+                <!-- Comments -->
+                <div class="pt-4 pt-xl-5 my-4" id="comments">
+                  @if (!commentsPagination.totalElements) {
+                    <h2 class="h1 py-lg-1 py-xl-3">0 Commentaire </h2>
+                  }
+                  @if (commentsPagination.totalElements) {
+                    <h2 class="h1 py-lg-1 py-xl-3">{{commentsPagination.totalElements <= 1
+                      ? commentsPagination.totalElements + " Commentaire" : commentsPagination.totalElements + " Commentaires" }}
+                    </h2>
+                  }
+                  @if (commentsPagination.totalElements!=0) {
+                    <div class="pt-2 pb-4">
+                      <!-- Comment -->
+                      @for (comment of comments; track comment) {
+                        <div [attr.id]="comment.id">
+                          <div class="py-4 mt-2 mb-4 border-bottom">
+                            <div>
+                              <div class="d-flex align-items-center pb-1 mb-3">
+                                <avatar class="avatar-select rounded-circle" [user]="getResponsableNames(comment)" [size]="50"
+                                [centerAvatar]="true" alt="Comment author"></avatar>
+                                <div class="ps-3">
+                                  <h6 class="mb-0">{{comment.authorFirstName}} {{comment.authorLastNameInitials}}.</h6>
+                                  <span class="fs-sm text-body-secondary">{{comment.creationDate | date:'dd/MM/yyyy'}}</span>
+                                </div>
+                              </div>
+                              <p class="pb-2 mb-0">{{comment.content}}</p>
+                              <button class="nav-link fs-sm fw-semibold px-0 py-2 " type="button" (click)="replyComment(comment)">
+                                Répondre
+                                <i class="ai-redo fs-xl ms-2"></i>
+                              </button>
+                            </div>
+                            <!-- Comment reply -->
+                            @if (comment.childrenComments && comment.childrenComments.length > 0) {
+                              <div>
+                                @for (children of comment.childrenComments; track children) {
+                                  <div [attr.id]="children.id"
+                                    class="card card-body border-0 my-3">
+                                    <div class="d-flex align-items-center pb-1 mb-3">
+                                      <avatar class="avatar-select rounded-circle" [user]="getResponsableNames(children)" [size]="50"
+                                      [centerAvatar]="true" alt="Comment author"></avatar>
+                                      <div class="ps-3">
+                                        <h6 class="mb-0">{{children.authorFirstName}}
+                                          {{children.authorLastNameInitials}}.
+                                        </h6>
+                                        <span class="fs-sm text-body-secondary">{{children.creationDate|
+                                        date:'dd/MM/yyyy'}}</span>
+                                      </div>
+                                    </div>
+                                    <p class="mb-0"><b
+                                      class="fw-bold text-decoration-none citing-author">&commat;{{comment.authorFirstName}}
+                                    {{children.authorLastNameInitials}}. </b>{{children.content}}</p>
+                                  </div>
+                                }
+                              </div>
+                            }
+                          </div>
+                        </div>
+                      }
+                      <div class="row d-flex justify-content-center align-items-center">
+                        @if (commentsPagination.totalElements>commentsPagination.pageSize && commentsPagination.totalElements-comments.length > 0) {
+                          <a
+                            class="d-flex justify-content-center gap-2 cursor-pointer nav-link p-2" (click)="showMoreComments()">
+                            <span class="fw-semibold">Voir
+                              plus</span><span>({{commentsPagination.totalElements-comments.length}})</span>
+                              <i class="ai-circle-arrow-down fs-xl ms-2"></i>
+                            </a>
+                          }
+                          @if (commentsPagination.totalElements>commentsPagination.pageSize && commentsPagination.totalElements-comments.length <= 0) {
+                            <a
+                              class="d-flex justify-content-center gap-2 cursor-pointer nav-link p-2" (click)="showLessComments()">
+                              <span class="fw-semibold">Voir moins</span>
+                              <i class="ai-circle-arrow-up fs-xl ms-2"></i>
+                            </a>
+                          }
+                        </div>
+                      </div>
+                    }
+                    <!-- Comment form user not connected -->
+                    @if (!currentUser) {
+                      <div id="commentForm"
+                        class="card border-0 pt-2 p-md-2 p-xl-3 p-xxl-4 mt-5 mt-md-0 mb-4">
+                        <div class="card-body">
+                          <div class="row justify-content-between align-items-center">
+                            @if (!newCommentParent.id) {
+                              <h2 class="col-8 pb-2 pb-lg-3 pb-xl-4">Laisser un commentaire</h2>
+                            }
+                            @if (newCommentParent.id) {
+                              <h2 class="col-8 pb-2 pb-lg-3 pb-xl-4">Répondre à
+                              {{newCommentParent.authorFirstName}} {{newCommentParent.authorLastNameInitials}}.</h2>
+                            }
+                            @if (newCommentParent.id) {
+                              <div class=" col-4 d-inline-flex justify-content-end pb-2 pb-lg-3 pb-xl-4"
+                                >
+                                <a type="button" aria-label="Close" class="fs-sm" (click)="cancelReply()">
+                                  Annuler la réponse
+                                </a>
+                              </div>
+                            }
+                          </div>
+                          <p>Votre adresse e-mail et votre nom de famille ne seront pas publiée. Les champs obligatoires sont
+                          indiqués avec *</p>
+                          <form class="row needs-validation g-4" novalidate>
+                            <div class="col-sm-4">
+                              <generic-input [(model)]="newComment.authorFirstName" label="Prénom*" [form]="createCommentForm"
+                                propertyName="firstname" [isMandatory]="true" [isDisabled]="false"
+                              [isDisplayLabel]="true"></generic-input>
+                            </div>
+                            <div class="col-sm-4">
+                              <generic-input [(model)]="newComment.authorLastName" label="Nom" [form]="createCommentForm"
+                                propertyName="lastname" [isMandatory]="false" [isDisabled]="false"
+                              [isDisplayLabel]="true"></generic-input>
+                            </div>
+                            <div class="col-sm-4">
+                              <generic-input [(model)]="newComment.mail.mail" label="Email*" [form]="createCommentForm"
+                                propertyName="mail" [isMandatory]="true" [isDisabled]="false"
+                              [isDisplayLabel]="true"></generic-input>
+                            </div>
+                            <div class="col-12">
+                              <generic-textarea [(model)]="newComment.content" label="Commentaire*" [form]="createCommentForm"
+                                propertyName="comment" [isMandatory]="true" [isDisabled]="false"
+                              [numberOfLines]="5"></generic-textarea>
+                            </div>
+                            <div class="col-12">
+                              <button class="btn btn-primary" type="submit" (click)="postComment()">Publier</button>
+                            </div>
+                          </form>
+                        </div>
+                      </div>
+                    }
+                    <!-- Comment form user connected -->
+                    @if (currentUser) {
+                      <div id="commentForm"
+                        class="card border-0 pt-2 p-md-2 p-xl-3 p-xxl-4 mt-5 mt-md-0 mb-4">
+                        <div class="card-body">
+                          <div class="row justify-content-between align-items-center">
+                            @if (!newCommentParent.id) {
+                              <h2 class="col-8 pb-2 pb-lg-3 pb-xl-4">Laisser un commentaire</h2>
+                            }
+                            @if (newCommentParent.id) {
+                              <h2 class="col-8 pb-2 pb-lg-3 pb-xl-4">Répondre à
+                              {{newCommentParent.authorFirstName}} {{newCommentParent.authorLastNameInitials}}.</h2>
+                            }
+                            @if (newCommentParent.id) {
+                              <div class=" col-4 d-inline-flex justify-content-end pb-2 pb-lg-3 pb-xl-4"
+                                >
+                                <a type="button" aria-label="Close" class="fs-sm" (click)="cancelReply()">
+                                  Annuler la réponse
+                                </a>
+                              </div>
+                            }
+                          </div>
+                          <p>Votre adresse e-mail et votre nom de famille ne seront pas publiée. Les champs obligatoires sont
+                          indiqués avec *</p>
+                          <form class="row needs-validation g-4" novalidate>
+                            <div class="col-12">
+                              <generic-textarea [(model)]="newComment.content" label="Commentaire*" [form]="createCommentForm"
+                                propertyName="comment" [isMandatory]="true" [isDisabled]="false"
+                              [numberOfLines]="5"></generic-textarea>
+                            </div>
+                            <div class="col-12">
+                              <button class="btn btn-primary" type="submit" (click)="postComment()">Publier</button>
+                            </div>
+                          </form>
+                        </div>
+                      </div>
+                    }
                   </div>
                 </div>
-                <p>Votre adresse e-mail et votre nom de famille ne seront pas publiée. Les champs obligatoires sont
-                  indiqués avec *</p>
-                <form class="row needs-validation g-4" novalidate>
-                  <div class="col-sm-4">
-                    <generic-input [(model)]="newComment.authorFirstName" label="Prénom*" [form]="createCommentForm"
-                      propertyName="firstname" [isMandatory]="true" [isDisabled]="false"
-                      [isDisplayLabel]="true"></generic-input>
-                  </div>
-                  <div class="col-sm-4">
-                    <generic-input [(model)]="newComment.authorLastName" label="Nom" [form]="createCommentForm"
-                      propertyName="lastname" [isMandatory]="false" [isDisabled]="false"
-                      [isDisplayLabel]="true"></generic-input>
-                  </div>
-                  <div class="col-sm-4">
-                    <generic-input [(model)]="newComment.mail.mail" label="Email*" [form]="createCommentForm"
-                      propertyName="mail" [isMandatory]="true" [isDisabled]="false"
-                      [isDisplayLabel]="true"></generic-input>
-                  </div>
-                  <div class="col-12">
-                    <generic-textarea [(model)]="newComment.content" label="Commentaire*" [form]="createCommentForm"
-                      propertyName="comment" [isMandatory]="true" [isDisabled]="false"
-                      [numberOfLines]="5"></generic-textarea>
-                  </div>
-                  <div class="col-12">
-                    <button class="btn btn-primary" type="submit" (click)="postComment()">Publier</button>
-                  </div>
-                </form>
+                <!-- Sidebar (offcanvas on sreens < 992px) -->
+                <aside class="col-lg-3 offset-xl-1  mt-4 mt-lg-0 d-none d-lg-block">
+                  @if (!isServer()) {
+                    <ng-container [ngTemplateOutlet]="asideColumn"></ng-container>
+                  }
+                </aside>
               </div>
-            </div>
-            <!-- Comment form user connected -->
-            <div *ngIf="currentUser" id="commentForm"
-              class="card border-0 pt-2 p-md-2 p-xl-3 p-xxl-4 mt-5 mt-md-0 mb-4">
-              <div class="card-body">
-                <div class="row justify-content-between align-items-center">
-                  <h2 class="col-8 pb-2 pb-lg-3 pb-xl-4" *ngIf="!newCommentParent.id">Laisser un commentaire</h2>
-                  <h2 class="col-8 pb-2 pb-lg-3 pb-xl-4" *ngIf="newCommentParent.id">Répondre à
-                    {{newCommentParent.authorFirstName}} {{newCommentParent.authorLastNameInitials}}.</h2>
-                  <div class=" col-4 d-inline-flex justify-content-end pb-2 pb-lg-3 pb-xl-4"
-                    *ngIf="newCommentParent.id">
-                    <a type="button" aria-label="Close" class="fs-sm" (click)="cancelReply()">
-                      Annuler la réponse
-                    </a>
+            }
+          </section>
+
+
+          <!-- Related articles (carousel) -->
+          @if (relatedPosts && relatedPosts[0]) {
+            <generic-swiper [items]="relatedPosts" subtitle="" title="Articles associés">
+              <ng-template let-relatedPost>
+                <!-- Post -->
+                <article>
+                  <div class="position-relative">
+                    @if (relatedPost.media) {
+                      <img class="rounded-5"
+                        [src]="relatedPost.media && relatedPost.media.urlLarge ? relatedPost.media.urlLarge : relatedPost.media.urlFull"
+                        alt="Post image">
+                    }
+                    <h3 class="h4 mt-4 mb-0">
+                      <a class="stretched-link" style="cursor: pointer;"
+                      [routerLink]="'/post/'+relatedPost.slug">{{relatedPost.titleText}}</a>
+                    </h3>
+                  </div>
+                </article>
+              </ng-template>
+            </generic-swiper>
+          }
+
+          <newsletter></newsletter>
+          <div class="my-4 py-4"></div>
+
+          <ng-template #asideColumn>
+            @if (post) {
+              <div id="sidebar">
+                <div class="offcanvas-body">
+                  @if (hotPosts[0] && hotPosts[1]) {
+                    <h4 class="pt-1 pt-lg-0 mt-lg-n2">Populaires :</h4>
+                  }
+                  <div class="mb-lg-5 mb-4">
+                    @if (hotPosts[0]) {
+                      <article class="position-relative pb-2 mb-3 mb-lg-4">
+                        @if (hotPosts[0].media) {
+                          <img class="rounded-5" [routerLink]="'/post/'+hotPosts[0].slug"
+                            [src]="hotPosts[0].media.urlLarge ? hotPosts[0].media.urlLarge : hotPosts[0].media.urlFull"
+                            alt="Post image">
+                        }
+                        <h5 class="h6 mt-3 mb-0">
+                          <a class="stretched-link" [routerLink]="'/post/'+hotPosts[0].slug">{{hotPosts[0].titleText}}</a>
+                        </h5>
+                      </article>
+                    }
+                    @if (hotPosts[1]) {
+                      <article class="position-relative pb-2 mb-3 mb-lg-4">
+                        @if (hotPosts[1].media) {
+                          <img class="rounded-5" [routerLink]="'/post/'+hotPosts[1].slug"
+                            [src]="hotPosts[1].media.urlLarge ? hotPosts[1].media.urlLarge : hotPosts[1].media.urlFull"
+                            alt="Post image">
+                        }
+                        <h5 class="h6 mt-3 mb-0">
+                          <a class="stretched-link" [routerLink]="'/post/'+hotPosts[1].slug">{{hotPosts[1].titleText}}</a>
+                        </h5>
+                      </article>
+                    }
+                  </div>
+                  <!-- Recent posts -->
+                  <h4 class="pt-3 pt-lg-1 mb-4">Récents :</h4>
+                  <ul class="list-unstyled mb-lg-5 mb-4">
+                    @if (recentPosts[0]) {
+                      <li class="border-bottom pb-3 mb-3">
+                        <span class="h6 mb-0">
+                          <a [routerLink]="'/post/'+recentPosts[0].slug">{{recentPosts[0].titleText}}</a>
+                        </span>
+                      </li>
+                    }
+                    @if (recentPosts[1]) {
+                      <li class="border-bottom pb-3 mb-3">
+                        <span class="h6 mb-0">
+                          <a [routerLink]="'/post/'+recentPosts[1].slug">{{recentPosts[1].titleText}}</a>
+                        </span>
+                      </li>
+                    }
+                    @if (recentPosts[2]) {
+                      <li class="border-bottom pb-3 mb-3">
+                        <span class="h6 mb-0">
+                          <a [routerLink]="'/post/'+recentPosts[2].slug">{{recentPosts[2].titleText}}</a>
+                        </span>
+                      </li>
+                    }
+                    @if (recentPosts[3]) {
+                      <li class="border-bottom pb-3">
+                        <span class="h6 mb-0">
+                          <a [routerLink]="'/post/'+recentPosts[3].slug">{{recentPosts[3].titleText}}</a>
+                        </span>
+                      </li>
+                    }
+                  </ul>
+                  <!-- Relevant tags -->
+                  @if (post.postTags && post.postTags[0]) {
+                    <h4 class="pt-3 pt-lg-1 mb-4">Tags associés :</h4>
+                  }
+                  <div class="d-flex flex-wrap mt-n3 ms-n3 mb-lg-5 mb-4 pb-3 pb-lg-0">
+                    @for (tag of post.postTags; track tag) {
+                      <span class="badge border text-nav fs-sm mt-3 ms-3" style="cursor: pointer;"
+                      [routerLink]="'/tools/practical-sheets/'+tag.slug">{{tag.name}}</span>
+                    }
                   </div>
                 </div>
-                <p>Votre adresse e-mail et votre nom de famille ne seront pas publiée. Les champs obligatoires sont
-                  indiqués avec *</p>
-                <form class="row needs-validation g-4" novalidate>
-                  <div class="col-12">
-                    <generic-textarea [(model)]="newComment.content" label="Commentaire*" [form]="createCommentForm"
-                      propertyName="comment" [isMandatory]="true" [isDisabled]="false"
-                      [numberOfLines]="5"></generic-textarea>
-                  </div>
-                  <div class="col-12">
-                    <button class="btn btn-primary" type="submit" (click)="postComment()">Publier</button>
-                  </div>
-                </form>
               </div>
-            </div>
-      </div>
-    </div>
-
-
-    <!-- Sidebar (offcanvas on sreens < 992px) -->
-    <aside class="col-lg-3 offset-xl-1  mt-4 mt-lg-0 d-none d-lg-block">
-      <ng-container *ngIf="!isServer()" [ngTemplateOutlet]="asideColumn"></ng-container>
-    </aside>
-  </div>
-</section>
-
-
-<!-- Related articles (carousel) -->
-<generic-swiper *ngIf="relatedPosts && relatedPosts[0]" [items]="relatedPosts" subtitle="" title="Articles associés">
-  <ng-template let-relatedPost>
-    <!-- Post -->
-    <article>
-      <div class="position-relative">
-        <img class="rounded-5" *ngIf="relatedPost.media"
-          [src]="relatedPost.media && relatedPost.media.urlLarge ? relatedPost.media.urlLarge : relatedPost.media.urlFull"
-          alt="Post image">
-        <h3 class="h4 mt-4 mb-0">
-          <a class="stretched-link" style="cursor: pointer;"
-            [routerLink]="'/post/'+relatedPost.slug">{{relatedPost.titleText}}</a>
-        </h3>
-      </div>
-    </article>
-  </ng-template>
-</generic-swiper>
-
-<newsletter></newsletter>
-<div class="my-4 py-4"></div>
-
-<ng-template #asideColumn>
-  <div id="sidebar" *ngIf="post">
-
-    <div class="offcanvas-body">
-      <h4 *ngIf="hotPosts[0] && hotPosts[1]" class="pt-1 pt-lg-0 mt-lg-n2">Populaires :</h4>
-      <div class="mb-lg-5 mb-4">
-        <article *ngIf="hotPosts[0]" class="position-relative pb-2 mb-3 mb-lg-4">
-          <img class="rounded-5" [routerLink]="'/post/'+hotPosts[0].slug" *ngIf="hotPosts[0].media"
-            [src]="hotPosts[0].media.urlLarge ? hotPosts[0].media.urlLarge : hotPosts[0].media.urlFull"
-            alt="Post image">
-          <h5 class="h6 mt-3 mb-0">
-            <a class="stretched-link" [routerLink]="'/post/'+hotPosts[0].slug">{{hotPosts[0].titleText}}</a>
-          </h5>
-        </article>
-        <article *ngIf="hotPosts[1]" class="position-relative pb-2 mb-3 mb-lg-4">
-          <img class="rounded-5" [routerLink]="'/post/'+hotPosts[1].slug" *ngIf="hotPosts[1].media"
-            [src]="hotPosts[1].media.urlLarge ? hotPosts[1].media.urlLarge : hotPosts[1].media.urlFull"
-            alt="Post image">
-          <h5 class="h6 mt-3 mb-0">
-            <a class="stretched-link" [routerLink]="'/post/'+hotPosts[1].slug">{{hotPosts[1].titleText}}</a>
-          </h5>
-        </article>
-      </div>
-
-      <!-- Recent posts -->
-      <h4 class="pt-3 pt-lg-1 mb-4">Récents :</h4>
-      <ul class="list-unstyled mb-lg-5 mb-4">
-        <li class="border-bottom pb-3 mb-3" *ngIf="recentPosts[0]">
-          <span class="h6 mb-0">
-            <a [routerLink]="'/post/'+recentPosts[0].slug">{{recentPosts[0].titleText}}</a>
-          </span>
-        </li>
-        <li class="border-bottom pb-3 mb-3" *ngIf="recentPosts[1]">
-          <span class="h6 mb-0">
-            <a [routerLink]="'/post/'+recentPosts[1].slug">{{recentPosts[1].titleText}}</a>
-          </span>
-        </li>
-        <li class="border-bottom pb-3 mb-3" *ngIf="recentPosts[2]">
-          <span class="h6 mb-0">
-            <a [routerLink]="'/post/'+recentPosts[2].slug">{{recentPosts[2].titleText}}</a>
-          </span>
-        </li>
-        <li class="border-bottom pb-3" *ngIf="recentPosts[3]">
-          <span class="h6 mb-0">
-            <a [routerLink]="'/post/'+recentPosts[3].slug">{{recentPosts[3].titleText}}</a>
-          </span>
-        </li>
-      </ul>
-
-      <!-- Relevant tags -->
-      <h4 class="pt-3 pt-lg-1 mb-4" *ngIf="post.postTags && post.postTags[0]">Tags associés :</h4>
-      <div class="d-flex flex-wrap mt-n3 ms-n3 mb-lg-5 mb-4 pb-3 pb-lg-0">
-        <span *ngFor="let tag of post.postTags" class="badge border text-nav fs-sm mt-3 ms-3" style="cursor: pointer;"
-          [routerLink]="'/tools/practical-sheets/'+tag.slug">{{tag.name}}</span>
-      </div>
-    </div>
-  </div>
-</ng-template>
+            }
+          </ng-template>

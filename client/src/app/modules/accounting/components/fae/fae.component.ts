@@ -6,9 +6,10 @@ import { FaeResult } from '../../model/FaeResult';
 import { FaeResultService } from '../../services/fae.result.service';
 
 @Component({
-  selector: 'fae',
-  templateUrl: './fae.component.html',
-  styleUrls: ['./fae.component.css']
+    selector: 'fae',
+    templateUrl: './fae.component.html',
+    styleUrls: ['./fae.component.css'],
+    standalone: false
 })
 export class FaeComponent implements OnInit {
   faeForm = this.formBuilder.group({});

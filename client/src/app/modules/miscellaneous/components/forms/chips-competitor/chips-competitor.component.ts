@@ -9,9 +9,10 @@ import { GenericChipsComponent } from '../generic-chips/generic-chips.component'
 import { AppService } from 'src/app/services/app.service';
 
 @Component({
-  selector: 'chips-competitor',
-  templateUrl: './chips-competitor.component.html',
-  styleUrls: ['./chips-competitor.component.css']
+    selector: 'chips-competitor',
+    templateUrl: './chips-competitor.component.html',
+    styleUrls: ['./chips-competitor.component.css'],
+    standalone: false
 })
 export class ChipsCompetitorComponent extends GenericChipsComponent<Competitor> implements OnInit {
 

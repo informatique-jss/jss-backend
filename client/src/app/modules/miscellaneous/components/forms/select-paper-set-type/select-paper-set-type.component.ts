@@ -6,9 +6,10 @@ import { GenericSelectComponent } from '../generic-select/generic-select.compone
 import { AppService } from 'src/app/services/app.service';
 
 @Component({
-  selector: 'select-paper-set-type',
-  templateUrl: './../generic-select/generic-select.component.html',
-  styleUrls: ['./../generic-select/generic-select.component.html']
+    selector: 'select-paper-set-type',
+    templateUrl: './../generic-select/generic-select.component.html',
+    styleUrls: ['./../generic-select/generic-select.component.html'],
+    standalone: false
 })
 
 export class SelectPaperSetTypeComponent extends GenericSelectComponent<PaperSetType> implements OnInit {

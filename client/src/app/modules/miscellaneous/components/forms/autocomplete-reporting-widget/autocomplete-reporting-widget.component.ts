@@ -7,9 +7,10 @@ import { ConstantService } from '../../../services/constant.service';
 import { GenericLocalAutocompleteComponent } from '../generic-local-autocomplete/generic-local-autocomplete.component';
 
 @Component({
-  selector: 'autocomplete-reporting-widget',
-  templateUrl: '../generic-local-autocomplete/generic-local-autocomplete.component.html',
-  styleUrls: ['../generic-local-autocomplete/generic-local-autocomplete.component.css'],
+    selector: 'autocomplete-reporting-widget',
+    templateUrl: '../generic-local-autocomplete/generic-local-autocomplete.component.html',
+    styleUrls: ['../generic-local-autocomplete/generic-local-autocomplete.component.css'],
+    standalone: false
 })
 export class AutocompleteReportingWidgetComponent extends GenericLocalAutocompleteComponent<ReportingWidget> implements OnInit {
 

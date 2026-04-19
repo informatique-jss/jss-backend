@@ -7,9 +7,10 @@ import { AppService } from 'src/app/services/app.service';
 import { GenericReferentialComponent } from '../generic-referential/generic-referential-component';
 
 @Component({
-  selector: 'referential-customer-order-origin',
-  templateUrl: './referential-customer-order-origin.component.html',
-  styleUrls: ['./../generic-referential/generic-referential.component.css']
+    selector: 'referential-customer-order-origin',
+    templateUrl: './referential-customer-order-origin.component.html',
+    styleUrls: ['./../generic-referential/generic-referential.component.css'],
+    standalone: false
 })
 export class ReferentialCustomerOrderOriginComponent extends GenericReferentialComponent<CustomerOrderOrigin> implements OnInit {
   constructor(private customerOrderOriginService: CustomerOrderOriginService,

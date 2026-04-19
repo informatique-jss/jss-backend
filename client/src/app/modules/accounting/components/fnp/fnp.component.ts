@@ -6,9 +6,10 @@ import { FnpResult } from '../../model/FnpResult';
 import { FnpResultService } from '../../services/fnp.result.service';
 
 @Component({
-  selector: 'fnp',
-  templateUrl: './fnp.component.html',
-  styleUrls: ['./fnp.component.css']
+    selector: 'fnp',
+    templateUrl: './fnp.component.html',
+    styleUrls: ['./fnp.component.css'],
+    standalone: false
 })
 export class FnpComponent implements OnInit {
   fnpForm = this.formBuilder.group({});

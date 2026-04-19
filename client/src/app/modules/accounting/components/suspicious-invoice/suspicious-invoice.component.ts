@@ -7,9 +7,10 @@ import { SuspiciousInvoiceResult } from '../../model/SuspiciousInvoice';
 import { SuspiciousInvoiceResultService } from '../../services/suspicious.invoice.result.service';
 
 @Component({
-  selector: 'suspicious-invoice',
-  templateUrl: './suspicious-invoice.component.html',
-  styleUrls: ['./suspicious-invoice.component.css']
+    selector: 'suspicious-invoice',
+    templateUrl: './suspicious-invoice.component.html',
+    styleUrls: ['./suspicious-invoice.component.css'],
+    standalone: false
 })
 export class SuspiciousInvoiceComponent implements OnInit {
   faeForm = this.formBuilder.group({});

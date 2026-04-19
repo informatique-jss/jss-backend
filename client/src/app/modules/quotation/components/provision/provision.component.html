@@ -1,50 +1,56 @@
-<div class="mat-accordion-container full-width" *ngIf="asso && asso.affaire">
-  <mat-accordion multi>
-    <mat-expansion-panel expanded="false">
-      <mat-expansion-panel-header>
-        <mat-panel-title>Détails de la commande n°{{asso.customerOrder.id}} du {{asso.customerOrder.createdDate |
-          date:'dd/MM/yyyy'}}
-        </mat-panel-title>
-        <mat-panel-description>
-          <span class="status-text">{{asso.customerOrder.customerOrderStatus.label}}</span>
-          <mat-icon color="accent" matTooltip="Voir/éditer la commande" (click)="displayCustomerOrder($event)"
-            (auxclick)="displayCustomerOrder($event)" class="pointer status-text">
+@if (asso && asso.affaire) {
+  <div class="mat-accordion-container full-width">
+    <mat-accordion multi>
+      <mat-expansion-panel expanded="false">
+        <mat-expansion-panel-header>
+          <mat-panel-title>Détails de la commande n°{{asso.customerOrder.id}} du {{asso.customerOrder.createdDate |
+            date:'dd/MM/yyyy'}}
+          </mat-panel-title>
+          <mat-panel-description>
+            <span class="status-text">{{asso.customerOrder.customerOrderStatus.label}}</span>
+            <mat-icon color="accent" matTooltip="Voir/éditer la commande" (click)="displayCustomerOrder($event)"
+              (auxclick)="displayCustomerOrder($event)" class="pointer status-text">
             shopping_cart</mat-icon>
-          <ng-template></ng-template>
-        </mat-panel-description>
-      </mat-expansion-panel-header>
-      <ordering-customer [quotation]="asso.customerOrder" [editMode]="false">
-      </ordering-customer>
-    </mat-expansion-panel>
-  </mat-accordion>
-</div>
-<div class="mat-accordion-container full-width" *ngIf="asso && asso.affaire">
-  <mat-accordion multi>
-    <mat-expansion-panel expanded="false">
-      <mat-expansion-panel-header>
-        <mat-panel-title>Détails de l'affaire
-          {{asso.affaire.denomination?asso.affaire.denomination:(asso.affaire.firstname + ' '
-          +asso.affaire.lastname)}} - {{asso.affaire.address}} - {{asso.affaire.postalCode}} -
-          {{asso.affaire.city.label}}
-          <mat-icon color="accent" matTooltip="Ajouter une notification sur cette affaire"
-            (click)="addNewNotificationOnAffaire(asso.affaire);$event.stopPropagation();"
-            [matBadge]="getNotificationForAffaire(asso.affaire).length" *ngIf="canDisplayNotifications()"
-            [matBadgeHidden]="getNotificationForAffaire(asso.affaire).length<=0" matBadgePosition="below after"
-            matBadgeColor="warn" matBadgeSize="small" class="pointer">notifications</mat-icon>
-        </mat-panel-title>
-        <mat-panel-description>
-          <mat-icon color="accent" matTooltip="Voir/éditer l'affaire"
-            (click)="displayAffaire($event);$event.stopPropagation();"
-            (auxclick)="displayAffaire($event);$event.stopPropagation();" class="pointer status-text">
+            <ng-template></ng-template>
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <ordering-customer [quotation]="asso.customerOrder" [editMode]="false">
+        </ordering-customer>
+      </mat-expansion-panel>
+    </mat-accordion>
+  </div>
+}
+@if (asso && asso.affaire) {
+  <div class="mat-accordion-container full-width">
+    <mat-accordion multi>
+      <mat-expansion-panel expanded="false">
+        <mat-expansion-panel-header>
+          <mat-panel-title>Détails de l'affaire
+            {{asso.affaire.denomination?asso.affaire.denomination:(asso.affaire.firstname + ' '
+            +asso.affaire.lastname)}} - {{asso.affaire.address}} - {{asso.affaire.postalCode}} -
+            {{asso.affaire.city.label}}
+            @if (canDisplayNotifications()) {
+              <mat-icon color="accent" matTooltip="Ajouter une notification sur cette affaire"
+                (click)="addNewNotificationOnAffaire(asso.affaire);$event.stopPropagation();"
+                [matBadge]="getNotificationForAffaire(asso.affaire).length"
+                [matBadgeHidden]="getNotificationForAffaire(asso.affaire).length<=0" matBadgePosition="below after"
+              matBadgeColor="warn" matBadgeSize="small" class="pointer">notifications</mat-icon>
+            }
+          </mat-panel-title>
+          <mat-panel-description>
+            <mat-icon color="accent" matTooltip="Voir/éditer l'affaire"
+              (click)="displayAffaire($event);$event.stopPropagation();"
+              (auxclick)="displayAffaire($event);$event.stopPropagation();" class="pointer status-text">
             edit</mat-icon>
-          <ng-template></ng-template>
-        </mat-panel-description>
-      </mat-expansion-panel-header>
-      <add-affaire [affaire]="asso.affaire" [editMode]="false"></add-affaire>
-    </mat-expansion-panel>
-  </mat-accordion>
-</div>
-<ng-container *ngFor="let service of asso.services">
+            <ng-template></ng-template>
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <add-affaire [affaire]="asso.affaire" [editMode]="false"></add-affaire>
+      </mat-expansion-panel>
+    </mat-accordion>
+  </div>
+}
+@for (service of asso.services; track service) {
   <div class="mat-accordion-container full-width">
     <mat-accordion multi>
       <mat-expansion-panel expanded="false" class="service-tab ">
@@ -52,231 +58,301 @@
           <mat-panel-title>Service - {{service.serviceLabelToDisplay}}
           </mat-panel-title>
           <mat-panel-description style="height:40px">
-            <mat-icon color="accent" *ngIf="!editMode && service.id" matTooltip="Modifier le type de service"
-              (click)="modifyService(service, asso.affaire);$event.stopPropagation()" class="pointer">
+            @if (!editMode && service.id) {
+              <mat-icon color="accent" matTooltip="Modifier le type de service"
+                (click)="modifyService(service, asso.affaire);$event.stopPropagation()" class="pointer">
               edit</mat-icon>
-            <mat-icon color="accent" *ngIf="!editMode  " matTooltip="Supprimer le service"
-              (click)="deleteService(asso,service);$event.stopPropagation()" class="pointer">
+            }
+            @if (!editMode  ) {
+              <mat-icon color="accent" matTooltip="Supprimer le service"
+                (click)="deleteService(asso,service);$event.stopPropagation()" class="pointer">
               delete</mat-icon>
-            <mat-icon color="accent" matTooltip="Ajouter une notification sur ce service"
-              (click)="addNewNotificationOnService(service);$event.stopPropagation();"
-              [matBadge]="getNotificationForService(service).length" matBadgeSize="small"
-              *ngIf="canDisplayNotifications()" [matBadgeHidden]="getNotificationForService(service).length<=0"
+            }
+            @if (canDisplayNotifications()) {
+              <mat-icon color="accent" matTooltip="Ajouter une notification sur ce service"
+                (click)="addNewNotificationOnService(service);$event.stopPropagation();"
+                [matBadge]="getNotificationForService(service).length" matBadgeSize="small"
+                [matBadgeHidden]="getNotificationForService(service).length<=0"
               matBadgePosition="below after" matBadgeColor="warn" class="pointer">notifications</mat-icon>
+            }
           </mat-panel-description>
         </mat-expansion-panel-header>
         <service [service]=" service" [editMode]="editMode"
-          [quotation]="asso.quotation ?asso.quotation : asso.customerOrder"></service>
+        [quotation]="asso.quotation ?asso.quotation : asso.customerOrder"></service>
       </mat-expansion-panel>
     </mat-accordion>
   </div>
-  <div class="mat-accordion-container full-width" *ngIf="asso && service.provisions" style="padding-bottom:15px">
-    <mat-accordion multi class="mat-accordion-container">
-      <mat-expansion-panel *ngFor="let provision of service.provisions" [expanded]="!provision.id"
-        (afterExpand)="onExpandedChange(provision.id)" [expanded]=" provision.id==inputProvisionId">
-        <mat-expansion-panel-header>
-          <mat-panel-title>
-            {{computeProvisionLabel(service, provision, true)}}
-          </mat-panel-title>
-          <mat-panel-description style="height:40px">
-            <span class="status-text"
-              *ngIf="getActiveWorkflowElementsForProvisionFn(provision)">{{getActiveWorkflowElementsForProvisionFn(provision).label}}</span>
-            <avatar-chip [employee]="provision.assignedTo"
-              (onChangeAssigne)="updateAssignedToForProvision($event, provision)">
-            </avatar-chip>
-            <ng-template></ng-template>
-          </mat-panel-description>
-          <mat-panel-description>
-            <mat-icon color="accent" *ngIf="!editMode" matTooltip="Supprimer la prestation" style="padding-right: 20px;"
-              (click)="deleteProvision(provision);$event.stopPropagation()" class="pointer">
-              delete</mat-icon>
-            <mat-icon color="accent" matTooltip="Ajouter une notification sur cette prestation"
-              (click)="addNewNotificationOnProvision(provision);$event.stopPropagation();"
-              [matBadge]="getNotificationForProvision(provision).length" matBadgeSize="small"
-              *ngIf="canDisplayNotifications()" [matBadgeHidden]="getNotificationForProvision(provision).length<=0"
-              matBadgePosition="below after" matBadgeColor="warn" class="pointer">notifications</mat-icon>
-          </mat-panel-description>
-          <mat-panel-description *ngIf="editMode">
-            <mat-icon color="accent" matTooltip="Dupliquer la prestation"
-              (click)="duplicateProvision(service,provision)" class="pointer">
-              content_copy</mat-icon>
-          </mat-panel-description>
-        </mat-expansion-panel-header>
-        <provision-item [quotation]="asso.customerOrder?asso.customerOrder:asso.quotation"
-          *ngIf="asso.affaire && asso.affaire.id" [editMode]="editMode" [provision]="provision" [affaire]="asso.affaire"
-          [instanceOfCustomerOrder]="true" [isStatusOpen]="isStatusOpen">
-        </provision-item>
-      </mat-expansion-panel>
-    </mat-accordion>
-  </div>
-  <div class="fab-extended-button-containter"><button mat-fab extended color="primary"
-      (click)="createProvision(service)" *ngIf="editMode && hasQuotation!=undefined">
+  @if (asso && service.provisions) {
+    <div class="mat-accordion-container full-width" style="padding-bottom:15px">
+      <mat-accordion multi class="mat-accordion-container">
+        @for (provision of service.provisions; track provision) {
+          <mat-expansion-panel [expanded]="!provision.id"
+            (afterExpand)="onExpandedChange(provision.id)" [expanded]=" provision.id==inputProvisionId">
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                {{computeProvisionLabel(service, provision, true)}}
+              </mat-panel-title>
+              <mat-panel-description style="height:40px">
+                @if (getActiveWorkflowElementsForProvisionFn(provision)) {
+                  <span class="status-text"
+                  >{{getActiveWorkflowElementsForProvisionFn(provision).label}}</span>
+                }
+                <avatar-chip [employee]="provision.assignedTo"
+                  (onChangeAssigne)="updateAssignedToForProvision($event, provision)">
+                </avatar-chip>
+                <ng-template></ng-template>
+              </mat-panel-description>
+              <mat-panel-description>
+                @if (!editMode) {
+                  <mat-icon color="accent" matTooltip="Supprimer la prestation" style="padding-right: 20px;"
+                    (click)="deleteProvision(provision);$event.stopPropagation()" class="pointer">
+                  delete</mat-icon>
+                }
+                @if (canDisplayNotifications()) {
+                  <mat-icon color="accent" matTooltip="Ajouter une notification sur cette prestation"
+                    (click)="addNewNotificationOnProvision(provision);$event.stopPropagation();"
+                    [matBadge]="getNotificationForProvision(provision).length" matBadgeSize="small"
+                    [matBadgeHidden]="getNotificationForProvision(provision).length<=0"
+                  matBadgePosition="below after" matBadgeColor="warn" class="pointer">notifications</mat-icon>
+                }
+              </mat-panel-description>
+              @if (editMode) {
+                <mat-panel-description>
+                  <mat-icon color="accent" matTooltip="Dupliquer la prestation"
+                    (click)="duplicateProvision(service,provision)" class="pointer">
+                  content_copy</mat-icon>
+                </mat-panel-description>
+              }
+            </mat-expansion-panel-header>
+            @if (asso.affaire && asso.affaire.id) {
+              <provision-item [quotation]="asso.customerOrder?asso.customerOrder:asso.quotation"
+                [editMode]="editMode" [provision]="provision" [affaire]="asso.affaire"
+                [instanceOfCustomerOrder]="true" [isStatusOpen]="isStatusOpen">
+              </provision-item>
+            }
+          </mat-expansion-panel>
+        }
+      </mat-accordion>
+    </div>
+  }
+  <div class="fab-extended-button-containter">@if (editMode && hasQuotation!=undefined) {
+    <button mat-fab extended color="primary"
+      (click)="createProvision(service)">
       <mat-icon>work</mat-icon>
       Ajouter une prestation pour le service {{service.serviceLabelToDisplay}}
-    </button></div>
-</ng-container>
-<div class=" fab-extended-button-containter"><button mat-fab extended color="primary" (click)="createService(asso)"
-    *ngIf="editMode && hasQuotation!=undefined">
+    </button>
+  }</div>
+}
+<div class=" fab-extended-button-containter">@if (editMode && hasQuotation!=undefined) {
+  <button mat-fab extended color="primary" (click)="createService(asso)"
+    >
     <mat-icon>room_service</mat-icon>
     Ajouter un service
-  </button></div>
-<button matTooltip="Sauvegarder" mat-fab color="warn" class="fab-button" *ngIf="editMode==true" (click)="saveAsso()">
-  <mat-icon>save</mat-icon>
-</button>
-<button matTooltip="Modifier l'affaire / prestation" mat-fab color="accent" class="fab-button"
-  *ngIf="editMode==false && asso" (click)="editAsso()">
-  <mat-icon>edit</mat-icon>
-</button>
+  </button>
+}</div>
+@if (editMode==true) {
+  <button matTooltip="Sauvegarder" mat-fab color="warn" class="fab-button" (click)="saveAsso()">
+    <mat-icon>save</mat-icon>
+  </button>
+}
+@if (editMode==false && asso) {
+  <button matTooltip="Modifier l'affaire / prestation" mat-fab color="accent" class="fab-button"
+    (click)="editAsso()">
+    <mat-icon>edit</mat-icon>
+  </button>
+}
 
 <!-- Status menu -->
-<button matTooltip="Changer de statut" mat-fab color="accent" class="second-fab-button"
-  (click)="setCurrentProvisionWorkflow(asso.services[0].provisions[0])"
-  *ngIf="canModifyStatus() && editMode==false && asso && onlyOneProvision()" [matMenuTriggerFor]="menu3">
-  <mat-icon>done</mat-icon>
-</button>
-<button matTooltip="Changer de statut" mat-fab class="second-fab-button"
-  *ngIf="canModifyStatus() && editMode==false && asso && !onlyOneProvision()" [matMenuTriggerFor]="menu2">
-  <mat-icon>done</mat-icon>
-  <mat-menu #menu2="matMenu" style="min-height: 0px;padding: 0;" xPosition="before">
-    <ng-container *ngFor="let service of asso.services">
-      <button mat-menu-item [matMenuTriggerFor]="menu3" (mouseover)="setCurrentProvisionWorkflow(provision)"
-        *ngFor="let provision of service.provisions"><span
+@if (canModifyStatus() && editMode==false && asso && onlyOneProvision()) {
+  <button matTooltip="Changer de statut" mat-fab color="accent" class="second-fab-button"
+    (click)="setCurrentProvisionWorkflow(asso.services[0].provisions[0])"
+    [matMenuTriggerFor]="menu3">
+    <mat-icon>done</mat-icon>
+  </button>
+}
+@if (canModifyStatus() && editMode==false && asso && !onlyOneProvision()) {
+  <button matTooltip="Changer de statut" mat-fab class="second-fab-button"
+    [matMenuTriggerFor]="menu2">
+    <mat-icon>done</mat-icon>
+    <mat-menu #menu2="matMenu" style="min-height: 0px;padding: 0;" xPosition="before">
+      @for (service of asso.services; track service) {
+        @for (provision of service.provisions; track provision) {
+          <button mat-menu-item [matMenuTriggerFor]="menu3" (mouseover)="setCurrentProvisionWorkflow(provision)"
+            ><span
           style="color:#c4ae8b">{{service.serviceLabelToDisplay}}</span>
         {{computeProvisionLabel(service, provision, true)}}</button>
-    </ng-container>
+      }
+    }
   </mat-menu>
 </button>
+}
 
 <mat-menu #menu3="matMenu" style="min-height: 0px;padding: 0;" xPosition="before">
-  <ng-container *ngIf="currentProvisionWorkflow">
+  @if (currentProvisionWorkflow) {
     <button mat-menu-item (click)="displayProvisionWorkflowDialog(currentProvisionWorkflow)">
       <span>Voir le workflow</span>
     </button>
-    <button disabled mat-menu-item
-      *ngIf="getActiveWorkflowElementsForProvisionFn(currentProvisionWorkflow).successors && getActiveWorkflowElementsForProvisionFn(currentProvisionWorkflow).successors.length>0">
-      <span>Passer à</span>
-    </button>
-    <button mat-menu-item
-      *ngFor="let status of  getActiveWorkflowElementsForProvisionFn(currentProvisionWorkflow).successors"
-      (click)="changeStatus(status,currentProvisionWorkflow)">
-      <mat-icon>{{status.icon}}</mat-icon><span>{{status.label}}</span>
-    </button>
-    <button disabled mat-menu-item
-      *ngIf="getActiveWorkflowElementsForProvisionFn(currentProvisionWorkflow).predecessors && getActiveWorkflowElementsForProvisionFn(currentProvisionWorkflow).predecessors.length>0">
-      <span>Revenir à</span>
-    </button>
-    <button mat-menu-item
-      *ngFor="let status of getActiveWorkflowElementsForProvisionFn(currentProvisionWorkflow).predecessors"
-      (click)="changeStatus(status,currentProvisionWorkflow)">
-      <mat-icon>{{status.icon}}</mat-icon><span>{{status.label}}</span>
-    </button>
-  </ng-container>
+    @if (getActiveWorkflowElementsForProvisionFn(currentProvisionWorkflow).successors && getActiveWorkflowElementsForProvisionFn(currentProvisionWorkflow).successors.length>0) {
+      <button disabled mat-menu-item
+        >
+        <span>Passer à</span>
+      </button>
+    }
+    @for (status of  getActiveWorkflowElementsForProvisionFn(currentProvisionWorkflow).successors; track status) {
+      <button mat-menu-item
+        (click)="changeStatus(status,currentProvisionWorkflow)">
+        <mat-icon>{{status.icon}}</mat-icon><span>{{status.label}}</span>
+      </button>
+    }
+    @if (getActiveWorkflowElementsForProvisionFn(currentProvisionWorkflow).predecessors && getActiveWorkflowElementsForProvisionFn(currentProvisionWorkflow).predecessors.length>0) {
+      <button disabled mat-menu-item
+        >
+        <span>Revenir à</span>
+      </button>
+    }
+    @for (status of getActiveWorkflowElementsForProvisionFn(currentProvisionWorkflow).predecessors; track status) {
+      <button mat-menu-item
+        (click)="changeStatus(status,currentProvisionWorkflow)">
+        <mat-icon>{{status.icon}}</mat-icon><span>{{status.label}}</span>
+      </button>
+    }
+  }
 </mat-menu>
 
 <!-- Mail menu -->
-<button matTooltip="Recevoir un mail" mat-fab color="accent" class="third-fab-button"
-  (click)="setCurrentProvisionWorkflow(asso.services[0].provisions[0])"
-  *ngIf="editMode==false && asso  && onlyOneProvision()" [matMenuTriggerFor]="menu4">
-  <mat-icon>mail</mat-icon>
+@if (editMode==false && asso  && onlyOneProvision()) {
+  <button matTooltip="Recevoir un mail" mat-fab color="accent" class="third-fab-button"
+    (click)="setCurrentProvisionWorkflow(asso.services[0].provisions[0])"
+    [matMenuTriggerFor]="menu4">
+    <mat-icon>mail</mat-icon>
+  </button>
+}
+@if (  editMode==false && asso  && !onlyOneProvision()) {
+  <button matTooltip="Recevoir un mail" mat-fab color="accent" class="third-fab-button"
+    [matMenuTriggerFor]="menu5">
+    <mat-icon>mail</mat-icon>
+    <mat-menu #menu5="matMenu" style="min-height: 0px;padding: 0;" xPosition="before">
+      <button mat-menu-item (click)="sendRibRequestToAffaire()">
+        <span>Envoyer une demande de RIB à l'affaire</span>
+      </button>
+      <mat-divider></mat-divider>
+      @for (service of asso.services; track service) {
+        <button mat-menu-item (click)="sendMissingAttachmentMail(service)">
+          <span>Demander des pièces manquantes pour le service {{service.serviceLabelToDisplay}}</span>
+        </button>
+      }
+      <mat-divider></mat-divider>
+      @for (service of asso.services; track service) {
+        @for (provision of service.provisions; track provision) {
+          <button mat-menu-item [matMenuTriggerFor]="menu4" (mouseover)="setCurrentProvisionWorkflow(provision)"
+            ><span
+          style="color:#c4ae8b">{{service.serviceLabelToDisplay}}</span>
+        {{computeProvisionLabel(service, provision, true)}}</button>
+      }
+    }
+  </mat-menu>
 </button>
-<button matTooltip="Recevoir un mail" mat-fab color="accent" class="third-fab-button"
-  *ngIf="  editMode==false && asso  && !onlyOneProvision()" [matMenuTriggerFor]="menu5">
-  <mat-icon>mail</mat-icon>
-  <mat-menu #menu5="matMenu" style="min-height: 0px;padding: 0;" xPosition="before">
+}
+<mat-menu #menu4="matMenu" style="min-height: 0px;padding: 0;" xPosition="before">
+  @if (onlyOneProvision()) {
     <button mat-menu-item (click)="sendRibRequestToAffaire()">
       <span>Envoyer une demande de RIB à l'affaire</span>
     </button>
-    <mat-divider></mat-divider>
-    <ng-container *ngFor="let service of asso.services">
-      <button mat-menu-item (click)="sendMissingAttachmentMail(service)">
-        <span>Demander des pièces manquantes pour le service {{service.serviceLabelToDisplay}}</span>
+  }
+  <mat-divider></mat-divider>
+  @if (onlyOneProvision()) {
+    <button mat-menu-item (click)="sendMissingAttachmentMail(asso.services[0])">
+      <span>Demander des pièces manquantes pour le service {{asso.services[0].serviceLabelToDisplay}}</span>
+    </button>
+  }
+  <mat-divider></mat-divider>
+  @if (currentProvisionWorkflow && currentProvisionWorkflow.announcement && currentProvisionWorkflow.announcement.isProofReadingDocument) {
+    <button mat-menu-item
+      (click)="generateProofReading(currentProvisionWorkflow.announcement,currentProvisionWorkflow)">
+      <span>Générer une épreuve de relecture</span>
+    </button>
+  }
+  @if (currentProvisionWorkflow && currentProvisionWorkflow.announcement && currentProvisionWorkflow.announcement.confrere && currentProvisionWorkflow.announcement.confrere.id==confrereJssSpel.id) {
+    <button mat-menu-item
+      (click)="generatePublicationReceipt(currentProvisionWorkflow.announcement,currentProvisionWorkflow)">
+      <span>Générer une attestation de parution</span>
+    </button>
+  }
+  @if (currentProvisionWorkflow && currentProvisionWorkflow.announcement && currentProvisionWorkflow.announcement.confrere && currentProvisionWorkflow.announcement.confrere.journalType.id==journalTypeSpel.id) {
+    <button mat-menu-item
+      (click)="generatePublicationReceiptMail(currentProvisionWorkflow.announcement)">
+      <span>Recevoir le mail d'attestation de parution</span>
+    </button>
+  }
+  @if (currentProvisionWorkflow && currentProvisionWorkflow.announcement && currentProvisionWorkflow.announcement.confrere && currentProvisionWorkflow.announcement.confrere.id==confrereJssSpel.id) {
+    <button mat-menu-item
+      (click)="generatePublicationFlag(currentProvisionWorkflow.announcement,currentProvisionWorkflow)">
+      <span>Générer un témoin de publication</span>
+    </button>
+  }
+  @if (currentProvisionWorkflow && currentProvisionWorkflow.announcement && currentProvisionWorkflow.announcement.confrere && currentProvisionWorkflow.announcement.confrere.journalType.id==journalTypeSpel.id) {
+    <button mat-menu-item
+      (click)="generatePublicationFlagMail(currentProvisionWorkflow.announcement)">
+      <span>Recevoir le mail de témoin de publication</span>
+    </button>
+  }
+  @if (currentProvisionWorkflow && currentProvisionWorkflow.provisionType && registrationAct && currentProvisionWorkflow.provisionType.code==registrationAct.code) {
+    <button mat-menu-item
+      (click)="generateRegistrationAct()">
+      <span>Télécharger l'acte d'enregistrement</span> </button>
+    }
+    @if (currentProvisionWorkflow) {
+      <button mat-menu-item (click)="generateAttachmentsMail()">
+        <span>Envoyer des pièces jointes</span>
       </button>
-    </ng-container>
-    <mat-divider></mat-divider>
-    <ng-container *ngFor="let service of asso.services">
-      <button mat-menu-item [matMenuTriggerFor]="menu4" (mouseover)="setCurrentProvisionWorkflow(provision)"
-        *ngFor="let provision of service.provisions"><span
-          style="color:#c4ae8b">{{service.serviceLabelToDisplay}}</span>
-        {{computeProvisionLabel(service, provision, true)}}</button>
-    </ng-container>
+    }
+    @if (currentProvisionWorkflow) {
+      <button mat-menu-item (click)="requestKbis()">
+        <span>Commander un KBis</span>
+      </button>
+    }
+    @if (currentProvisionWorkflow && currentProvisionWorkflow.domiciliation && asso.customerOrder && asso.customerOrder.isRecurring) {
+      <button mat-menu-item
+        (click)="generateDomiciliationContract(currentProvisionWorkflow)">
+        <span>Générer le contrat</span>
+      </button>
+    }
+    @if (currentProvisionWorkflow && currentProvisionWorkflow.announcement && currentProvisionWorkflow.announcement.confrere && currentProvisionWorkflow.announcement.confrere.journalType.id!=journalTypeSpel.id) {
+      <button mat-menu-item
+        (click)="generateAnnouncementRequestToConfrereMail(currentProvisionWorkflow.announcement)">
+        <span>Recevoir le mail d'envoi au confrère</span>
+      </button>
+    }
   </mat-menu>
-</button>
-<mat-menu #menu4="matMenu" style="min-height: 0px;padding: 0;" xPosition="before">
-  <button mat-menu-item (click)="sendRibRequestToAffaire()" *ngIf="onlyOneProvision()">
-    <span>Envoyer une demande de RIB à l'affaire</span>
-  </button>
-  <mat-divider></mat-divider>
-  <button mat-menu-item (click)="sendMissingAttachmentMail(asso.services[0])" *ngIf="onlyOneProvision()">
-    <span>Demander des pièces manquantes pour le service {{asso.services[0].serviceLabelToDisplay}}</span>
-  </button>
-  <mat-divider></mat-divider>
-  <button mat-menu-item
-    *ngIf="currentProvisionWorkflow && currentProvisionWorkflow.announcement && currentProvisionWorkflow.announcement.isProofReadingDocument"
-    (click)="generateProofReading(currentProvisionWorkflow.announcement,currentProvisionWorkflow)">
-    <span>Générer une épreuve de relecture</span>
-  </button>
-  <button mat-menu-item
-    *ngIf="currentProvisionWorkflow && currentProvisionWorkflow.announcement && currentProvisionWorkflow.announcement.confrere && currentProvisionWorkflow.announcement.confrere.id==confrereJssSpel.id"
-    (click)="generatePublicationReceipt(currentProvisionWorkflow.announcement,currentProvisionWorkflow)">
-    <span>Générer une attestation de parution</span>
-  </button>
-  <button mat-menu-item
-    *ngIf="currentProvisionWorkflow && currentProvisionWorkflow.announcement && currentProvisionWorkflow.announcement.confrere && currentProvisionWorkflow.announcement.confrere.journalType.id==journalTypeSpel.id"
-    (click)="generatePublicationReceiptMail(currentProvisionWorkflow.announcement)">
-    <span>Recevoir le mail d'attestation de parution</span>
-  </button>
-  <button mat-menu-item
-    *ngIf="currentProvisionWorkflow && currentProvisionWorkflow.announcement && currentProvisionWorkflow.announcement.confrere && currentProvisionWorkflow.announcement.confrere.id==confrereJssSpel.id"
-    (click)="generatePublicationFlag(currentProvisionWorkflow.announcement,currentProvisionWorkflow)">
-    <span>Générer un témoin de publication</span>
-  </button>
-  <button mat-menu-item
-    *ngIf="currentProvisionWorkflow && currentProvisionWorkflow.announcement && currentProvisionWorkflow.announcement.confrere && currentProvisionWorkflow.announcement.confrere.journalType.id==journalTypeSpel.id"
-    (click)="generatePublicationFlagMail(currentProvisionWorkflow.announcement)">
-    <span>Recevoir le mail de témoin de publication</span>
-  </button>
-  <button mat-menu-item
-    *ngIf="currentProvisionWorkflow && currentProvisionWorkflow.provisionType && registrationAct && currentProvisionWorkflow.provisionType.code==registrationAct.code"
-    (click)="generateRegistrationAct()">
-    <span>Télécharger l'acte d'enregistrement</span> </button>
-  <button mat-menu-item *ngIf="currentProvisionWorkflow" (click)="generateAttachmentsMail()">
-    <span>Envoyer des pièces jointes</span>
-  </button>
-  <button mat-menu-item *ngIf="currentProvisionWorkflow" (click)="requestKbis()">
-    <span>Commander un KBis</span>
-  </button>
-  <button mat-menu-item
-    *ngIf="currentProvisionWorkflow && currentProvisionWorkflow.domiciliation && asso.customerOrder && asso.customerOrder.isRecurring"
-    (click)="generateDomiciliationContract(currentProvisionWorkflow)">
-    <span>Générer le contrat</span>
-  </button>
-  <button mat-menu-item
-    *ngIf="currentProvisionWorkflow && currentProvisionWorkflow.announcement && currentProvisionWorkflow.announcement.confrere && currentProvisionWorkflow.announcement.confrere.journalType.id!=journalTypeSpel.id"
-    (click)="generateAnnouncementRequestToConfrereMail(currentProvisionWorkflow.announcement)">
-    <span>Recevoir le mail d'envoi au confrère</span>
-  </button>
-</mat-menu>
 
-<button matTooltip="Générer une fiche de suivi" mat-fab color="accent" class="fourth-fab-button"
-  (click)="setCurrentProvisionWorkflow(asso.services[0].provisions[0])"
-  *ngIf="editMode==false && asso  && onlyOneProvision()" [matMenuTriggerFor]="menu6">
-  <mat-icon>file_download</mat-icon>
-</button>
-<button matTooltip="Générer une fiche de suivi" mat-fab color="accent" class="fourth-fab-button"
-  *ngIf="editMode==false && asso  && !onlyOneProvision()" [matMenuTriggerFor]="menu7">
-  <mat-icon>file_download</mat-icon>
-  <mat-menu #menu7="matMenu" style="min-height: 0px;padding: 0;" xPosition="before">
-    <ng-container *ngFor="let service of asso.services">
-      <button mat-menu-item [matMenuTriggerFor]="menu6" (mouseover)="setCurrentProvisionWorkflow(provision)"
-        *ngFor="let provision of service.provisions"><span
-          style="color:#c4ae8b">{{service.serviceLabelToDisplay}}</span>
-        {{computeProvisionLabel(service, provision, true)}}</button>
-    </ng-container>
-  </mat-menu>
-</button>
-<mat-menu #menu6="matMenu" style="min-height: 0px;padding: 0;" xPosition="before">
-  <button mat-menu-item (click)="downloadTrackingSheet(currentProvisionWorkflow)" *ngIf="currentProvisionWorkflow">
-    <span>Générer la fiche de suivi</span>
+  @if (editMode==false && asso  && onlyOneProvision()) {
+    <button matTooltip="Générer une fiche de suivi" mat-fab color="accent" class="fourth-fab-button"
+      (click)="setCurrentProvisionWorkflow(asso.services[0].provisions[0])"
+      [matMenuTriggerFor]="menu6">
+      <mat-icon>file_download</mat-icon>
+    </button>
+  }
+  @if (editMode==false && asso  && !onlyOneProvision()) {
+    <button matTooltip="Générer une fiche de suivi" mat-fab color="accent" class="fourth-fab-button"
+      [matMenuTriggerFor]="menu7">
+      <mat-icon>file_download</mat-icon>
+      <mat-menu #menu7="matMenu" style="min-height: 0px;padding: 0;" xPosition="before">
+        @for (service of asso.services; track service) {
+          @for (provision of service.provisions; track provision) {
+            <button mat-menu-item [matMenuTriggerFor]="menu6" (mouseover)="setCurrentProvisionWorkflow(provision)"
+              ><span
+            style="color:#c4ae8b">{{service.serviceLabelToDisplay}}</span>
+          {{computeProvisionLabel(service, provision, true)}}</button>
+        }
+      }
+    </mat-menu>
   </button>
+}
+<mat-menu #menu6="matMenu" style="min-height: 0px;padding: 0;" xPosition="before">
+  @if (currentProvisionWorkflow) {
+    <button mat-menu-item (click)="downloadTrackingSheet(currentProvisionWorkflow)">
+      <span>Générer la fiche de suivi</span>
+    </button>
+  }
   <mat-divider></mat-divider>
 </mat-menu>

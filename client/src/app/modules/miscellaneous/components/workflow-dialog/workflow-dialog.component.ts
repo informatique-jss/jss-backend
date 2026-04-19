@@ -4,9 +4,10 @@ import { EChartsOption } from 'echarts';
 import { IWorkflowElement } from '../../model/IWorkflowElement';
 
 @Component({
-  selector: 'app-workflow-dialog',
-  templateUrl: './workflow-dialog.component.html',
-  styleUrls: ['./workflow-dialog.component.css']
+    selector: 'app-workflow-dialog',
+    templateUrl: './workflow-dialog.component.html',
+    styleUrls: ['./workflow-dialog.component.css'],
+    standalone: false
 })
 export class WorkflowDialogComponent implements OnInit {
 

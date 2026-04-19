@@ -330,7 +330,7 @@ public class GeneratePdfDelegate {
             try {
                 renderer.createPDF(outputStream);
                 outputStream.close();
-            } catch (DocumentException | IOException e) {
+            } catch (IOException e) {
                 throw new OsirisException(e,
                         "Unable to create publication flag PDF file for announcement " + announcement.getId());
             }
@@ -427,7 +427,7 @@ public class GeneratePdfDelegate {
         try {
             renderer.createPDF(outputStream);
             outputStream.close();
-        } catch (DocumentException | IOException e) {
+        } catch (IOException e) {
             throw new OsirisException(e, "Unable to create PDF file for letters");
         }
         return tempFile;
@@ -553,7 +553,7 @@ public class GeneratePdfDelegate {
         try {
             renderer.createPDF(outputStream);
             outputStream.close();
-        } catch (DocumentException | IOException e) {
+        } catch (IOException e) {
             throw new OsirisException(e,
                     "Unable to create PDF file for biling closure receipt, tiers/responsable n°"
                             + (tier != null ? tier.getId() : (responsable != null ? responsable.getId() : "")));
@@ -726,7 +726,7 @@ public class GeneratePdfDelegate {
         try {
             renderer.createPDF(outputStream);
             outputStream.close();
-        } catch (DocumentException | IOException e) {
+        } catch (IOException e) {
             throw new OsirisException(e, "Unable to create PDF file for order " + customerOrder.getId());
         }
         return tempFile;
@@ -787,7 +787,7 @@ public class GeneratePdfDelegate {
         try {
             renderer.createPDF(outputStream);
             outputStream.close();
-        } catch (DocumentException | IOException e) {
+        } catch (IOException e) {
             throw new OsirisException(e, "Unable to create PDF file for quotation " + quotation.getId());
         }
         return tempFile;
@@ -996,7 +996,7 @@ public class GeneratePdfDelegate {
 
             finalInvoice = pdfTools.mergePdfs(List.of(Files.newInputStream(tempFile.toPath()),
                     getClass().getClassLoader().getResourceAsStream("mails/CGV_JSS.pdf")));
-        } catch (DocumentException | IOException e) {
+        } catch (IOException e) {
             throw new OsirisException(e, "Unable to create PDF file for invoice " + invoice.getId());
         }
 
@@ -1437,7 +1437,7 @@ public class GeneratePdfDelegate {
         try {
             renderer.createPDF(outputStream);
             outputStream.close();
-        } catch (DocumentException | IOException e) {
+        } catch (IOException e) {
             throw new OsirisException(e, "Unable to create PDF file for domiciliation contracts");
         }
         return tempFile;
@@ -1595,7 +1595,7 @@ public class GeneratePdfDelegate {
         try {
             renderer.createPDF(outputStream);
             outputStream.close();
-        } catch (DocumentException | IOException e) {
+        } catch (IOException e) {
             throw new OsirisException(e, "Unable to create PDF file for registration act");
         }
         return tempFile;
@@ -1648,7 +1648,7 @@ public class GeneratePdfDelegate {
         try {
             renderer.createPDF(outputStream);
             outputStream.close();
-        } catch (DocumentException | IOException e) {
+        } catch (IOException e) {
             throw new OsirisException(e, "Unable to create PDF file for tracking sheet document");
         }
         return tempFile;

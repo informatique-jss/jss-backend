@@ -7,9 +7,10 @@ import { GenericAutocompleteComponent } from '../generic-autocomplete/generic-au
 import { AppService } from 'src/app/services/app.service';
 
 @Component({
-  selector: 'autocomplete-postal-code',
-  templateUrl: '../generic-autocomplete/generic-autocomplete.component.html',
-  styleUrls: ['../generic-autocomplete/generic-autocomplete.component.css']
+    selector: 'autocomplete-postal-code',
+    templateUrl: '../generic-autocomplete/generic-autocomplete.component.html',
+    styleUrls: ['../generic-autocomplete/generic-autocomplete.component.css'],
+    standalone: false
 })
 export class AutocompletePostalCodeComponent extends GenericAutocompleteComponent<string, City> implements OnInit {
 

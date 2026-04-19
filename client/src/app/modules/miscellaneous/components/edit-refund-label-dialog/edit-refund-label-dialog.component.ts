@@ -3,9 +3,10 @@ import { FormBuilder } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
-  selector: 'app-edit-refund-label-dialog',
-  templateUrl: './edit-refund-label-dialog.component.html',
-  styleUrls: ['./edit-refund-label-dialog.component.css']
+    selector: 'app-edit-refund-label-dialog',
+    templateUrl: './edit-refund-label-dialog.component.html',
+    styleUrls: ['./edit-refund-label-dialog.component.css'],
+    standalone: false
 })
 export class EditRefundLabelDialogComponent {
 

@@ -18,9 +18,10 @@ import { UserPreferenceService } from '../../../../services/user.preference.serv
 import { CityService } from '../../../miscellaneous/services/city.service';
 
 @Component({
-  selector: 'provider',
-  templateUrl: './provider.component.html',
-  styleUrls: ['./provider.component.css']
+    selector: 'provider',
+    templateUrl: './provider.component.html',
+    styleUrls: ['./provider.component.css'],
+    standalone: false
 })
 export class ProviderComponent implements OnInit {
   constructor(private providerService: ProviderService,

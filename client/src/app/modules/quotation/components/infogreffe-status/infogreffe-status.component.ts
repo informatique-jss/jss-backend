@@ -4,9 +4,10 @@ import { EvenementInfogreffe } from '../../model/infogreffe/EvenementInfogreffe'
 import { FormaliteInfogreffe } from '../../model/infogreffe/FormaliteInfogreffe';
 
 @Component({
-  selector: 'infogreffe-status',
-  templateUrl: './infogreffe-status.component.html',
-  styleUrls: ['./infogreffe-status.component.css']
+    selector: 'infogreffe-status',
+    templateUrl: './infogreffe-status.component.html',
+    styleUrls: ['./infogreffe-status.component.css'],
+    standalone: false
 })
 export class InfogreffeStatusComponent implements OnInit {
 

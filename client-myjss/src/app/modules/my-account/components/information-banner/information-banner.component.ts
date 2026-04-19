@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, Input } from '@angular/core';
 import { InformationBanner } from '../../../miscellaneous/model/InformationBanner';
 
@@ -6,7 +6,7 @@ import { InformationBanner } from '../../../miscellaneous/model/InformationBanne
 @Component({
     selector: 'information-banner',
     standalone: true,
-    imports: [CommonModule],
+    imports: [],
     templateUrl: './information-banner.component.html',
     styleUrls: ['./information-banner.component.css']
 })

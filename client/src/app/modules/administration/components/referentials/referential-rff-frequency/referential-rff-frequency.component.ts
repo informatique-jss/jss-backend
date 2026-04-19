@@ -7,9 +7,10 @@ import { RffFrequencyService } from 'src/app/modules/tiers/services/rff.frequenc
 import { GenericReferentialComponent } from '../generic-referential/generic-referential-component';
 
 @Component({
-  selector: 'referential-rff-frequency',
-  templateUrl: './../generic-referential/generic-referential.component.html',
-  styleUrls: ['./../generic-referential/generic-referential.component.css']
+    selector: 'referential-rff-frequency',
+    templateUrl: './../generic-referential/generic-referential.component.html',
+    styleUrls: ['./../generic-referential/generic-referential.component.css'],
+    standalone: false
 })
 export class ReferentialRffFrequencyComponent extends GenericReferentialComponent<RffFrequency> implements OnInit {
   constructor(private rffFrequencyService: RffFrequencyService,

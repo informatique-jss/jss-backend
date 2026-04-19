@@ -7,9 +7,10 @@ import { ActiveDirectoryGroup } from '../../../model/ActiveDirectoryGroup';
 import { GenericMultipleSelectComponent } from '../generic-select/generic-multiple-select.component';
 
 @Component({
-  selector: 'select-employee',
-  templateUrl: './select-employee.component.html',
-  styleUrls: ['./../generic-select/generic-select.component.html']
+    selector: 'select-employee',
+    templateUrl: './select-employee.component.html',
+    styleUrls: ['./../generic-select/generic-select.component.html'],
+    standalone: false
 })
 
 export class SelectEmployeeComponent extends GenericMultipleSelectComponent<Employee> implements OnInit {

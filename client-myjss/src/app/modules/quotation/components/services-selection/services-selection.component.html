@@ -2,52 +2,64 @@
 
   <section>
     <div class="row justify-content-start align-items-center mt-4 ">
-      <p class="sub-title col-auto my-auto"
-        *ngIf="quotation && quotation.assoAffaireOrders && quotation.assoAffaireOrders.length>0  ">
-        Sélectionnez une affaire
-      </p>
-      <osi-tooltip *ngIf="quotation && quotation.assoAffaireOrders && quotation.assoAffaireOrders.length>1"
+      @if (quotation && quotation.assoAffaireOrders && quotation.assoAffaireOrders.length>0  ) {
+        <p class="sub-title col-auto my-auto"
+          >
+          Sélectionnez une affaire
+        </p>
+      }
+      @if (quotation && quotation.assoAffaireOrders && quotation.assoAffaireOrders.length>1) {
+        <osi-tooltip
         tootltipCodeToDisplay="MYJSS_QUOTATION_SERV_SELECTION_AFFAIRE" class="col-auto"></osi-tooltip>
+      }
     </div>
 
-    <div class="w-100" *ngIf="!quotation ">
-      <p class="card-text placeholder-glow">
-        <span class="placeholder placeholder-sm col-7 me-2"></span>
-        <span class="placeholder placeholder-sm col-4"></span>
-        <span class="placeholder placeholder-sm col-4 me-2"></span>
-        <span class="placeholder placeholder-sm col-6"></span>
-        <span class="placeholder placeholder-sm col-8"></span>
-      </p>
-    </div>
-
-    <div class="row" *ngIf="quotation && quotation.assoAffaireOrders  ">
-      <!-- Afficher les cartes avec ngFor -->
-      <div *ngFor="let asso of quotation.assoAffaireOrders; let indexAsso = index;"
-        class="col-12 col-sm-6 col-lg-4 my-2" [ngClass]="{'col-sm-6 col-lg-4' : quotation.assoAffaireOrders.length>1}">
-        <div class="white-card card rounded-1 d-flex flex-column h-100 p-4 "
-          [ngClass]="{'selected': selectedAssoIndex == indexAsso, 'border-tertiary border-2': selectedAssoIndex != indexAsso}"
-          (click)="selectCard(indexAsso);$event.stopPropagation()">
-          <div class="row d-flex flex-row align-items-center">
-            <i class="ai-briefcase col-1 selected-hover" [ngClass]="{'selected': selectedAssoIndex == indexAsso}"></i>
-            <h6 class="col m-0 selected-hover" [ngClass]="{'selected': selectedAssoIndex == indexAsso}">
-              {{asso.affaire.siret?(asso.affaire.siret + ' - '):''}}{{
-              asso.affaire.denomination
-              ?asso.affaire.denomination : (asso.affaire.firstname+ ' ' +
-              asso.affaire.lastname) }} - {{asso.affaire.address + ' ' + asso.affaire.city.label }}
-              {{asso.affaire.city.postalCode ? ' '+ asso.affaire.city.postalCode : ''}}</h6>
-          </div>
-          <div class="row align-items-center">
-            <!-- Les boutons pills -->
-            <a *ngFor="let serviceType of selectedServiceTypes[indexAsso]"
-              class="btn rounded-pill mt-2 ms-1 mt-md-3 col-auto pill text-wrap text-break"
-              [ngClass]="{'btn-secondary': selectedAssoIndex == indexAsso,'btn-outline-primary':selectedAssoIndex != indexAsso}"
-              (click)="removeServiceFromCurrentAffaire(serviceType);$event.stopPropagation()">
-              {{getFamilyLabelForService(serviceType)}} - {{serviceType.customLabel }} <i class="ai-cross ms-2"></i>
-            </a>
-          </div>
-        </div>
+    @if (!quotation ) {
+      <div class="w-100">
+        <p class="card-text placeholder-glow">
+          <span class="placeholder placeholder-sm col-7 me-2"></span>
+          <span class="placeholder placeholder-sm col-4"></span>
+          <span class="placeholder placeholder-sm col-4 me-2"></span>
+          <span class="placeholder placeholder-sm col-6"></span>
+          <span class="placeholder placeholder-sm col-8"></span>
+        </p>
       </div>
-    </div>
+    }
+
+    @if (quotation && quotation.assoAffaireOrders  ) {
+      <div class="row">
+        <!-- Afficher les cartes avec ngFor -->
+        @for (asso of quotation.assoAffaireOrders; track asso; let indexAsso = $index) {
+          <div
+            class="col-12 col-sm-6 col-lg-4 my-2" [ngClass]="{'col-sm-6 col-lg-4' : quotation.assoAffaireOrders.length>1}">
+            <div class="white-card card rounded-1 d-flex flex-column h-100 p-4 "
+              [ngClass]="{'selected': selectedAssoIndex == indexAsso, 'border-tertiary border-2': selectedAssoIndex != indexAsso}"
+              (click)="selectCard(indexAsso);$event.stopPropagation()">
+              <div class="row d-flex flex-row align-items-center">
+                <i class="ai-briefcase col-1 selected-hover" [ngClass]="{'selected': selectedAssoIndex == indexAsso}"></i>
+                <h6 class="col m-0 selected-hover" [ngClass]="{'selected': selectedAssoIndex == indexAsso}">
+                  {{asso.affaire.siret?(asso.affaire.siret + ' - '):''}}{{
+                  asso.affaire.denomination
+                  ?asso.affaire.denomination : (asso.affaire.firstname+ ' ' +
+                  asso.affaire.lastname) }} - {{asso.affaire.address + ' ' + asso.affaire.city.label }}
+                {{asso.affaire.city.postalCode ? ' '+ asso.affaire.city.postalCode : ''}}</h6>
+              </div>
+              <div class="row align-items-center">
+                <!-- Les boutons pills -->
+                @for (serviceType of selectedServiceTypes[indexAsso]; track serviceType) {
+                  <a
+                    class="btn rounded-pill mt-2 ms-1 mt-md-3 col-auto pill text-wrap text-break"
+                    [ngClass]="{'btn-secondary': selectedAssoIndex == indexAsso,'btn-outline-primary':selectedAssoIndex != indexAsso}"
+                    (click)="removeServiceFromCurrentAffaire(serviceType);$event.stopPropagation()">
+                    {{getFamilyLabelForService(serviceType)}} - {{serviceType.customLabel }} <i class="ai-cross ms-2"></i>
+                  </a>
+                }
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    }
   </section>
 
 
@@ -55,113 +67,134 @@
     <p class="sub-title">
       Sélectionnez vos services
     </p>
-    <div class="w-100" *ngIf="!serviceFamilies || serviceFamilies.length<=0 ">
-      <p class="card-text placeholder-glow">
-        <span class="placeholder placeholder-sm col-7 me-2"></span>
-        <span class="placeholder placeholder-sm col-4"></span>
-        <span class="placeholder placeholder-sm col-4 me-2"></span>
-        <span class="placeholder placeholder-sm col-6"></span>
-        <span class="placeholder placeholder-sm col-8"></span>
-      </p>
-    </div>
+    @if (!serviceFamilies || serviceFamilies.length<=0 ) {
+      <div class="w-100">
+        <p class="card-text placeholder-glow">
+          <span class="placeholder placeholder-sm col-7 me-2"></span>
+          <span class="placeholder placeholder-sm col-4"></span>
+          <span class="placeholder placeholder-sm col-4 me-2"></span>
+          <span class="placeholder placeholder-sm col-6"></span>
+          <span class="placeholder placeholder-sm col-8"></span>
+        </p>
+      </div>
+    }
 
     <ul ngbNav #nav="ngbNav" [destroyOnHide]="false" [activeId]="activeId"
       class="nav-tabs border-3 border-secondary align-items-start">
-      <ng-container *ngIf="serviceFamilies">
-        <ng-container *ngFor="let serviceFamily of serviceFamilies;let serviceFamilyIndex=index">
-          <li [ngbNavItem]="serviceFamilyIndex" class="nav-item "
-            *ngIf="quotation && selectedAssoIndex!=null && shouldDisplayServiceFamily(serviceFamily, quotation.assoAffaireOrders[selectedAssoIndex])">
-            <button class="nav-link quotation-tabs" ngbNavLink (click)="selecteServiceFamily(serviceFamily)"> <i
-                class="{{serviceFamily.myJssIcon}} me-2"></i>{{serviceFamily.customLabel + ' (' +
-              getNumberOfShownServices(serviceFamily.services)+')'}}</button>
-            <ng-template ngbNavContent *ngIf="selectedServiceFamily">
-              <div class="quotation-container">
-                <div class="pb-3 row">
-                  <generic-input class="col" [(model)]="searchtext" label="Rechercher" [form]="servicesForm"
-                    propertyName="servicesSearched" [isMandatory]="false" [isDisabled]="false" [isDisplayLabel]="false"
+      @if (serviceFamilies) {
+        @for (serviceFamily of serviceFamilies; track serviceFamily; let serviceFamilyIndex = $index) {
+          @if (quotation && selectedAssoIndex!=null && shouldDisplayServiceFamily(serviceFamily, quotation.assoAffaireOrders[selectedAssoIndex])) {
+            <li [ngbNavItem]="serviceFamilyIndex" class="nav-item "
+              >
+              <button class="nav-link quotation-tabs" ngbNavLink (click)="selecteServiceFamily(serviceFamily)"> <i
+              class="{{serviceFamily.myJssIcon}} me-2"></i>{{serviceFamily.customLabel + ' (' +
+            getNumberOfShownServices(serviceFamily.services)+')'}}</button>
+            @if (selectedServiceFamily) {
+              <ng-template ngbNavContent>
+                <div class="quotation-container">
+                  <div class="pb-3 row">
+                    <generic-input class="col" [(model)]="searchtext" label="Rechercher" [form]="servicesForm"
+                      propertyName="servicesSearched" [isMandatory]="false" [isDisabled]="false" [isDisplayLabel]="false"
                     [icon]="'search'"></generic-input>
-                  <osi-tooltip tootltipCodeToDisplay="MYJSS_QUOTATION_SERV_SELECTION_SERVICES"
+                    <osi-tooltip tootltipCodeToDisplay="MYJSS_QUOTATION_SERV_SELECTION_SERVICES"
                     class="col-auto"></osi-tooltip>
+                  </div>
+                  <!-- Stacked checkboxes -->
+                  <div class="d-flex flex-column flex-md-row flex-wrap">
+                    @for (service of selectedServiceFamily.services ; track service; let indexService = $index) {
+                      @if (shouldDisplayService(service)) {
+                        <div class="form-check service-item m-1">
+                          @if (getServiceIndexInCurrentAffaire(service)>=0) {
+                            <input class="form-check-input" type="checkbox" [id]="'ex-check-'+indexService"
+                              (click)="removeServiceFromCurrentAffaire(service)"
+                              checked>
+                          }
+                          @if (getServiceIndexInCurrentAffaire(service)<0) {
+                            <input class="form-check-input" type="checkbox" [id]="'ex-check-'+indexService"
+                              (click)="addServiceToCurrentAffaire(service, indexService)"
+                              >
+                          }
+                          <label class="form-check-label" [for]="'ex-check-'+indexService">{{service.customLabel }}</label>
+                          @if (service.serviceTypeLinked && isServiceSelected(service)) {
+                            <generic-toggle [(model)]="serviceLinkToggles[selectedAssoIndex][service.id]"
+                              label="Besoin d'inclure aussi la formalité ?" [form]="servicesForm"
+                            [propertyName]="'serviceLinkToggles'+service.id" [isDisabled]="false"></generic-toggle>
+                          }
+                        </div>
+                      }
+                    }
+                  </div>
+                  <div class="text-end">
+                    @if (quotation && quotation.assoAffaireOrders.length>1) {
+                      <button type="button" class="btn btn-outline-primary rounded-1 mt-5 ms-auto"
+                        [ngClass]="{'btn-secondary' : applyToAllAffaires}" (click)="applyToAllAffaires=!applyToAllAffaires"
+                        >@if (applyToAllAffaires) {
+                        <i class="ai-check me-2"
+                        ></i>
+                      } Appliquer mes choix à toutes les affaires</button>
+                    }
+                  </div>
                 </div>
-                <!-- Stacked checkboxes -->
-                <div class="d-flex flex-column flex-md-row flex-wrap">
-                  <ng-container *ngFor="let service of selectedServiceFamily.services ; let indexService  =index">
-                    <div class="form-check service-item m-1" *ngIf="shouldDisplayService(service)">
-                      <input class="form-check-input" type="checkbox" [id]="'ex-check-'+indexService"
-                        (click)="removeServiceFromCurrentAffaire(service)"
-                        *ngIf="getServiceIndexInCurrentAffaire(service)>=0" checked>
-                      <input class="form-check-input" type="checkbox" [id]="'ex-check-'+indexService"
-                        (click)="addServiceToCurrentAffaire(service, indexService)"
-                        *ngIf="getServiceIndexInCurrentAffaire(service)<0">
-                      <label class="form-check-label" [for]="'ex-check-'+indexService">{{service.customLabel }}</label>
-                      <generic-toggle [(model)]="serviceLinkToggles[selectedAssoIndex][service.id]"
-                        *ngIf="service.serviceTypeLinked && isServiceSelected(service)"
-                        label="Besoin d'inclure aussi la formalité ?" [form]="servicesForm"
-                        [propertyName]="'serviceLinkToggles'+service.id" [isDisabled]="false"></generic-toggle>
-                    </div>
-                  </ng-container>
-                </div>
-                <div class="text-end">
-                  <button type="button" class="btn btn-outline-primary rounded-1 mt-5 ms-auto"
-                    [ngClass]="{'btn-secondary' : applyToAllAffaires}" (click)="applyToAllAffaires=!applyToAllAffaires"
-                    *ngIf="quotation && quotation.assoAffaireOrders.length>1"><i class="ai-check me-2"
-                      *ngIf="applyToAllAffaires"></i> Appliquer mes choix à toutes les affaires</button>
-                </div>
-              </div>
-            </ng-template>
+              </ng-template>
+            }
           </li>
-        </ng-container>
-        <osi-tooltip tootltipCodeToDisplay="MYJSS_QUOTATION_SERV_SELECTION_SERVICE_FAMILY"
-          class="col-auto  align-self-center mt-1"></osi-tooltip>
-      </ng-container>
-    </ul>
-    <div [ngbNavOutlet]="nav" class="mt-2"></div>
-  </section>
+        }
+      }
+      <osi-tooltip tootltipCodeToDisplay="MYJSS_QUOTATION_SERV_SELECTION_SERVICE_FAMILY"
+      class="col-auto  align-self-center mt-1"></osi-tooltip>
+    }
+  </ul>
+  <div [ngbNavOutlet]="nav" class="mt-2"></div>
+</section>
 
-  <section class="py-4">
-    <hr>
+<section class="py-4">
+  <hr>
     <div class="row">
       <div class="col with-right-border">
         <div class="row align-items-center mx-2">
           <img class="col-1" src="/assets/img/quotation/services-selection/message-question.svg" />
           <p class="col-11 mb-0">Une question sur la liste des pièces à transmettre pour votre formalité, consultez le
             guide des formalités du JSS à <a href="assets/documents/guide.pdf" target="_blank">télécharger ici</a></p>
+          </div>
+        </div>
+        <div class="col">
+          <div class="row align-items-center mx-2">
+            <img class="col-1" src="/assets/img/quotation/services-selection/file-validation.svg" />
+            <p class="col-11 mb-0">Transmettez-nous vos actes signés et documents justificatifs numérisés en PDF
+              accompagnés d'un pouvoir au JSS à <a href="assets/documents/pouvoir.pdf" target="_blank">télécharger ici</a>
+            </p>
+          </div>
         </div>
       </div>
-      <div class="col">
-        <div class="row align-items-center mx-2">
-          <img class="col-1" src="/assets/img/quotation/services-selection/file-validation.svg" />
-          <p class="col-11 mb-0">Transmettez-nous vos actes signés et documents justificatifs numérisés en PDF
-            accompagnés d'un pouvoir au JSS à <a href="assets/documents/pouvoir.pdf" target="_blank">télécharger ici</a>
-          </p>
-        </div>
-      </div>
-    </div>
-  </section>
+    </section>
 
-  <div
-    class="position-fixed bottom-0 start-0 w-100 bg-light shadow-sm p-3 m-0 d-flex justify-content-between align-items-center z-1030">
-    <button type="button" class="col-auto btn btn-secondary rounded-1 mx-0 ms-sm-5 d-flex align-items-center"
-      (click)="goBackQuotation()">
-      <i class="ai-arrow-left d-none d-sm-inline"></i>
-      <span class="ms-2 ms-lg-2">Étape précédente </span>
-    </button>
-
-
-    <div class="row align-items-center">
-      <osi-tooltip
-        *ngIf="canSaveQuotation() && quotation && quotation.assoAffaireOrders && quotation.assoAffaireOrders.length === 1"
-        tootltipCodeToDisplay="MYJSS_QUOTATION_SERV_SELECTION_NEXT_UNI"
-        class="d-none d-md-block col-auto mt-1"></osi-tooltip>
-      <osi-tooltip
-        *ngIf="canSaveQuotation() && quotation && quotation.assoAffaireOrders && quotation.assoAffaireOrders.length > 1"
-        tootltipCodeToDisplay="MYJSS_QUOTATION_SERV_SELECTION_NEXT_MULTI"
-        class="d-none d-md-block col-auto mt-1"></osi-tooltip>
-      <button type="button" class="col-auto btn btn-secondary rounded-1 mx-0 mx-sm-5 ms-sm-2 d-flex align-items-center"
-        *ngIf="canSaveQuotation()" (click)="saveQuotation()"> <span class="me-2">Étape
-          suivante</span>
-        <i class="ai-arrow-right d-none d-sm-inline"></i>
+    <div
+      class="position-fixed bottom-0 start-0 w-100 bg-light shadow-sm p-3 m-0 d-flex justify-content-between align-items-center z-1030">
+      <button type="button" class="col-auto btn btn-secondary rounded-1 mx-0 ms-sm-5 d-flex align-items-center"
+        (click)="goBackQuotation()">
+        <i class="ai-arrow-left d-none d-sm-inline"></i>
+        <span class="ms-2 ms-lg-2">Étape précédente </span>
       </button>
+
+
+      <div class="row align-items-center">
+        @if (canSaveQuotation() && quotation && quotation.assoAffaireOrders && quotation.assoAffaireOrders.length === 1) {
+          <osi-tooltip
+            tootltipCodeToDisplay="MYJSS_QUOTATION_SERV_SELECTION_NEXT_UNI"
+          class="d-none d-md-block col-auto mt-1"></osi-tooltip>
+        }
+        @if (canSaveQuotation() && quotation && quotation.assoAffaireOrders && quotation.assoAffaireOrders.length > 1) {
+          <osi-tooltip
+            tootltipCodeToDisplay="MYJSS_QUOTATION_SERV_SELECTION_NEXT_MULTI"
+          class="d-none d-md-block col-auto mt-1"></osi-tooltip>
+        }
+        @if (canSaveQuotation()) {
+          <button type="button" class="col-auto btn btn-secondary rounded-1 mx-0 mx-sm-5 ms-sm-2 d-flex align-items-center"
+            (click)="saveQuotation()"> <span class="me-2">Étape
+          suivante</span>
+          <i class="ai-arrow-right d-none d-sm-inline"></i>
+        </button>
+      }
     </div>
   </div>
 </div>

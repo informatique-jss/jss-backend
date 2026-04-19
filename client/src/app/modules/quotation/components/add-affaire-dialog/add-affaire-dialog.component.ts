@@ -8,9 +8,10 @@ import { Affaire } from '../../model/Affaire';
 import { AffaireService } from '../../services/affaire.service';
 
 @Component({
-  selector: 'app-add-affaire-dialog',
-  templateUrl: './add-affaire-dialog.component.html',
-  styleUrls: ['./add-affaire-dialog.component.css']
+    selector: 'app-add-affaire-dialog',
+    templateUrl: './add-affaire-dialog.component.html',
+    styleUrls: ['./add-affaire-dialog.component.css'],
+    standalone: false
 })
 export class AddAffaireDialogComponent implements OnInit {
 

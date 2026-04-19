@@ -5,9 +5,10 @@ import { LoginService } from './login.service';
 import { User } from './User';
 
 @Component({
-  selector: 'app-login-dialog',
-  templateUrl: './login-dialog.component.html',
-  styleUrls: ['./login-dialog.component.css']
+    selector: 'app-login-dialog',
+    templateUrl: './login-dialog.component.html',
+    styleUrls: ['./login-dialog.component.css'],
+    standalone: false
 })
 export class LoginDialogComponent implements OnInit {
 

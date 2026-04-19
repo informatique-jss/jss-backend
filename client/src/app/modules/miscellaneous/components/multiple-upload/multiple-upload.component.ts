@@ -14,9 +14,10 @@ import { AttachmentTypeService } from '../../services/attachment.type.service';
 import { UploadAttachmentService } from '../../services/upload.attachment.service';
 
 @Component({
-  selector: 'multiple-upload',
-  templateUrl: './multiple-upload.component.html',
-  styleUrls: ['./multiple-upload.component.css']
+    selector: 'multiple-upload',
+    templateUrl: './multiple-upload.component.html',
+    styleUrls: ['./multiple-upload.component.css'],
+    standalone: false
 })
 export class MultipleUploadComponent implements OnInit {
   @Input() entity: IAttachment | IAttachmentCode = {} as IAttachment;

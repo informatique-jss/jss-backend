@@ -11,9 +11,10 @@ import { AppService } from 'src/app/services/app.service';
 import { GenericReferentialComponent } from '../generic-referential/generic-referential-component';
 
 @Component({
-  selector: 'referential-announcement-notice-template',
-  templateUrl: 'referential-announcement-notice-template.component.html',
-  styleUrls: ['referential-announcement-notice-template.component.css']
+    selector: 'referential-announcement-notice-template',
+    templateUrl: 'referential-announcement-notice-template.component.html',
+    styleUrls: ['referential-announcement-notice-template.component.css'],
+    standalone: false
 })
 export class ReferentialAnnouncementNoticeTemplateComponent extends GenericReferentialComponent<AnnouncementNoticeTemplate> implements OnInit {
   constructor(private announcementNoticeTemplateService: AnnouncementNoticeTemplateService,

@@ -7,9 +7,10 @@ import { ProviderService } from '../../../services/provider.service';
 import { GenericAutocompleteComponent } from '../generic-autocomplete/generic-autocomplete.component';
 
 @Component({
-  selector: 'autocomplete-provider',
-  templateUrl: '../generic-autocomplete/generic-autocomplete.component.html',
-  styleUrls: ['../generic-autocomplete/generic-autocomplete.component.css'],
+    selector: 'autocomplete-provider',
+    templateUrl: '../generic-autocomplete/generic-autocomplete.component.html',
+    styleUrls: ['../generic-autocomplete/generic-autocomplete.component.css'],
+    standalone: false
 })
 export class AutocompleteProviderComponent extends GenericAutocompleteComponent<Provider, Provider> implements OnInit {
 

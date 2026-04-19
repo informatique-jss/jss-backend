@@ -14,6 +14,7 @@ import { GuMatchingService } from '../../services/gu.matching.service';
   selector: 'gu-matching',
   templateUrl: './gu-matching.component.html',
   styleUrls: ['./gu-matching.component.css'],
+  standalone: false
 })
 export class GuMatchingComponent implements OnInit {
 

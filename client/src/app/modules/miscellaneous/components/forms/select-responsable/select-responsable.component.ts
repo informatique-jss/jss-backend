@@ -5,9 +5,10 @@ import { AppService } from 'src/app/services/app.service';
 import { GenericMultipleSelectComponent } from '../generic-select/generic-multiple-select.component';
 
 @Component({
-  selector: 'select-responsable',
-  templateUrl: './select-responsable.component.html',
-  styleUrls: ['./select-responsable.component.css']
+    selector: 'select-responsable',
+    templateUrl: './select-responsable.component.html',
+    styleUrls: ['./select-responsable.component.css'],
+    standalone: false
 })
 export class SelectResponsableComponent extends GenericMultipleSelectComponent<Responsable> implements OnInit {
 

@@ -14,9 +14,10 @@ import { AddNotificationDialogComponent } from '../add-notification-dialog/add-n
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 
 @Component({
-  selector: 'notification-list',
-  templateUrl: './notification-list.component.html',
-  styleUrls: ['./notification-list.component.css']
+    selector: 'notification-list',
+    templateUrl: './notification-list.component.html',
+    styleUrls: ['./notification-list.component.css'],
+    standalone: false
 })
 export class NotificationListComponent implements OnInit {
   notificationForm = this.formBuilder.group({});

@@ -1,77 +1,85 @@
-<div class="mat-elevation-z2 form-div" *ngIf="currentEmployee">
-  <form [formGroup]="employeeForm">
-    <div class="full-width">
-      <table class="full-width">
-        <tr>
-          <td>
-            <generic-input [(model)]="currentEmployee.firstname" label="Prénom" [form]="employeeForm"
+@if (currentEmployee) {
+  <div class="mat-elevation-z2 form-div">
+    <form [formGroup]="employeeForm">
+      <div class="full-width">
+        <table class="full-width">
+          <tr>
+            <td>
+              <generic-input [(model)]="currentEmployee.firstname" label="Prénom" [form]="employeeForm"
               propertyName="firstname" [isMandatory]="true" [isDisabled]="true"></generic-input>
-          </td>
-          <td>
-            <generic-input [(model)]="currentEmployee.lastname" label="Nom" [form]="employeeForm"
+            </td>
+            <td>
+              <generic-input [(model)]="currentEmployee.lastname" label="Nom" [form]="employeeForm"
               propertyName="lastname" [isMandatory]="true" [isDisabled]="true"></generic-input>
-          </td>
-        </tr>
-      </table>
-      <table class="full-width">
-        <tr>
-          <td>
-            <generic-input [(model)]="currentEmployee.mail" label="E-mail" [form]="employeeForm" propertyName="mail"
+            </td>
+          </tr>
+        </table>
+        <table class="full-width">
+          <tr>
+            <td>
+              <generic-input [(model)]="currentEmployee.mail" label="E-mail" [form]="employeeForm" propertyName="mail"
               [isMandatory]="true" [isDisabled]="true"></generic-input>
-          </td>
-          <td>
-            <generic-input [(model)]="currentEmployee.title" label="Fonction" [form]="employeeForm" propertyName="title"
+            </td>
+            <td>
+              <generic-input [(model)]="currentEmployee.title" label="Fonction" [form]="employeeForm" propertyName="title"
               [isMandatory]="true" [isDisabled]="true"></generic-input>
-          </td>
-        </tr>
-      </table>
-      <table class="full-width"
-        *ngIf="adSales && currentEmployee.adPath.indexOf(adSales.activeDirectoryPath)>=0 || adDirection  && currentEmployee.adPath.indexOf(adDirection.activeDirectoryPath)>=0">
-        <tr>
-          <td>
-            <generic-input [(model)]="currentEmployee.bookingPageUrl" label="URL vers ma page de rendez-vous"
-              [form]="employeeForm" propertyName="bookingPageUrl" [isMandatory]="false"
-              [isDisabled]="!editMode"></generic-input>
-          </td>
-        </tr>
-      </table>
-      <table class="full-width">
-        <tr>
-          <td>
-            <select-notification-types [(model)]="currentEmployee.notificationTypeToHide"
-              label="Type de notifications masquées" [form]="employeeForm" propertyName="notificationTypeToHide"
+            </td>
+          </tr>
+        </table>
+        @if (adSales && currentEmployee.adPath.indexOf(adSales.activeDirectoryPath)>=0 || adDirection  && currentEmployee.adPath.indexOf(adDirection.activeDirectoryPath)>=0) {
+          <table class="full-width"
+            >
+            <tr>
+              <td>
+                <generic-input [(model)]="currentEmployee.bookingPageUrl" label="URL vers ma page de rendez-vous"
+                  [form]="employeeForm" propertyName="bookingPageUrl" [isMandatory]="false"
+                [isDisabled]="!editMode"></generic-input>
+              </td>
+            </tr>
+          </table>
+        }
+        <table class="full-width">
+          <tr>
+            <td>
+              <select-notification-types [(model)]="currentEmployee.notificationTypeToHide"
+                label="Type de notifications masquées" [form]="employeeForm" propertyName="notificationTypeToHide"
               [isMandatory]="false" [isDisabled]="!editMode"></select-notification-types>
-          </td>
-        </tr>
-      </table>
-      <table class="full-width">
-        <tr>
-          <td>
-            <chips-employee label="Mode vacances" [(model)]="currentEmployee.backups" [form]="employeeForm"
-              propertyName="backups" [isMandatory]="false" [isDisabled]="!editMode"
+            </td>
+          </tr>
+        </table>
+        <table class="full-width">
+          <tr>
+            <td>
+              <chips-employee label="Mode vacances" [(model)]="currentEmployee.backups" [form]="employeeForm"
+                propertyName="backups" [isMandatory]="false" [isDisabled]="!editMode"
               hint="Indiquez ici les personnes qui vous remplaceront pendant vos vacances. Elles verront alors vos objets associés aux leurs."></chips-employee>
-          </td>
-        </tr>
-      </table>
-      <table class="full-width">
-        <tr>
-          <td>
-            <div class="fab-extended-button-containter"><button mat-fab extended color="primary"
+            </td>
+          </tr>
+        </table>
+        <table class="full-width">
+          <tr>
+            <td>
+              <div class="fab-extended-button-containter"><button mat-fab extended color="primary"
                 (click)="deleteSearchPreferences()">
                 <mat-icon>cleaning_services</mat-icon>
                 Effacer mes recherches sauvegardées
               </button></div>
-          </td>
-        </tr>
-      </table>
-    </div>
-  </form>
-</div>
-<button matTooltip="Sauvegarder" mat-fab color="warn" class="fab-button" *ngIf="editMode==true"
-  (click)="saveEmployee()">
-  <mat-icon>save</mat-icon>
-</button>
-<button matTooltip="Modifier mon profil" mat-fab color="accent" class="fab-button" *ngIf="editMode==false"
-  (click)="editEmployee()">
-  <mat-icon>edit</mat-icon>
-</button>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </form>
+  </div>
+}
+@if (editMode==true) {
+  <button matTooltip="Sauvegarder" mat-fab color="warn" class="fab-button"
+    (click)="saveEmployee()">
+    <mat-icon>save</mat-icon>
+  </button>
+}
+@if (editMode==false) {
+  <button matTooltip="Modifier mon profil" mat-fab color="accent" class="fab-button"
+    (click)="editEmployee()">
+    <mat-icon>edit</mat-icon>
+  </button>
+}

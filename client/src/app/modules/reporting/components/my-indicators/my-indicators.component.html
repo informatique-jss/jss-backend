@@ -1,52 +1,53 @@
 <div class="mat-elevation-z2 form-div">
-  <div *ngIf="canDisplayMyIndicatorsForEverybody()">
-    <autocomplete-employee [(model)]="currentEmployee" [form]="formIndicator" propertyName="currentEmployee"
-      [isMandatory]="false" [isDisabled]="false" label="Employé sélectionné"
+  @if (canDisplayMyIndicatorsForEverybody()) {
+    <div>
+      <autocomplete-employee [(model)]="currentEmployee" [form]="formIndicator" propertyName="currentEmployee"
+        [isMandatory]="false" [isDisabled]="false" label="Employé sélectionné"
       (onOptionSelected)="loadValues()"></autocomplete-employee>
-  </div>
+    </div>
+  }
 
   <div class="dashboard-container" fxLayout="row wrap" fxLayoutGap="16px" fxLayoutAlign="start stretch">
     <h2>Indicateurs objectivés</h2>
     <div style="display: flex; flex-wrap: wrap;">
-      <ng-container *ngFor="let item of values">
-        <mat-card class="indicator-card pointer" *ngIf="hasKpi(item)" appearance="outlined"
-          (click)="displayDetailedIndicator(item)">
-          <div class="indicator-title">{{ item.indicator.label }}</div>
-
-          <div class="indicator-value" [ngClass]="getValueClass(item)">
-            {{ item.value!=null && item.value!=undefined ? item.value : '' }}
-          </div>
-
-          <div class="indicator-date" [matTooltip]="'Mis à jour le '+formatDateHourFrance(item.indicator.lastUpdate)">
-            {{ item.date | date: 'd MMMM yyyy' }}
-          </div>
-
-          <div class="indicator-meta">
-            <span>{{getIndicatorMetas(item)}} </span>
-          </div>
-        </mat-card>
-      </ng-container>
+      @for (item of values; track item) {
+        @if (hasKpi(item)) {
+          <mat-card class="indicator-card pointer" appearance="outlined"
+            (click)="displayDetailedIndicator(item)">
+            <div class="indicator-title">{{ item.indicator.label }}</div>
+            <div class="indicator-value" [ngClass]="getValueClass(item)">
+              {{ item.value!=null && item.value!=undefined ? item.value : '' }}
+            </div>
+            <div class="indicator-date" [matTooltip]="'Mis à jour le '+formatDateHourFrance(item.indicator.lastUpdate)">
+              {{ item.date | date: 'd MMMM yyyy' }}
+            </div>
+            <div class="indicator-meta">
+              <span>{{getIndicatorMetas(item)}} </span>
+            </div>
+          </mat-card>
+        }
+      }
     </div>
   </div>
   <div class="dashboard-container" fxLayout="row wrap" fxLayoutGap="16px" fxLayoutAlign="start stretch">
     <h2>Indicateurs mesurés</h2>
-    <ng-container *ngFor="let group of indicatorGroups">
+    @for (group of indicatorGroups; track group) {
       <div style="display: flex; flex-wrap: wrap;">
-        <ng-container *ngFor="let item of values">
-          <mat-card class="indicator-card pointer" *ngIf="!hasKpi(item) && item.indicator.indicatorGroup.id==group.id"
-            appearance="outlined" (click)="displayDetailedIndicator(item)">
-            <div class="indicator-title">{{ item.indicator.label }}</div>
-
-            <div class="indicator-value">
-              {{ item.value ? item.value : '' }}
-            </div>
-
-            <div class="indicator-date" [matTooltip]="'Mis à jour le '+formatDateHourFrance(item.indicator.lastUpdate)">
-              {{ item.date | date: 'd MMMM yyyy' }}
-            </div>
-          </mat-card>
-        </ng-container>
+        @for (item of values; track item) {
+          @if (!hasKpi(item) && item.indicator.indicatorGroup.id==group.id) {
+            <mat-card class="indicator-card pointer"
+              appearance="outlined" (click)="displayDetailedIndicator(item)">
+              <div class="indicator-title">{{ item.indicator.label }}</div>
+              <div class="indicator-value">
+                {{ item.value ? item.value : '' }}
+              </div>
+              <div class="indicator-date" [matTooltip]="'Mis à jour le '+formatDateHourFrance(item.indicator.lastUpdate)">
+                {{ item.date | date: 'd MMMM yyyy' }}
+              </div>
+            </mat-card>
+          }
+        }
       </div>
-    </ng-container>
+    }
   </div>
 </div>

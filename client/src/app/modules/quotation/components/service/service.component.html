@@ -1,144 +1,169 @@
-<ng-container *ngIf="service">
+@if (service) {
   <table class="full-width">
     <tr>
       <td>
         <generic-input [(model)]="service.customLabel" label="Libellé du service" [form]="serviceForm"
-          propertyName="customLabel" [isMandatory]="false" [maxLength]="250" [isDisabled]="!editMode"></generic-input>
+        propertyName="customLabel" [isMandatory]="false" [maxLength]="250" [isDisabled]="!editMode"></generic-input>
       </td>
     </tr>
     <tr>
       <td>
         <generic-textarea [(model)]="service.customerComment" label="Commentaire client" [form]="serviceForm"
-          propertyName="customerComment" [isMandatory]="false" [isDisabled]="!editMode"></generic-textarea>
+        propertyName="customerComment" [isMandatory]="false" [isDisabled]="!editMode"></generic-textarea>
       </td>
     </tr>
   </table>
-  <ng-container *ngIf="service.assoServiceDocuments ">
-    <div class="attachment-cards" *ngIf="editMode">
-      <ng-container *ngFor="let document of service.assoServiceDocuments;let index= index">
-        <mat-card class="document-card"
-          *ngIf="!searchText || searchText.length === 0 || documentContainsSearch(document)">
-          <div class="document-row">
-
-            <div class="doc-info">
-              <div class="doc-type">{{ document.typeDocument.customLabel }}</div>
-              <div *ngIf="document.formalisteComment" class="doc-comment" matTooltip="Commentaire du formaliste">
-                {{ document.formalisteComment }}
-              </div>
-            </div>
-
-            <div class="doc-upload">
-              <multiple-upload [entity]="document" [editMode]="isValidatedStatusForUploadFile()"
-                [entityType]="ASSO_SERVICE_DOCUMENT_ENTITY_TYPE.entityType"
-                (endOfUpload)="completeDocumentAttachment($event, document)" [isDirectUpload]="false"
-                [attachmentType]="document.typeDocument.attachmentType"
-                [forcedAttachmentType]="document.typeDocument.attachmentType" [typeDocument]="document.typeDocument"
-                [smallSize]="true">
-              </multiple-upload>
-            </div>
-
-            <div class="doc-attachments">
-              <ng-container *ngIf="document.attachments && document.attachments.length>0">
-                <ng-container *ngFor="let attachment of document.attachments">
-                  <div *ngIf="!attachment.isDisabled" class="attachment-line">
-                    <mat-icon color="accent" class="pointer" matTooltip="Supprimer le fichier"
-                      (click)="deleteAttachment(attachment)">delete_forever</mat-icon>
-                    <mat-icon color="accent" class="pointer" matTooltip="Prévisualiser le fichier"
-                      (click)="previewAttachment(attachment)">visibility</mat-icon>
-                    <mat-icon color="accent" class="pointer" matTooltip="Télécharger le fichier"
-                      (click)="downloadAttachment(attachment)">download</mat-icon>
-                    <span>
-                      {{ attachment.uploadedFile.filename }}
-                      {{ attachment.uploadedFile.size ? '(' + formatBytes(attachment.uploadedFile.size, 2) + ')' : '' }}
-                    </span>
+  @if (service.assoServiceDocuments ) {
+    @if (editMode) {
+      <div class="attachment-cards">
+        @for (document of service.assoServiceDocuments; track document; let index = $index) {
+          @if (!searchText || searchText.length === 0 || documentContainsSearch(document)) {
+            <mat-card class="document-card"
+              >
+              <div class="document-row">
+                <div class="doc-info">
+                  <div class="doc-type">{{ document.typeDocument.customLabel }}</div>
+                  @if (document.formalisteComment) {
+                    <div class="doc-comment" matTooltip="Commentaire du formaliste">
+                      {{ document.formalisteComment }}
+                    </div>
+                  }
+                </div>
+                <div class="doc-upload">
+                  <multiple-upload [entity]="document" [editMode]="isValidatedStatusForUploadFile()"
+                    [entityType]="ASSO_SERVICE_DOCUMENT_ENTITY_TYPE.entityType"
+                    (endOfUpload)="completeDocumentAttachment($event, document)" [isDirectUpload]="false"
+                    [attachmentType]="document.typeDocument.attachmentType"
+                    [forcedAttachmentType]="document.typeDocument.attachmentType" [typeDocument]="document.typeDocument"
+                    [smallSize]="true">
+                  </multiple-upload>
+                </div>
+                <div class="doc-attachments">
+                  @if (document.attachments && document.attachments.length>0) {
+                    @for (attachment of document.attachments; track attachment) {
+                      @if (!attachment.isDisabled) {
+                        <div class="attachment-line">
+                          <mat-icon color="accent" class="pointer" matTooltip="Supprimer le fichier"
+                          (click)="deleteAttachment(attachment)">delete_forever</mat-icon>
+                          <mat-icon color="accent" class="pointer" matTooltip="Prévisualiser le fichier"
+                          (click)="previewAttachment(attachment)">visibility</mat-icon>
+                          <mat-icon color="accent" class="pointer" matTooltip="Télécharger le fichier"
+                          (click)="downloadAttachment(attachment)">download</mat-icon>
+                          <span>
+                            {{ attachment.uploadedFile.filename }}
+                            {{ attachment.uploadedFile.size ? '(' + formatBytes(attachment.uploadedFile.size, 2) + ')' : '' }}
+                          </span>
+                        </div>
+                      }
+                    }
+                  }
+                </div>
+                @if (quotation && instanceOfCustomerOrder(quotation) && quotation.pendingAttachments && quotation.pendingAttachments.length>0 && editMode) {
+                  <div class="doc-attachments"
+                    >
+                    <select-attachment [(model)]="selectedPendingAttachments[index]" label="Pièces de la demande initiale"
+                      [form]="serviceForm" [types]="quotation.pendingAttachments"
+                      [propertyName]="'selectedPendingAttachments'+index" [isMandatory]="false"
+                    (onUploadFile)="uploadFileFromPending($event,document )" [isDisabled]="false"></select-attachment>
                   </div>
-                </ng-container>
-              </ng-container>
-            </div>
-
-            <div class="doc-attachments"
-              *ngIf="quotation && instanceOfCustomerOrder(quotation) && quotation.pendingAttachments && quotation.pendingAttachments.length>0 && editMode">
-              <select-attachment [(model)]="selectedPendingAttachments[index]" label="Pièces de la demande initiale"
-                [form]="serviceForm" [types]="quotation.pendingAttachments"
-                [propertyName]="'selectedPendingAttachments'+index" [isMandatory]="false"
-                (onUploadFile)="uploadFileFromPending($event,document )" [isDisabled]="false"></select-attachment>
-            </div>
-
-            <div class="doc-actions">
-              <generic-toggle [(model)]="document.isMandatory" label="Obligatoire ?" [form]="serviceForm"
-                [propertyName]="'isMandatory' + index" [isDisabled]="!editMode">
-              </generic-toggle>
-
-              <button mat-icon-button color="accent" *ngIf="editMode" matTooltip="Ajouter un commentaire"
-                (click)="commentDocument(document)">
-                <mat-icon>comment</mat-icon>
-              </button>
-
-              <button mat-icon-button color="accent" *ngIf="editMode" matTooltip="Supprimer le type de document"
-                (click)="deleteDocument(document)">
-                <mat-icon>delete</mat-icon>
-              </button>
-            </div>
-
-          </div>
-        </mat-card>
-
-      </ng-container>
+                }
+                <div class="doc-actions">
+                  <generic-toggle [(model)]="document.isMandatory" label="Obligatoire ?" [form]="serviceForm"
+                    [propertyName]="'isMandatory' + index" [isDisabled]="!editMode">
+                  </generic-toggle>
+                  @if (editMode) {
+                    <button mat-icon-button color="accent" matTooltip="Ajouter un commentaire"
+                      (click)="commentDocument(document)">
+                      <mat-icon>comment</mat-icon>
+                    </button>
+                  }
+                  @if (editMode) {
+                    <button mat-icon-button color="accent" matTooltip="Supprimer le type de document"
+                      (click)="deleteDocument(document)">
+                      <mat-icon>delete</mat-icon>
+                    </button>
+                  }
+                </div>
+              </div>
+            </mat-card>
+          }
+        }
+      </div>
+    }
+    @if (!editMode) {
+      <attachments [entity]="serviceAttachments" [editMode]="false" [forIntegration]="true">
+      </attachments>
+    }
+  }
+  @if (service.assoServiceFieldTypes ) {
+    <div>
+      <table class="full-width">
+        @for (assoServiceFieldType of service.assoServiceFieldTypes; track assoServiceFieldType; let i = $index) {
+          <tr>
+            @if (assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_TEXT) {
+              <td>
+                <generic-input [(model)]="assoServiceFieldType.stringValue"
+                  [label]="assoServiceFieldType.serviceFieldType.label" [form]="serviceForm"
+                  [propertyName]='"stringFieldType"+i' [isDisabled]="!editMode"
+                [isMandatory]="assoServiceFieldType.isMandatory" [maxLength]="255"></generic-input>
+              </td>
+            }
+            @if (assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_TEXTAREA) {
+              <td>
+                <generic-textarea [(model)]="assoServiceFieldType.textAreaValue"
+                  [label]="assoServiceFieldType.serviceFieldType.label" [form]="serviceForm"
+                  [propertyName]='"textAreaFieldType"+i' [isDisabled]="!editMode"
+                [isMandatory]="assoServiceFieldType.isMandatory"></generic-textarea>
+              </td>
+            }
+            @if (assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_DATE) {
+              <td>
+                <generic-datepicker [(model)]="assoServiceFieldType.dateValue"
+                  [label]="assoServiceFieldType.serviceFieldType.label" [form]="serviceForm"
+                  [propertyName]='"dateFieldType"+i' [isMandatory]="assoServiceFieldType.isMandatory"
+                [isDisabled]="!editMode"></generic-datepicker>
+              </td>
+            }
+            @if (assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_INTEGER) {
+              <td>
+                <generic-input [(model)]="assoServiceFieldType.integerValue"
+                  [label]="assoServiceFieldType.serviceFieldType.label" [form]="serviceForm"
+                  [propertyName]='"integerFieldType"+i' [isMandatory]="assoServiceFieldType.isMandatory"
+                [isDisabled]=" !editMode" type="number"></generic-input>
+              </td>
+            }
+            @if (assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_SELECT) {
+              <td>
+                <select-value-service-field-type [(model)]="assoServiceFieldType.selectValue"
+                  [label]="assoServiceFieldType.serviceFieldType.label" [form]="serviceForm"
+                  [propertyName]='"selectFieldType"+i' [serviceFieldType]="assoServiceFieldType.serviceFieldType"
+                  [isMandatory]="assoServiceFieldType.isMandatory"
+                [isDisabled]="!editMode"></select-value-service-field-type>
+              </td>
+            }
+          </tr>
+        }
+      </table>
     </div>
-    <attachments [entity]="serviceAttachments" *ngIf="!editMode" [editMode]="false" [forIntegration]="true">
-    </attachments>
-  </ng-container>
-  <div *ngIf="service.assoServiceFieldTypes ">
-    <table class="full-width">
-      <ng-container *ngFor="let assoServiceFieldType of service.assoServiceFieldTypes; let i = index">
-        <tr>
-          <td *ngIf="assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_TEXT">
-            <generic-input [(model)]="assoServiceFieldType.stringValue"
-              [label]="assoServiceFieldType.serviceFieldType.label" [form]="serviceForm"
-              [propertyName]='"stringFieldType"+i' [isDisabled]="!editMode"
-              [isMandatory]="assoServiceFieldType.isMandatory" [maxLength]="255"></generic-input>
-          </td>
-          <td *ngIf="assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_TEXTAREA">
-            <generic-textarea [(model)]="assoServiceFieldType.textAreaValue"
-              [label]="assoServiceFieldType.serviceFieldType.label" [form]="serviceForm"
-              [propertyName]='"textAreaFieldType"+i' [isDisabled]="!editMode"
-              [isMandatory]="assoServiceFieldType.isMandatory"></generic-textarea>
-          </td>
-          <td *ngIf="assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_DATE">
-            <generic-datepicker [(model)]="assoServiceFieldType.dateValue"
-              [label]="assoServiceFieldType.serviceFieldType.label" [form]="serviceForm"
-              [propertyName]='"dateFieldType"+i' [isMandatory]="assoServiceFieldType.isMandatory"
-              [isDisabled]="!editMode"></generic-datepicker>
-          </td>
-          <td *ngIf="assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_INTEGER">
-            <generic-input [(model)]="assoServiceFieldType.integerValue"
-              [label]="assoServiceFieldType.serviceFieldType.label" [form]="serviceForm"
-              [propertyName]='"integerFieldType"+i' [isMandatory]="assoServiceFieldType.isMandatory"
-              [isDisabled]=" !editMode" type="number"></generic-input>
-          </td>
-          <td *ngIf="assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_SELECT">
-            <select-value-service-field-type [(model)]="assoServiceFieldType.selectValue"
-              [label]="assoServiceFieldType.serviceFieldType.label" [form]="serviceForm"
-              [propertyName]='"selectFieldType"+i' [serviceFieldType]="assoServiceFieldType.serviceFieldType"
-              [isMandatory]="assoServiceFieldType.isMandatory"
-              [isDisabled]="!editMode"></select-value-service-field-type>
-          </td>
-        </tr>
-      </ng-container>
-    </table>
-  </div>
+  }
   <div style="width: 100%;text-align: right;margin-top:10px;">
-    <button matTooltip="Télécharger tous les documents" mat-fab color="accent" (click)="downloadAllFiles()"
-      *ngIf="!editMode">
-      <mat-icon>download</mat-icon>
-    </button>
-    <button mat-fab color="accent" style="margin-right:15px;" matTooltip="Ajouter un nouveau type de document"
-      *ngIf="editMode" (click)="addNewDocumentType(service)">
-      <mat-icon>post_add</mat-icon>
-    </button>
-    <button mat-fab color="accent" matTooltip="Ajouter un champ d'informations complémentaires" *ngIf="editMode"
-      (click)="addFurtherInformationField()">
-      <mat-icon>add_comment</mat-icon>
-    </button>
+    @if (!editMode) {
+      <button matTooltip="Télécharger tous les documents" mat-fab color="accent" (click)="downloadAllFiles()"
+        >
+        <mat-icon>download</mat-icon>
+      </button>
+    }
+    @if (editMode) {
+      <button mat-fab color="accent" style="margin-right:15px;" matTooltip="Ajouter un nouveau type de document"
+        (click)="addNewDocumentType(service)">
+        <mat-icon>post_add</mat-icon>
+      </button>
+    }
+    @if (editMode) {
+      <button mat-fab color="accent" matTooltip="Ajouter un champ d'informations complémentaires"
+        (click)="addFurtherInformationField()">
+        <mat-icon>add_comment</mat-icon>
+      </button>
+    }
   </div>
-</ng-container>
+}

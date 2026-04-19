@@ -16,30 +16,44 @@
         <accounting-balance-generale></accounting-balance-generale>
       </ng-template>
     </mat-tab>
-    <mat-tab label="Bilan" *ngIf="canDisplayBilan()">
-      <accounting-bilan></accounting-bilan>
-    </mat-tab>
-    <mat-tab label="Compte de résultats" *ngIf="canDisplayProfitLost()">
-      <accounting-profit-lost></accounting-profit-lost>
-    </mat-tab>
-    <mat-tab label="FAE" *ngIf="canDisplayFae()">
-      <fae></fae>
-    </mat-tab>
-    <mat-tab label="FNP" *ngIf="canDisplayFnp()">
-      <fnp></fnp>
-    </mat-tab>
-    <mat-tab label="Trésorerie" *ngIf="canDisplayTreasure()">
-      <treasure></treasure>
-    </mat-tab>
-    <mat-tab label="Créances douteuses" *ngIf="canDisplaySuspiciousInvoice()">
-      <ng-template matTabContent>
-        <suspicious-invoice></suspicious-invoice>
-      </ng-template>
-    </mat-tab>
-    <mat-tab label="OD paie" *ngIf="canDisplaySuspiciousInvoice()">
-      <ng-template matTabContent>
-        <payslip-list></payslip-list>
-      </ng-template>
-    </mat-tab>
+    @if (canDisplayBilan()) {
+      <mat-tab label="Bilan">
+        <accounting-bilan></accounting-bilan>
+      </mat-tab>
+    }
+    @if (canDisplayProfitLost()) {
+      <mat-tab label="Compte de résultats">
+        <accounting-profit-lost></accounting-profit-lost>
+      </mat-tab>
+    }
+    @if (canDisplayFae()) {
+      <mat-tab label="FAE">
+        <fae></fae>
+      </mat-tab>
+    }
+    @if (canDisplayFnp()) {
+      <mat-tab label="FNP">
+        <fnp></fnp>
+      </mat-tab>
+    }
+    @if (canDisplayTreasure()) {
+      <mat-tab label="Trésorerie">
+        <treasure></treasure>
+      </mat-tab>
+    }
+    @if (canDisplaySuspiciousInvoice()) {
+      <mat-tab label="Créances douteuses">
+        <ng-template matTabContent>
+          <suspicious-invoice></suspicious-invoice>
+        </ng-template>
+      </mat-tab>
+    }
+    @if (canDisplaySuspiciousInvoice()) {
+      <mat-tab label="OD paie">
+        <ng-template matTabContent>
+          <payslip-list></payslip-list>
+        </ng-template>
+      </mat-tab>
+    }
   </mat-tab-group>
 </div>

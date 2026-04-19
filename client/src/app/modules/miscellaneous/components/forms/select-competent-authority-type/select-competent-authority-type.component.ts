@@ -6,9 +6,10 @@ import { GenericSelectComponent } from '../generic-select/generic-select.compone
 import { AppService } from 'src/app/services/app.service';
 
 @Component({
-  selector: 'select-competent-authority-type',
-  templateUrl: './select-competent-authority-type.component.html',
-  styleUrls: ['./select-competent-authority-type.component.css']
+    selector: 'select-competent-authority-type',
+    templateUrl: './select-competent-authority-type.component.html',
+    styleUrls: ['./select-competent-authority-type.component.css'],
+    standalone: false
 })
 export class SelectCompetentAuthorityTypeComponent extends GenericSelectComponent<CompetentAuthorityType> implements OnInit {
 

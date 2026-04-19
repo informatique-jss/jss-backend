@@ -6,9 +6,10 @@ import { GenericSelectComponent } from '../generic-select/generic-select.compone
 import { AppService } from 'src/app/services/app.service';
 
 @Component({
-  selector: 'select-mail-redirection',
-  templateUrl: './select-mail-redirection.component.html',
-  styleUrls: ['./select-mail-redirection.component.css']
+    selector: 'select-mail-redirection',
+    templateUrl: './select-mail-redirection.component.html',
+    styleUrls: ['./select-mail-redirection.component.css'],
+    standalone: false
 })
 export class SelectMailRedirectionComponent extends GenericSelectComponent<MailRedirectionType> implements OnInit {
 

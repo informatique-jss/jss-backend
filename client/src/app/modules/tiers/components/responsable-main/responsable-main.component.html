@@ -3,10 +3,12 @@
     <mat-form-field class="full-width">
       <input matInput (keyup)="applyFilter($event.target)" placeholder="Rechercher">
     </mat-form-field>
-    <span *ngIf="editMode" matTooltip=" Créer un nouveau responsable" matTooltipPosition="above"><button
-        (click)="addResponsable()" mat-mini-fab color="warn" class="mini-fab-add">
+    @if (editMode) {
+    <span matTooltip=" Créer un nouveau responsable" matTooltipPosition="above"><button (click)="addResponsable()"
+        mat-mini-fab color="warn" class="mini-fab-add">
         <mat-icon>add</mat-icon>
       </button></span>
+    }
   </div>
   <div class="table-container-scroll">
     <sort-table [columns]="displayedColumns" (onRowClick)="selectResponsable($event)" [values]="tiers.responsables"
@@ -14,7 +16,8 @@
       [actions]="tableActions" [idRowSelected]="selectedResponsable?selectedResponsable.id:undefined"></sort-table>
   </div>
   <div [hidden]="selectedResponsable==null" class="responsable-tabs">
-    <form [formGroup]="principalForm" *ngIf="selectedResponsable!=null">
+    @if (selectedResponsable!=null) {
+    <form [formGroup]="principalForm">
       <mat-tab-group animationDuration="0ms" (selectedTabChange)="onTabChange($event)" [selectedIndex]="index">
         <mat-tab label="Fiche du responsable">
           <div class="full-width">
@@ -49,7 +52,6 @@
                   </td>
                 </tr>
               </table>
-
               <table class="full-width">
                 <tr>
                   <td>
@@ -72,7 +74,6 @@
                   </td>
                 </tr>
               </table>
-
               <table class="full-width">
                 <tr>
                   <td>
@@ -81,19 +82,20 @@
                     </autocomplete-employee>
                   </td>
                   <td>
-                    <autocomplete-employee *ngIf="!editMode || canChooseProductionEmployeeOnITiers()"
-                      [(model)]="selectedResponsable.formalisteEmployee" label="Formaliste" [form]="principalForm"
-                      propertyName="formalisteEmployee" [isDisabled]="!editMode ">
+                    @if (!editMode || canChooseProductionEmployeeOnITiers()) {
+                    <autocomplete-employee [(model)]="selectedResponsable.formalisteEmployee" label="Formaliste"
+                      [form]="principalForm" propertyName="formalisteEmployee" [isDisabled]="!editMode ">
                     </autocomplete-employee>
+                    }
                   <td>
-                    <autocomplete-employee *ngIf="!editMode || canChooseProductionEmployeeOnITiers()"
-                      [(model)]="selectedResponsable.insertionEmployee" label="Publiciste" [isDisabled]="!editMode  "
-                      [form]="principalForm" propertyName="insertionEmployee">
+                    @if (!editMode || canChooseProductionEmployeeOnITiers()) {
+                    <autocomplete-employee [(model)]="selectedResponsable.insertionEmployee" label="Publiciste"
+                      [isDisabled]="!editMode  " [form]="principalForm" propertyName="insertionEmployee">
                     </autocomplete-employee>
+                    }
                   </td>
                 </tr>
               </table>
-
               <table class="full-width">
                 <tr>
                   <td>
@@ -124,8 +126,6 @@
                   </td>
                 </tr>
               </table>
-
-
               <table class="full-width">
                 <tr>
                   <td>
@@ -195,113 +195,148 @@
               </table>
             </fieldset>
           </div>
+          @if (!editMode && selectedResponsable) {
           <button
             [matTooltip]="'Renouveler le mot de passe JSS.fr pour '+selectedResponsable.firstname+' '+ selectedResponsable.lastname"
-            mat-fab color="accent" class="second-fab-button" *ngIf="!editMode && selectedResponsable"
-            (click)="renewPassword()">
+            mat-fab color="accent" class="second-fab-button" (click)="renewPassword()">
             <mat-icon>password</mat-icon>
           </button>
+          }
         </mat-tab>
-        <mat-tab label="Pièces et facturation" *ngIf="isResponsableTypeProspect()==false">
+        @if (isResponsableTypeProspect()==false) {
+        <mat-tab label="Pièces et facturation">
           <settlement-billing [tiers]="selectedResponsable!" [editMode]="editMode"></settlement-billing>
         </mat-tab>
-        <mat-tab label="Documents" *ngIf="selectedResponsable?.id!=null && selectedResponsable?.id!=undefined">
+        }
+        @if (selectedResponsable.id!=null && selectedResponsable.id!=undefined) {
+        <mat-tab label="Documents">
           <attachments [entity]="selectedResponsable!" [editMode]="true"
             [entityType]="RESPONSABLE_ENTITY_TYPE.entityType">
           </attachments>
         </mat-tab>
-        <mat-tab label="Mails" *ngIf="selectedResponsable.id">
+        }
+        @if (selectedResponsable.id) {
+        <mat-tab label="Mails">
           <ng-template matTabContent>
             <automatic-mail-list [responsable]="selectedResponsable">
             </automatic-mail-list>
           </ng-template>
         </mat-tab>
-        <mat-tab label="Devis" *ngIf="tiers.id!=null && tiers.id!=undefined">
+        }
+        @if (tiers.id!=null && tiers.id!=undefined) {
+        <mat-tab label="Devis">
           <ng-template matTabContent>
-            <quotation-list class="integration-component"
-              *ngIf="this.quotationSearch.customerOrders && this.quotationSearch.customerOrders.length>0"
-              [quotationSearch]="quotationSearch" [isForTiersIntegration]="true">
+            @if (this.quotationSearch.customerOrders && this.quotationSearch.customerOrders.length>0) {
+            <quotation-list class="integration-component" [quotationSearch]="quotationSearch"
+              [isForTiersIntegration]="true">
             </quotation-list>
+            }
           </ng-template>
         </mat-tab>
-        <mat-tab label="Commandes" *ngIf="tiers.id!=null && tiers.id!=undefined">
+        }
+        @if (tiers.id!=null && tiers.id!=undefined) {
+        <mat-tab label="Commandes">
           <ng-template matTabContent>
-            <ordering-list class="integration-component"
-              *ngIf="this.orderingSearch.customerOrders && this.orderingSearch.customerOrders.length>0"
-              [orderingSearch]="orderingSearch" [isForTiersIntegration]="true">
+            @if (this.orderingSearch.customerOrders && this.orderingSearch.customerOrders.length>0) {
+            <ordering-list class="integration-component" [orderingSearch]="orderingSearch"
+              [isForTiersIntegration]="true">
             </ordering-list>
+            }
           </ng-template>
         </mat-tab>
-        <mat-tab label="Prestations" *ngIf="tiers.id!=null && tiers.id!=undefined">
+        }
+        @if (tiers.id!=null && tiers.id!=undefined) {
+        <mat-tab label="Prestations">
           <ng-template matTabContent>
-            <provision-list class="integration-component"
-              *ngIf="this.provisionSearch.customerOrders && this.provisionSearch.customerOrders.length>0"
-              [affaireSearch]="provisionSearch" [isForTiersIntegration]="true">
+            @if (this.provisionSearch.customerOrders && this.provisionSearch.customerOrders.length>0) {
+            <provision-list class="integration-component" [affaireSearch]="provisionSearch"
+              [isForTiersIntegration]="true">
             </provision-list>
+            }
           </ng-template>
         </mat-tab>
-        <mat-tab label="Factures" *ngIf="tiers.id!=null && tiers.id!=undefined">
+        }
+        @if (tiers.id!=null && tiers.id!=undefined) {
+        <mat-tab label="Factures">
           <ng-template matTabContent>
-            <invoice-list *ngIf="this.invoiceSearch.customerOrders && this.invoiceSearch.customerOrders.length>0"
-              [invoiceSearch]="invoiceSearch" [isForTiersIntegration]="true"></invoice-list>
+            @if (this.invoiceSearch.customerOrders && this.invoiceSearch.customerOrders.length>0) {
+            <invoice-list [invoiceSearch]="invoiceSearch" [isForTiersIntegration]="true"></invoice-list>
+            }
           </ng-template>
         </mat-tab>
-        <mat-tab label="Comptes" *ngIf="selectedResponsable">
+        }
+        @if (selectedResponsable) {
+        <mat-tab label="Comptes">
           <ng-template matTabContent>
             <accounting-record [responsableToDisplay]="selectedResponsable"
               [tiersToDisplay]="tiers"></accounting-record>
           </ng-template>
         </mat-tab>
-        <mat-tab label="RFF" *ngIf="rffSearch && rffSearch.responsable">
+        }
+        @if (rffSearch && rffSearch.responsable) {
+        <mat-tab label="RFF">
           <ng-template matTabContent>
             <div class="mat-elevation-z2 form-div">
               <rff-list [rffSearch]="rffSearch" [isForTiersIntegration]="true"></rff-list>
             </div>
           </ng-template>
         </mat-tab>
+        }
         <mat-tab label="CRI">
           <ng-template matTabContent>
             <incident-report-list [responsable]="selectedResponsable"></incident-report-list>
           </ng-template>
         </mat-tab>
-        <mat-tab label="Suivi" *ngIf="selectedResponsable?.id!=null && selectedResponsable?.id!=undefined">
+        @if (selectedResponsable.id!=null && selectedResponsable.id!=undefined) {
+        <mat-tab label="Suivi">
           <ng-template matTabContent>
             <tiers-followup [tiers]="selectedResponsable!" [editMode]="editMode"></tiers-followup>
           </ng-template>
         </mat-tab>
-        <mat-tab label="Historique" *ngIf="selectedResponsable?.id!=null && selectedResponsable?.id!=undefined">
+        }
+        @if (selectedResponsable.id!=null && selectedResponsable.id!=undefined) {
+        <mat-tab label="Historique">
           <ng-template matTabContent>
             <history [entity]="selectedResponsable" [entityType]="RESPONSABLE_ENTITY_TYPE"></history>
           </ng-template>
         </mat-tab>
-        <mat-tab label="Préférences de communication" *ngIf="selectedResponsable && selectedResponsable.id">
+        }
+        @if (selectedResponsable && selectedResponsable.id) {
+        <mat-tab label="Préférences de communication">
           <ng-template matTabContent>
             <div class="mat-elevation-z2 form-div">
               <communication-preference [responsable]="selectedResponsable"></communication-preference>
             </div>
           </ng-template>
         </mat-tab>
+        }
       </mat-tab-group>
     </form>
+    }
   </div>
+  @if (editMode==false && selectedResponsable && selectedResponsable.id && canDisplayNotifications()) {
   <button matTooltip="Ajouter une notification sur ce responsable" mat-fab color="accent" class="fourth-fab-button"
     (click)="addNewNotification();$event.stopPropagation()" [matBadge]="getNotificationForResponsable().length"
-    [matBadgeHidden]="getNotificationForResponsable().length<=0" matBadgePosition="below after" matBadgeColor="warn"
-    *ngIf="editMode==false &&  selectedResponsable && selectedResponsable.id && canDisplayNotifications()">
+    [matBadgeHidden]="getNotificationForResponsable().length<=0" matBadgePosition="below after" matBadgeColor="warn">
     <mat-icon>notifications</mat-icon>
   </button>
+  }
+  @if (editMode==false && selectedResponsable && selectedResponsable.id && tiers && tiers.id) {
   <a matTooltip="Voir le responsable dans Osiris V2" mat-fab color="accent" class="sixth-fab-button"
-    *ngIf="editMode==false &&  selectedResponsable && selectedResponsable.id && tiers && tiers.id"
     [href]="frontendOsirisV2Url + OSIRIS_V2_TIERS_ROUTE + tiers.id + '/'+ OSIRIS_V2_RESPONSABLE_ROUTE + selectedResponsable.id"
     target="_blank">
     <mat-icon>launch</mat-icon>
   </a>
+  }
+  @if (editMode==false && tiers.id) {
   <button matTooltip="Imprimer une étiquette pour le responsable" mat-fab color="accent" class="seventh-fab-button"
-    *ngIf="editMode==false &&  tiers.id" (click)="printLabel()">
+    (click)="printLabel()">
     <mat-icon>print</mat-icon>
   </button>
+  }
+  @if (editMode==false && selectedResponsable && selectedResponsable.id && selectedResponsable.isActive) {
   <button matTooltip="Transférer le responsable" mat-fab color="accent" class="eight-fab-button"
-    *ngIf="editMode==false &&  selectedResponsable && selectedResponsable.id && selectedResponsable.isActive"
     (click)="openDialogTransferResponsable()">
     <mat-icon>forward</mat-icon>
   </button>
+  }

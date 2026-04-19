@@ -7,9 +7,10 @@ import { AppService } from 'src/app/services/app.service';
 import { A } from '@angular/cdk/keycodes';
 
 @Component({
-  selector: 'select-customer-order-frequency',
-  templateUrl: '../generic-select/generic-select.component.html',
-  styleUrls: ['../generic-select/generic-select.component.css']
+    selector: 'select-customer-order-frequency',
+    templateUrl: '../generic-select/generic-select.component.html',
+    styleUrls: ['../generic-select/generic-select.component.css'],
+    standalone: false
 })
 export class SelectCustomerOrderFrequencyComponent extends GenericSelectComponent<CustomerOrderFrequency> implements OnInit {
 

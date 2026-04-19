@@ -10,9 +10,10 @@ import { UserPreferenceService } from 'src/app/services/user.preference.service'
 import { AFFAIRE_ENTITY_TYPE } from '../../../../routing/search/search.component';
 
 @Component({
-  selector: 'affaire-list',
-  templateUrl: './affaire-list.component.html',
-  styleUrls: ['./affaire-list.component.css']
+    selector: 'affaire-list',
+    templateUrl: './affaire-list.component.html',
+    styleUrls: ['./affaire-list.component.css'],
+    standalone: false
 })
 export class AffaireListComponent implements OnInit {
   affaires: IndexEntity[] | undefined;

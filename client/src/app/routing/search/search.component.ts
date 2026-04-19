@@ -39,9 +39,10 @@ export const TYPE_DOCUMENT_ATTACHMENT_TYPE: EntityType = { entityType: 'TypeDocu
 export const MISSING_ATTACHMENT_QUERY_ENTITY_TYPE: EntityType = { entityType: 'MissingAttachmentQuery', tabName: 'Demande de pièces manquantes', entryPoint: 'provision/missing-attachment-query' };
 
 @Component({
-  selector: 'app-search',
-  templateUrl: './search.component.html',
-  styleUrls: ['./search.component.css']
+    selector: 'app-search',
+    templateUrl: './search.component.html',
+    styleUrls: ['./search.component.css'],
+    standalone: false
 })
 
 export class SearchComponent implements OnInit {

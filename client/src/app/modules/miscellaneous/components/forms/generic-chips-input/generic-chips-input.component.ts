@@ -4,9 +4,10 @@ import { GenericChipsComponent } from '../generic-chips/generic-chips.component'
 import { AppService } from 'src/app/services/app.service';
 
 @Component({
-  selector: 'generic-chips-input',
-  templateUrl: './../generic-chips/generic-chips.component.html',
-  styleUrls: ['./../generic-chips/generic-chips.component.css']
+    selector: 'generic-chips-input',
+    templateUrl: './../generic-chips/generic-chips.component.html',
+    styleUrls: ['./../generic-chips/generic-chips.component.css'],
+    standalone: false
 })
 export class GenericChipsInputComponent extends GenericChipsComponent<string> implements OnInit {
 

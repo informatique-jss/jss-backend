@@ -4,7 +4,7 @@
       <tr>
         <td>
           <generic-input [(model)]="textSearch" label="Rechercher" [form]="paperSetForm" propertyName="textSearch"
-            [isMandatory]="false" [isDisabled]="false" (onFormChange)="searchPaperSets()"></generic-input>
+          [isMandatory]="false" [isDisabled]="false" (onFormChange)="searchPaperSets()"></generic-input>
         </td>
         <td>
           <generic-toggle [(model)]="isDisplayValidated" label="Afficher les actions validées ?" [form]="paperSetForm" propertyName="isDisplayValidated" [isDisabled]="false" (onFormChange)="searchPaperSets()"> </generic-toggle>
@@ -14,8 +14,10 @@
         </td>
       </tr>
     </table>
-    <sort-table *ngIf="paperSetResults" [actions]="tableAction" [columns]="displayedColumns"
-      [displayTotalLines]="true" [values]="paperSetResults" tableName="Gestion des documents">
-    </sort-table>
+    @if (paperSetResults) {
+      <sort-table [actions]="tableAction" [columns]="displayedColumns"
+        [displayTotalLines]="true" [values]="paperSetResults" tableName="Gestion des documents">
+      </sort-table>
+    }
   </div>
 </div>

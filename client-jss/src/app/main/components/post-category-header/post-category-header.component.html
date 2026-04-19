@@ -1,17 +1,19 @@
-<div *ngIf="selectedJssCategory">
-
-  <div class="container">
-    <div class="bg-container">
-      <div class="w-100 justify-content-between">
-        <div class="container header-hub-bg d-flex align-items-center">
-          <div class="row w-100">
-            <div class="col-12 ">
-              <div class="d-flex align-items-center gap-3 flex-wrap">
-                <h1 class="section-widget-title m-0">{{selectedJssCategory.name}}</h1>
-                <button type="button" class="btn btn-outline-dark" *ngIf="currentUser"
-                  (click)="isFollowed ? unfollowAuthor() : followAuthor()"> <i class="bi"
+@if (selectedJssCategory) {
+  <div>
+    <div class="container">
+      <div class="bg-container">
+        <div class="w-100 justify-content-between">
+          <div class="container header-hub-bg d-flex align-items-center">
+            <div class="row w-100">
+              <div class="col-12 ">
+                <div class="d-flex align-items-center gap-3 flex-wrap">
+                  <h1 class="section-widget-title m-0">{{selectedJssCategory.name}}</h1>
+                  @if (currentUser) {
+                    <button type="button" class="btn btn-outline-dark"
+                      (click)="isFollowed ? unfollowAuthor() : followAuthor()"> <i class="bi"
                     [ngClass]="isFollowed ? 'bi-dash-lg' : 'bi-plus-lg'"></i>
                   {{ isFollowed ? 'Ne plus suivre' : 'Suivre' }}</button>
+                }
               </div>
             </div>
           </div>
@@ -19,7 +21,9 @@
       </div>
     </div>
   </div>
-
-  <category-hub [selectedEntityType]="selectedJssCategory" *ngIf="selectedJssCategory"
+  @if (selectedJssCategory) {
+    <category-hub [selectedEntityType]="selectedJssCategory"
     (jssCategoryChange)="updateSelectedCategory($event)"></category-hub>
+  }
 </div>
+}

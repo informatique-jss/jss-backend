@@ -67,9 +67,10 @@ import { SuggestedQuotationsDialogComponent } from '../suggested-quotations-dial
 import { IQuotation } from './../../model/IQuotation';
 
 @Component({
-  selector: 'quotation',
-  templateUrl: './quotation.component.html',
-  styleUrls: ['./quotation.component.css']
+    selector: 'quotation',
+    templateUrl: './quotation.component.html',
+    styleUrls: ['./quotation.component.css'],
+    standalone: false
 })
 export class QuotationComponent implements OnInit, AfterContentChecked {
   quotation: IQuotation = {} as IQuotation;

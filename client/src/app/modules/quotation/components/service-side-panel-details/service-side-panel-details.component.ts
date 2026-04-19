@@ -20,10 +20,11 @@ import { HabilitationsService } from 'src/app/services/habilitations.service';
 import { Notification } from '../../../miscellaneous/model/Notification';
 
 @Component({
-  selector: 'service-side-panel-details',
-  templateUrl: './service-side-panel-details.component.html',
-  styleUrls: ['./service-side-panel-details.component.css'],
-  viewProviders: [MatExpansionPanel]
+    selector: 'service-side-panel-details',
+    templateUrl: './service-side-panel-details.component.html',
+    styleUrls: ['./service-side-panel-details.component.css'],
+    viewProviders: [MatExpansionPanel],
+    standalone: false
 })
 export class ServiceSidePanelDetailsComponent implements OnInit {
 

@@ -2,192 +2,214 @@
   <div class="row">
 
     <div class="col-md-7 px-4">
-      <form [formGroup]="form" class="mb-4" *ngIf="service">
-
-        <!--============== GENERIC BLOC ===============-->
-        <!-- Block title -->
-        <h4 class="mb-3">Informations générales</h4>
-        <div class="row row-cols-1 row-cols-lg-3 g-3">
-
-          <!-- Loop over placeholder entries -->
-          <div class="col" [ngClass]="{'w-100': placeholder.dataType === SERVICE_FIELD_TYPE_TEXTAREA}"
-            *ngFor="let placeholder of placeholdersMap.get('#')">
-
-            <!-- TEXT -->
-            <div>
-              <generic-input *ngIf="placeholder.dataType === SERVICE_FIELD_TYPE_TEXT" [model]="placeholder.value"
-                [label]="placeholder.label" [form]="form" [propertyName]="placeholder.code + '_' + placeholder.id"
-                [isDisabled]="false" [isMandatory]="true" [maxLength]="255">
-              </generic-input>
-            </div>
-
-            <!-- TEXTAREA -->
-            <div>
-              <generic-textarea *ngIf="placeholder.dataType === SERVICE_FIELD_TYPE_TEXTAREA" [model]="placeholder.value"
-                [label]="placeholder.label" [form]="form" [propertyName]="placeholder.code + '_' + placeholder.id"
-                [isDisabled]="false" [isMandatory]="true">
-              </generic-textarea>
-            </div>
-
-            <!-- DATE -->
-            <div>
-              <generic-date-picker *ngIf="placeholder.dataType === SERVICE_FIELD_TYPE_DATE" [model]="placeholder.value"
-                [label]="placeholder.label" [form]="form" [propertyName]="placeholder.code + '_' + placeholder.id"
-                [isMandatory]="true" [isDisabled]="false">
-              </generic-date-picker>
-            </div>
-
-            <!-- INTEGER -->
-            <div>
-              <generic-input *ngIf="placeholder.dataType === SERVICE_FIELD_TYPE_INTEGER" [model]="placeholder.value"
-                [label]="placeholder.label" [form]="form" [propertyName]="placeholder.code + '_' + placeholder.id"
-                [isMandatory]="true" [isDisabled]="false" type="number">
-              </generic-input>
-            </div>
-
-            <!-- SELECT -->
-            <div>
-              <select-value-service-field-type *ngIf="placeholder.dataType === SERVICE_FIELD_TYPE_SELECT"
-                [model]="placeholder.value" [label]="placeholder.label" [form]="form"
-                [propertyName]="placeholder.code + '_' + placeholder.id" [serviceFieldType]="placeholder"
-                [isMandatory]="true" [isDisabled]="false">
-              </select-value-service-field-type>
-            </div>
-
-            <!-- DEFAULT / UNKNOWN -->
-            <div>
-              <generic-input *ngIf="!placeholder.dataType" [model]="placeholder.value"
-                [label]="placeholder.label ? placeholder.label : placeholder.code" [form]="form"
-                [propertyName]="placeholder.code + '_' + placeholder.id" [isMandatory]="true" [isDisabled]="false"
-                type="text">
-              </generic-input>
-            </div>
+      @if (service) {
+        <form [formGroup]="form" class="mb-4">
+          <!--============== GENERIC BLOC ===============-->
+          <!-- Block title -->
+          <h4 class="mb-3">Informations générales</h4>
+          <div class="row row-cols-1 row-cols-lg-3 g-3">
+            <!-- Loop over placeholder entries -->
+            @for (placeholder of placeholdersMap.get('#'); track placeholder) {
+              <div class="col" [ngClass]="{'w-100': placeholder.dataType === SERVICE_FIELD_TYPE_TEXTAREA}"
+                >
+                <!-- TEXT -->
+                <div>
+                  @if (placeholder.dataType === SERVICE_FIELD_TYPE_TEXT) {
+                    <generic-input [model]="placeholder.value"
+                      [label]="placeholder.label" [form]="form" [propertyName]="placeholder.code + '_' + placeholder.id"
+                      [isDisabled]="false" [isMandatory]="true" [maxLength]="255">
+                    </generic-input>
+                  }
+                </div>
+                <!-- TEXTAREA -->
+                <div>
+                  @if (placeholder.dataType === SERVICE_FIELD_TYPE_TEXTAREA) {
+                    <generic-textarea [model]="placeholder.value"
+                      [label]="placeholder.label" [form]="form" [propertyName]="placeholder.code + '_' + placeholder.id"
+                      [isDisabled]="false" [isMandatory]="true">
+                    </generic-textarea>
+                  }
+                </div>
+                <!-- DATE -->
+                <div>
+                  @if (placeholder.dataType === SERVICE_FIELD_TYPE_DATE) {
+                    <generic-date-picker [model]="placeholder.value"
+                      [label]="placeholder.label" [form]="form" [propertyName]="placeholder.code + '_' + placeholder.id"
+                      [isMandatory]="true" [isDisabled]="false">
+                    </generic-date-picker>
+                  }
+                </div>
+                <!-- INTEGER -->
+                <div>
+                  @if (placeholder.dataType === SERVICE_FIELD_TYPE_INTEGER) {
+                    <generic-input [model]="placeholder.value"
+                      [label]="placeholder.label" [form]="form" [propertyName]="placeholder.code + '_' + placeholder.id"
+                      [isMandatory]="true" [isDisabled]="false" type="number">
+                    </generic-input>
+                  }
+                </div>
+                <!-- SELECT -->
+                <div>
+                  @if (placeholder.dataType === SERVICE_FIELD_TYPE_SELECT) {
+                    <select-value-service-field-type
+                      [model]="placeholder.value" [label]="placeholder.label" [form]="form"
+                      [propertyName]="placeholder.code + '_' + placeholder.id" [serviceFieldType]="placeholder"
+                      [isMandatory]="true" [isDisabled]="false">
+                    </select-value-service-field-type>
+                  }
+                </div>
+                <!-- DEFAULT / UNKNOWN -->
+                <div>
+                  @if (!placeholder.dataType) {
+                    <generic-input [model]="placeholder.value"
+                      [label]="placeholder.label ? placeholder.label : placeholder.code" [form]="form"
+                      [propertyName]="placeholder.code + '_' + placeholder.id" [isMandatory]="true" [isDisabled]="false"
+                      type="text">
+                    </generic-input>
+                  }
+                </div>
+              </div>
+            }
           </div>
-        </div>
-
-        <h4 class="mt-5 mb-3">Spécificités</h4>
-
-        <!--============== FRAGMENT BLOCS ===============-->
-        <div *ngFor="let selections of fragmentSelection; let i = index" class="my-4">
-
+          <h4 class="mt-5 mb-3">Spécificités</h4>
+          <!--============== FRAGMENT BLOCS ===============-->
+          @for (selections of fragmentSelection; track selections; let i = $index) {
+            <div class="my-4">
           <div style="border-radius: 4px; padding:1rem;" [ngClass]="{ 'selected-fragment': isFragmentSelected(selectedFragments[i]), 'fragment-border': !isFragmentSelected(selectedFragments[i])}
             ">
-
-            <!-- Block title -->
-            <div class="row align-items-center">
-              <div class="col">
-                <h6 class=" mb-0">
-                  {{ selections.length > 0 ? getArrayInString(selections) : "Champs spécifiques : " + selections }}</h6>
-              </div>
-              <div class="col-auto">
-                <button type="button"
-                  (click)="changeToggleValue(selectedFragments[i] ? selectedFragments[i] : selections[0], i)"
-                  class="btn btn-icon rounded-pill fs-xl"
-                  [ngClass]="this.getSelectionClassForFragment(selectedFragments[i])">
-                  <i class="ai-check"></i>
-                </button>
-              </div>
-
-              <div class="col-12 mt-3" *ngIf="selections.length>1">
-                <select-announcement-notice-template-fragment [types]="selections" [(model)]="selectedFragments[i]"
-                  (modelChange)="onFragmentSelectionChange($event, i)" label="Selectionner" [form]="form"
-                  [propertyName]="'SELECT_'+ i"
-                  [isMandatory]="selectFragmentInfosMap.get(i) ? selectFragmentInfosMap.get(i)!.isRequired : false">
-                </select-announcement-notice-template-fragment>
-              </div>
-            </div>
-
-            <!-- Loop over placeholder entries -->
-            <div *ngIf="selectedFragments[i]">
-              <div class="my-4"
-                *ngFor="let fragmentInstance of fragmentInstancesMap.get(selectedFragments[i]!.code); let fragmentIndex=index">
-
-                <div
-                  *ngIf="fragmentInstancesMap.get(selectedFragments[i]!.code)!.length>1 && fragmentIndex == fragmentInstancesMap.get(selectedFragments[i]!.code)!.length-1"
-                  class="row justify-content-end px-3 ">
-                  <button type="button" class="btn btn-sm btn-icon btn-outline-danger rounded-4 mt-n2"
-                    aria-label="Delete" (click)="deleteFragmentInstance(selectedFragments[i]!.code)">
-                    <i class="ai-trash"></i>
-                  </button>
+                <!-- Block title -->
+                <div class="row align-items-center">
+                  <div class="col">
+                    <h6 class=" mb-0">
+                    {{ selections.length > 0 ? getArrayInString(selections) : "Champs spécifiques : " + selections }}</h6>
+                  </div>
+                  <div class="col-auto">
+                    <button type="button"
+                      (click)="changeToggleValue(selectedFragments[i] ? selectedFragments[i] : selections[0], i)"
+                      class="btn btn-icon rounded-pill fs-xl"
+                      [ngClass]="this.getSelectionClassForFragment(selectedFragments[i])">
+                      <i class="ai-check"></i>
+                    </button>
+                  </div>
+                  @if (selections.length>1) {
+                    <div class="col-12 mt-3">
+                      <select-announcement-notice-template-fragment [types]="selections" [(model)]="selectedFragments[i]"
+                        (modelChange)="onFragmentSelectionChange($event, i)" label="Selectionner" [form]="form"
+                        [propertyName]="'SELECT_'+ i"
+                        [isMandatory]="selectFragmentInfosMap.get(i) ? selectFragmentInfosMap.get(i)!.isRequired : false">
+                      </select-announcement-notice-template-fragment>
+                    </div>
+                  }
                 </div>
-                <div class="row row-cols-3 g-3" *ngIf="fragmentInstance">
-                  <div class="col" [ngClass]="{'w-100': placeholder.dataType === SERVICE_FIELD_TYPE_TEXTAREA}"
-                    *ngFor="let placeholder of placeholdersMap.get(fragmentInstance!.code)">
-
-                    <!-- Wrap inputs automatically to next line -->
+                <!-- Loop over placeholder entries -->
+                @if (selectedFragments[i]) {
+                  <div>
+                    @for (fragmentInstance of fragmentInstancesMap.get(selectedFragments[i]!.code); track fragmentInstance; let fragmentIndex = $index) {
+                      <div class="my-4"
+                        >
+                        @if (fragmentInstancesMap.get(selectedFragments[i]!.code)!.length>1 && fragmentIndex == fragmentInstancesMap.get(selectedFragments[i]!.code)!.length-1) {
+                          <div
+                            class="row justify-content-end px-3 ">
+                            <button type="button" class="btn btn-sm btn-icon btn-outline-danger rounded-4 mt-n2"
+                              aria-label="Delete" (click)="deleteFragmentInstance(selectedFragments[i]!.code)">
+                              <i class="ai-trash"></i>
+                            </button>
+                          </div>
+                        }
+                        @if (fragmentInstance) {
+                          <div class="row row-cols-3 g-3">
+                            @for (placeholder of placeholdersMap.get(fragmentInstance!.code); track placeholder) {
+                              <div class="col" [ngClass]="{'w-100': placeholder.dataType === SERVICE_FIELD_TYPE_TEXTAREA}"
+                                >
+                                <!-- Wrap inputs automatically to next line -->
+                                <div>
+                                  <!-- TEXT -->
+                                  @if (placeholder.dataType === SERVICE_FIELD_TYPE_TEXT) {
+                                    <generic-input
+                                      [model]="placeholder.value"
+                                      [label]="getFragmentInputLabel(placeholder, fragmentIndex, fragmentInstancesMap.get(selectedFragments[i]!.code)!)"
+                                      [form]="form"
+                                      [propertyName]="buildFormControlName(fragmentInstance.code, placeholder, fragmentIndex)"
+                                      [isDisabled]="false" [isMandatory]="true" [maxLength]="255">
+                                    </generic-input>
+                                  }
+                                  <!-- TEXTAREA -->
+                                  @if (placeholder.dataType === SERVICE_FIELD_TYPE_TEXTAREA) {
+                                    <generic-textarea
+                                      [model]="placeholder.value"
+                                      [label]="getFragmentInputLabel(placeholder, fragmentIndex, fragmentInstancesMap.get(selectedFragments[i]!.code)!)"
+                                      [form]="form"
+                                      [propertyName]="buildFormControlName(fragmentInstance.code, placeholder, fragmentIndex)"
+                                      [isDisabled]="false" [isMandatory]="true">
+                                    </generic-textarea>
+                                  }
+                                  <!-- DATE -->
+                                  @if (placeholder.dataType === SERVICE_FIELD_TYPE_DATE) {
+                                    <generic-date-picker
+                                      [model]="placeholder.value"
+                                      [label]="getFragmentInputLabel(placeholder, fragmentIndex, fragmentInstancesMap.get(selectedFragments[i]!.code)!)"
+                                      [form]="form"
+                                      [propertyName]="buildFormControlName(fragmentInstance.code, placeholder, fragmentIndex)"
+                                      [isMandatory]="true" [isDisabled]="false">
+                                    </generic-date-picker>
+                                  }
+                                  <!-- INTEGER -->
+                                  @if (placeholder.dataType === SERVICE_FIELD_TYPE_INTEGER) {
+                                    <generic-input
+                                      [model]="placeholder.value"
+                                      [label]="getFragmentInputLabel(placeholder, fragmentIndex, fragmentInstancesMap.get(selectedFragments[i]!.code)!)"
+                                      [form]="form"
+                                      [propertyName]="buildFormControlName(fragmentInstance.code, placeholder, fragmentIndex)"
+                                      [isMandatory]="true" [isDisabled]="false" type="number">
+                                    </generic-input>
+                                  }
+                                  <!-- SELECT -->
+                                  @if (placeholder.dataType === SERVICE_FIELD_TYPE_SELECT) {
+                                    <select-value-service-field-type
+                                      [model]="placeholder.value" (onFormFocus)="setSelectedFragment(fragmentInstance.code)"
+                                      [label]="getFragmentInputLabel(placeholder, fragmentIndex, fragmentInstancesMap.get(selectedFragments[i]!.code)!)"
+                                      [form]="form" [serviceFieldType]="placeholder"
+                                      [propertyName]="buildFormControlName(fragmentInstance.code, placeholder, fragmentIndex)"
+                                      [isMandatory]="true" [isDisabled]="false">
+                                    </select-value-service-field-type>
+                                  }
+                                  <!-- DEFAULT / UNKNOWN -->
+                                  @if (!placeholder.dataType) {
+                                    <generic-input [model]="placeholder.value"
+                                      (onFormFocus)="setSelectedFragment(fragmentInstance.code)"
+                                      [label]="getFragmentInputLabel(placeholder, fragmentIndex, fragmentInstancesMap.get(selectedFragments[i]!.code)!)"
+                                      [form]="form"
+                                      [propertyName]="buildFormControlName(fragmentInstance.code, placeholder, fragmentIndex)"
+                                      [isMandatory]="true" [isDisabled]="false" type="text">
+                                    </generic-input>
+                                  }
+                                </div>
+                              </div>
+                            }
+                          </div>
+                        }
+                        @if (fragmentInstancesMap.get(selectedFragments[i]!.code)!.length>1 && fragmentIndex < fragmentInstancesMap.get(selectedFragments[i]!.code)!.length-1) {
+                          <hr
+                            >
+                        }
+                      </div>
+                    }
                     <div>
-
-                      <!-- TEXT -->
-                      <generic-input *ngIf="placeholder.dataType === SERVICE_FIELD_TYPE_TEXT"
-                        [model]="placeholder.value"
-                        [label]="getFragmentInputLabel(placeholder, fragmentIndex, fragmentInstancesMap.get(selectedFragments[i]!.code)!)"
-                        [form]="form"
-                        [propertyName]="buildFormControlName(fragmentInstance.code, placeholder, fragmentIndex)"
-                        [isDisabled]="false" [isMandatory]="true" [maxLength]="255">
-                      </generic-input>
-
-                      <!-- TEXTAREA -->
-                      <generic-textarea *ngIf="placeholder.dataType === SERVICE_FIELD_TYPE_TEXTAREA"
-                        [model]="placeholder.value"
-                        [label]="getFragmentInputLabel(placeholder, fragmentIndex, fragmentInstancesMap.get(selectedFragments[i]!.code)!)"
-                        [form]="form"
-                        [propertyName]="buildFormControlName(fragmentInstance.code, placeholder, fragmentIndex)"
-                        [isDisabled]="false" [isMandatory]="true">
-                      </generic-textarea>
-
-                      <!-- DATE -->
-                      <generic-date-picker *ngIf="placeholder.dataType === SERVICE_FIELD_TYPE_DATE"
-                        [model]="placeholder.value"
-                        [label]="getFragmentInputLabel(placeholder, fragmentIndex, fragmentInstancesMap.get(selectedFragments[i]!.code)!)"
-                        [form]="form"
-                        [propertyName]="buildFormControlName(fragmentInstance.code, placeholder, fragmentIndex)"
-                        [isMandatory]="true" [isDisabled]="false">
-                      </generic-date-picker>
-
-                      <!-- INTEGER -->
-                      <generic-input *ngIf="placeholder.dataType === SERVICE_FIELD_TYPE_INTEGER"
-                        [model]="placeholder.value"
-                        [label]="getFragmentInputLabel(placeholder, fragmentIndex, fragmentInstancesMap.get(selectedFragments[i]!.code)!)"
-                        [form]="form"
-                        [propertyName]="buildFormControlName(fragmentInstance.code, placeholder, fragmentIndex)"
-                        [isMandatory]="true" [isDisabled]="false" type="number">
-                      </generic-input>
-
-                      <!-- SELECT -->
-                      <select-value-service-field-type *ngIf="placeholder.dataType === SERVICE_FIELD_TYPE_SELECT"
-                        [model]="placeholder.value" (onFormFocus)="setSelectedFragment(fragmentInstance.code)"
-                        [label]="getFragmentInputLabel(placeholder, fragmentIndex, fragmentInstancesMap.get(selectedFragments[i]!.code)!)"
-                        [form]="form" [serviceFieldType]="placeholder"
-                        [propertyName]="buildFormControlName(fragmentInstance.code, placeholder, fragmentIndex)"
-                        [isMandatory]="true" [isDisabled]="false">
-                      </select-value-service-field-type>
-
-                      <!-- DEFAULT / UNKNOWN -->
-                      <generic-input *ngIf="!placeholder.dataType" [model]="placeholder.value"
-                        (onFormFocus)="setSelectedFragment(fragmentInstance.code)"
-                        [label]="getFragmentInputLabel(placeholder, fragmentIndex, fragmentInstancesMap.get(selectedFragments[i]!.code)!)"
-                        [form]="form"
-                        [propertyName]="buildFormControlName(fragmentInstance.code, placeholder, fragmentIndex)"
-                        [isMandatory]="true" [isDisabled]="false" type="text">
-                      </generic-input>
-
+                      @if (selectedFragments[i] && selectedFragments[i]!.isMultiple) {
+                        <div
+                          class="row gap-2 justify-content-end m-0">
+                          <a class="col fs-lg btn btn-primary" (click)="addFragmentInstance(selectedFragments[i]!.code)"><i
+                          class="ai-circle-plus"></i></a>
+                        </div>
+                      }
                     </div>
                   </div>
-                </div>
-                <hr
-                  *ngIf="fragmentInstancesMap.get(selectedFragments[i]!.code)!.length>1 && fragmentIndex < fragmentInstancesMap.get(selectedFragments[i]!.code)!.length-1">
-              </div>
-              <div>
-                <div *ngIf="selectedFragments[i] && selectedFragments[i]!.isMultiple"
-                  class="row gap-2 justify-content-end m-0">
-                  <a class="col fs-lg btn btn-primary" (click)="addFragmentInstance(selectedFragments[i]!.code)"><i
-                      class="ai-circle-plus"></i></a>
-                </div>
+                }
               </div>
             </div>
-          </div>
-        </div>
-      </form>
+          }
+        </form>
+      }
     </div>
 
     <!-- Preview section - 1/3 of width -->
@@ -219,9 +241,11 @@
   </div>
   <div class="modal-body">
     <!-- Preview content -->
-    <div *ngIf="getNoticeTemplateDescription()" class="p-3 border rounded"
-      [innerHTML]="getNoticeTemplateDescription()!.displayText | trustHtml" style="white-space: pre-wrap;">
-    </div>
+    @if (getNoticeTemplateDescription()) {
+      <div class="p-3 border rounded"
+        [innerHTML]="getNoticeTemplateDescription()!.displayText | trustHtml" style="white-space: pre-wrap;">
+      </div>
+    }
   </div>
   <div class="modal-footer">
     <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Fermer</button>

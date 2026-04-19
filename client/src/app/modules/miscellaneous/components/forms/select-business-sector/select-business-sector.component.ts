@@ -8,9 +8,10 @@ import { AppService } from 'src/app/services/app.service';
 import { GenericSelectComponent } from '../generic-select/generic-select.component';
 
 @Component({
-  selector: 'select-business-sector',
-  templateUrl: '../generic-select/generic-select.component.html',
-  styleUrls: ['../generic-select/generic-select.component.css']
+    selector: 'select-business-sector',
+    templateUrl: '../generic-select/generic-select.component.html',
+    styleUrls: ['../generic-select/generic-select.component.css'],
+    standalone: false
 })
 
 export class SelectBusinessSectorComponent extends GenericSelectComponent<BusinessSector> implements OnInit {

@@ -13,9 +13,10 @@ import { VoucherService } from '../../services/voucher.service';
 import { NewVoucherDialogComponent } from '../new-voucher-dialog/new-voucher-dialog.component';
 
 @Component({
-  selector: 'voucher',
-  templateUrl: './voucher.component.html',
-  styleUrls: ['./voucher.component.css']
+    selector: 'voucher',
+    templateUrl: './voucher.component.html',
+    styleUrls: ['./voucher.component.css'],
+    standalone: false
 })
 export class VoucherComponent implements OnInit {
   vouchers: Voucher[] | undefined;

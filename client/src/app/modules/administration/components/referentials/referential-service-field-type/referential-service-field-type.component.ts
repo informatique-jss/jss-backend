@@ -10,9 +10,10 @@ import { AssoServiceProvisionType } from 'src/app/modules/quotation/model/AssoSe
 import { ServiceTypeFieldTypePossibleValue } from 'src/app/modules/quotation/model/ServiceTypeFieldTypePossibleValue';
 
 @Component({
-  selector: 'referential-service-field-type',
-  templateUrl: './referential-service-field-type.component.html',
-  styleUrls: ['./../generic-referential/generic-referential.component.css']
+    selector: 'referential-service-field-type',
+    templateUrl: './referential-service-field-type.component.html',
+    styleUrls: ['./../generic-referential/generic-referential.component.css'],
+    standalone: false
 })
 export class ReferentialServiceFieldTypeComponent extends GenericReferentialComponent<ServiceFieldType> implements OnInit {
 

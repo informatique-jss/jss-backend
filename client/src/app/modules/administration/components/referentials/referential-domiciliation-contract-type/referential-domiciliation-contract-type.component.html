@@ -11,39 +11,43 @@
     </sort-table>
   </div>
 </div>
-<div class="mat-elevation-z2 form-div" *ngIf="selectedEntity ">
-  <form [formGroup]="entityForm">
-    <div class="full-width">
-      <fieldset [disabled]="editMode==false" class="fieldset-no-border">
-        <p>Indiquez ici les taux de TVA pour les départements français qui dérogent à la règle.</p>
-        <table class="full-width">
-          <tr *ngIf="selectedEntity.id">
-            <td>
-              <generic-input [(model)]="selectedEntity.id" label="Identifiant technique" [form]="entityForm"
-                propertyName="id" [isMandatory]="true" [isDisabled]="true"></generic-input>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <generic-input [(model)]="selectedEntity.code" label="Codification" [maxLength]="20" [form]="entityForm"
+@if (selectedEntity ) {
+  <div class="mat-elevation-z2 form-div">
+    <form [formGroup]="entityForm">
+      <div class="full-width">
+        <fieldset [disabled]="editMode==false" class="fieldset-no-border">
+          <p>Indiquez ici les taux de TVA pour les départements français qui dérogent à la règle.</p>
+          <table class="full-width">
+            @if (selectedEntity.id) {
+              <tr>
+                <td>
+                  <generic-input [(model)]="selectedEntity.id" label="Identifiant technique" [form]="entityForm"
+                  propertyName="id" [isMandatory]="true" [isDisabled]="true"></generic-input>
+                </td>
+              </tr>
+            }
+            <tr>
+              <td>
+                <generic-input [(model)]="selectedEntity.code" label="Codification" [maxLength]="20" [form]="entityForm"
                 propertyName="code" [isMandatory]="true" [isDisabled]="!editMode"></generic-input>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <generic-input [(model)]="selectedEntity.label" label="Libellé" [maxLength]="100" [form]="entityForm"
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <generic-input [(model)]="selectedEntity.label" label="Libellé" [maxLength]="100" [form]="entityForm"
                 propertyName="label" [isMandatory]="true" [isDisabled]="!editMode"></generic-input>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <generic-input [(model)]="selectedEntity.englishLabel" label="Libellé en anglais" [maxLength]="100"
-                [form]="entityForm" propertyName="englishLabel" [isMandatory]="true"
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <generic-input [(model)]="selectedEntity.englishLabel" label="Libellé en anglais" [maxLength]="100"
+                  [form]="entityForm" propertyName="englishLabel" [isMandatory]="true"
                 [isDisabled]="!editMode"></generic-input>
-            </td>
-          </tr>
-        </table>
-      </fieldset>
-    </div>
-  </form>
-</div>
+              </td>
+            </tr>
+          </table>
+        </fieldset>
+      </div>
+    </form>
+  </div>
+}

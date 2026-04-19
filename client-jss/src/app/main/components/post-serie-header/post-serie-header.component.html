@@ -1,20 +1,24 @@
-<div *ngIf="selectedSerie">
-  <div class="container">
-    <div class="bg-container">
-      <div class="w-100 justify-content-between">
-        <div class="container header-hub-bg d-flex align-items-center rounded-1">
-          <div class="row w-100">
-            <div class="col-12">
-              <div class="row d-flex align-items-center flex-wrap py-2">
-                <div class="col">
-                  <p class="text-muted mb-1">Série</p>
-                  <h1 class="fw-bold mb-2">{{ selectedSerie.name }}</h1>
-                  <div class="text-body">{{selectedSerie.excerptText}}</div>
-                </div>
-                <div class=" col mb-1 w-100">
-                  <img *ngIf="selectedSerie.picture"
-                    [src]="selectedSerie.picture.urlMediumLarge || selectedSerie.picture.urlFull"
-                    [alt]="selectedSerie.picture.alt_text" class="banner-img rounded-1">
+@if (selectedSerie) {
+  <div>
+    <div class="container">
+      <div class="bg-container">
+        <div class="w-100 justify-content-between">
+          <div class="container header-hub-bg d-flex align-items-center rounded-1">
+            <div class="row w-100">
+              <div class="col-12">
+                <div class="row d-flex align-items-center flex-wrap py-2">
+                  <div class="col">
+                    <p class="text-muted mb-1">Série</p>
+                    <h1 class="fw-bold mb-2">{{ selectedSerie.name }}</h1>
+                    <div class="text-body">{{selectedSerie.excerptText}}</div>
+                  </div>
+                  <div class=" col mb-1 w-100">
+                    @if (selectedSerie.picture) {
+                      <img
+                        [src]="selectedSerie.picture.urlMediumLarge || selectedSerie.picture.urlFull"
+                        [alt]="selectedSerie.picture.alt_text" class="banner-img rounded-1">
+                    }
+                  </div>
                 </div>
               </div>
             </div>
@@ -22,7 +26,6 @@
         </div>
       </div>
     </div>
+    <serie-hub [selectedEntityType]="selectedSerie"></serie-hub>
   </div>
-
-  <serie-hub [selectedEntityType]="selectedSerie"></serie-hub>
-</div>
+}

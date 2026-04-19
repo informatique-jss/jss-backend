@@ -1,53 +1,73 @@
-<form [formGroup]="simpleProvisionForm" *ngIf="simpleProvision && provision">
-  <mat-tab-group animationDuration="0ms" (selectedTabChange)="onTabChange($event)" [selectedIndex]="index">
-    <mat-tab [label]="provision.provisionType.label">
-      <div class="form-div">
-        <table class="full-width">
-          <tr *ngIf="simpleProvision.waitedCompetentAuthority && simpleProvision.simpleProvisionStatus">
-            <td>
-              <autocomplete-competent-authority [(model)]="simpleProvision.waitedCompetentAuthority"
-                [form]="simpleProvisionForm" propertyName="waitedCompetentAuthority" [isMandatory]="false"
-                label="Autorité compétente en attente"></autocomplete-competent-authority>
-            </td>
-            <td><generic-datepicker *ngIf="provision.lastCompetentAuthorityReminderDateTime" [isMandatory]="false"
-                [(model)]="provision.lastCompetentAuthorityReminderDateTime" label="Dernière relance de l'AC"
-                [form]="simpleProvisionForm" propertyName="lastCompetentAuthorityReminderDateTime"></generic-datepicker>
-            </td>
-          </tr>
+@if (simpleProvision && provision) {
+  <form [formGroup]="simpleProvisionForm">
+    <mat-tab-group animationDuration="0ms" (selectedTabChange)="onTabChange($event)" [selectedIndex]="index">
+      <mat-tab [label]="provision.provisionType.label">
+        <div class="form-div">
+          <table class="full-width">
+            @if (simpleProvision.waitedCompetentAuthority && simpleProvision.simpleProvisionStatus) {
+              <tr>
+                <td>
+                  <autocomplete-competent-authority [(model)]="simpleProvision.waitedCompetentAuthority"
+                    [form]="simpleProvisionForm" propertyName="waitedCompetentAuthority" [isMandatory]="false"
+                  label="Autorité compétente en attente"></autocomplete-competent-authority>
+                </td>
+                <td>@if (provision.lastCompetentAuthorityReminderDateTime) {
+                  <generic-datepicker [isMandatory]="false"
+                    [(model)]="provision.lastCompetentAuthorityReminderDateTime" label="Dernière relance de l'AC"
+                  [form]="simpleProvisionForm" propertyName="lastCompetentAuthorityReminderDateTime"></generic-datepicker>
+                }
+              </td>
+            </tr>
+          }
         </table>
       </div>
       <mat-divider class="margin-mat-divider"></mat-divider>
-      <customer-order-comment *ngIf="provision && provision.id" [provision]="provision"></customer-order-comment>
+      @if (provision && provision.id) {
+        <customer-order-comment [provision]="provision"></customer-order-comment>
+      }
     </mat-tab>
     <mat-tab label="Options">
       <provision-options [editMode]="editMode" [provision]="provision" (provisionChange)="provisionChangeFunction()">
       </provision-options>
     </mat-tab>
-    <mat-tab label="Documents" *ngIf="simpleProvision.id && provision ">
-      <paper-set *ngIf="quotation &&  instanceOfCustomerOrderFn(quotation)" [customerOrder]="quotation"></paper-set>
-      <attachments [entity]="provision" [editMode]="true" [entityType]="PROVISION_ENTITY_TYPE.entityType">
-      </attachments>
-    </mat-tab>
-    <mat-tab label="Paiements & factures"
-      *ngIf="simpleProvision.id && provision && quotation &&  instanceOfCustomerOrderFn(quotation)">
-      <provision-payment [editMode]="editMode" [provision]="provision" [quotation]="quotation">
-      </provision-payment>
-    </mat-tab>
-    <mat-tab label="Historique" *ngIf="simpleProvision && simpleProvision.id">
-      <ng-template matTabContent>
-        <history [entity]="simpleProvision" [entityType]="SIMPLE_PROVISION_ENTITY_TYPE"
+    @if (simpleProvision.id && provision ) {
+      <mat-tab label="Documents">
+        @if (quotation &&  instanceOfCustomerOrderFn(quotation)) {
+          <paper-set [customerOrder]="quotation"></paper-set>
+        }
+        <attachments [entity]="provision" [editMode]="true" [entityType]="PROVISION_ENTITY_TYPE.entityType">
+        </attachments>
+      </mat-tab>
+    }
+    @if (simpleProvision.id && provision && quotation &&  instanceOfCustomerOrderFn(quotation)) {
+      <mat-tab label="Paiements & factures"
+        >
+        <provision-payment [editMode]="editMode" [provision]="provision" [quotation]="quotation">
+        </provision-payment>
+      </mat-tab>
+    }
+    @if (simpleProvision && simpleProvision.id) {
+      <mat-tab label="Historique">
+        <ng-template matTabContent>
+          <history [entity]="simpleProvision" [entityType]="SIMPLE_PROVISION_ENTITY_TYPE"
           [parseTypeList]="simpleProvisionStatus"></history>
-      </ng-template>
-    </mat-tab>
-    <mat-tab label="Historique (prestation)" *ngIf="provision && provision.id">
-      <ng-template matTabContent>
-        <history [entity]="provision" [entityType]="PROVISION_ENTITY_TYPE"></history>
-      </ng-template>
-    </mat-tab>
-    <mat-tab label="Débours" *ngIf="simpleProvision && simpleProvision.id && canAddNewInvoice()">
-      <ng-template matTabContent>
-        <debour [provision]="provision"></debour>
-      </ng-template>
-    </mat-tab>
+        </ng-template>
+      </mat-tab>
+    }
+    @if (provision && provision.id) {
+      <mat-tab label="Historique (prestation)">
+        <ng-template matTabContent>
+          <history [entity]="provision" [entityType]="PROVISION_ENTITY_TYPE"></history>
+        </ng-template>
+      </mat-tab>
+    }
+    @if (simpleProvision && simpleProvision.id && canAddNewInvoice()) {
+      <mat-tab label="Débours">
+        <ng-template matTabContent>
+          <debour [provision]="provision"></debour>
+        </ng-template>
+      </mat-tab>
+    }
   </mat-tab-group>
 </form>
+}

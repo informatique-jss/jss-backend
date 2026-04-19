@@ -4,9 +4,10 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { QuotationAbandonReason } from 'src/app/modules/miscellaneous/model/QuotationAbandonReason';
 
 @Component({
-  selector: 'quotation-abandon-reason-dialog',
-  templateUrl: './quotation-abandon-reason-dialog.html',
-  styleUrls: ['./quotation-abandon-reason-dialog.css'],
+    selector: 'quotation-abandon-reason-dialog',
+    templateUrl: './quotation-abandon-reason-dialog.html',
+    styleUrls: ['./quotation-abandon-reason-dialog.css'],
+    standalone: false
 })
 
 export class QuotationAbandonReasonDialog implements OnInit {

@@ -7,9 +7,10 @@ import { NoticeTypeService } from '../../../../quotation/services/notice.type.se
 import { GenericSelectComponent } from '../generic-select/generic-select.component';
 
 @Component({
-  selector: 'select-notice-type',
-  templateUrl: './select-notice-type.component.html',
-  styleUrls: ['./select-notice-type.component.css']
+    selector: 'select-notice-type',
+    templateUrl: './select-notice-type.component.html',
+    styleUrls: ['./select-notice-type.component.css'],
+    standalone: false
 })
 export class SelectNoticeTypeComponent extends GenericSelectComponent<NoticeType> implements OnInit {
 

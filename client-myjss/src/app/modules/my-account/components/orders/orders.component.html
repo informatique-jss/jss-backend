@@ -1,40 +1,38 @@
 <div class="d-flex align-items-center mb-4">
   <h1 class="h2 mb-0">Commandes</h1>
   <div class="ms-auto">
-    <div ngbDropdown [autoClose]="'outside'" class="btn-group dropdown" style="margin-right: 10px;"
-      *ngIf="responsablesForCurrentUser && responsablesForCurrentUser.length > 0">
+    @if (responsablesForCurrentUser && responsablesForCurrentUser.length > 0) {
+    <div ngbDropdown [autoClose]="'outside'" class="btn-group dropdown" style="margin-right: 10px;">
       <button type="button" class="btn btn-outline-secondary dropdown-toggle" ngbDropdownToggle aria-haspopup="true"
         aria-expanded="false">
         <i class="ai-filter me-2"></i>
         Responsables
       </button>
       <div ngbDropdownMenu class="dropdown-menu my-1">
-
         <label class="dropdown-item">
           <input class="form-check-input me-2" type="checkbox" [(ngModel)]="selectAllActiveResponsable"
             (change)="selectAllActiveResponsables()">
           <strong>Sélectionner tout</strong>
         </label>
-
         <div class="dropdown-divider"></div>
-        <ng-container *ngFor="let respo of responsablesForCurrentUser; let i = index">
-          <ng-container *ngIf="i > 0 && !respo.isActive && responsablesForCurrentUser[i-1].isActive">
-            <div class="dropdown-divider"></div>
-            <label class="dropdown-item">
-              <input class="form-check-input me-2" type="checkbox" [(ngModel)]="selectAllInactiveResponsable"
-                (change)="selectAllInactiveResponsables()">
-              <strong>Ajouter les inactifs</strong>
-            </label>
-          </ng-container>
-
-          <label class="dropdown-item">
-            <input class="form-check-input me-2" type="checkbox" [(ngModel)]="responsableCheck[respo.id]"
-              (change)="changeFilter()">
-            {{respo.firstname}} {{respo.lastname}}
-          </label>
-        </ng-container>
+        @for (respo of responsablesForCurrentUser; track respo; let i = $index) {
+        @if (i > 0 && !respo.isActive && responsablesForCurrentUser[i-1].isActive) {
+        <div class="dropdown-divider"></div>
+        <label class="dropdown-item">
+          <input class="form-check-input me-2" type="checkbox" [(ngModel)]="selectAllInactiveResponsable"
+            (change)="selectAllInactiveResponsables()">
+          <strong>Ajouter les inactifs</strong>
+        </label>
+        }
+        <label class="dropdown-item">
+          <input class="form-check-input me-2" type="checkbox" [(ngModel)]="responsableCheck[respo.id]"
+            (change)="changeFilter()">
+          {{respo.firstname}} {{respo.lastname}}
+        </label>
+        }
       </div>
     </div>
+    }
     <div ngbDropdown [autoClose]="'outside'" class="btn-group dropdown" style="margin-right: 10px;">
       <button type="button" class="btn btn-outline-secondary dropdown-toggle" ngbDropdownToggle aria-haspopup="true"
         aria-expanded="false">
@@ -98,18 +96,24 @@
           (click)="changeSort('createdDateDesc');$event.stopPropagation();">
           <i class="ai-time me-2"></i>
           De la plus récente à la plus ancienne
-          <i class="ai-check me-2" *ngIf="currentSort=='createdDateDesc'"></i>
+          @if (currentSort=='createdDateDesc') {
+          <i class="ai-check me-2"></i>
+          }
         </a>
         <a class="dropdown-item" style="cursor: pointer;"
           (click)="changeSort('createdDateAsc');$event.stopPropagation();">
           <i class="ai-time me-2"></i>
           De la plus ancienne à la plus récente
-          <i class="ai-check me-2" *ngIf="currentSort=='createdDateAsc'"></i>
+          @if (currentSort=='createdDateAsc') {
+          <i class="ai-check me-2"></i>
+          }
         </a>
         <a class="dropdown-item" style="cursor: pointer;" (click)="changeSort('statusAsc');$event.stopPropagation();">
           <i class="ai-pulse me-2"></i>
           Par statut
-          <i class="ai-check me-2" *ngIf="currentSort=='statusAsc'"></i>
+          @if (currentSort=='statusAsc') {
+          <i class="ai-check me-2"></i>
+          }
         </a>
       </div>
     </div>
@@ -118,14 +122,17 @@
 <div class="card border-0 py-1 p-md-2 p-xl-3 p-xxl-4">
   <div class="card-body pb-4">
 
-    <div class="alert alert-info d-flex mb-0" role="alert" *ngIf="!isFirstLoading && orders.length==0">
+    @if (!isFirstLoading && orders.length==0) {
+    <div class="alert alert-info d-flex mb-0" role="alert">
       <i class="ai-circle-info fs-xl"></i>
       <div class="ps-2">Aucune commande n'a été trouvée, essayez de modifier vos filtres ci-dessus</div>
     </div>
+    }
 
     <!-- Orders accordion -->
     <div class="accordion accordion-alt accordion-orders" id="orders">
-      <div class="accordion-item border-top mb-0" *ngIf="isFirstLoading ">
+      @if (isFirstLoading ) {
+      <div class="accordion-item border-top mb-0">
         <div class="accordion-header">
           <p class="card-text placeholder-glow">
             <span class="placeholder placeholder-sm col-7 me-2"></span>
@@ -136,20 +143,24 @@
           </p>
         </div>
       </div>
+      }
 
       <div ngbAccordion [closeOthers]="true">
-        <div ngbAccordionItem #accordionItem="ngbAccordionItem" *ngFor="let order of orders"
-          (show)="loadOrderDetails(order)">
+        @for (order of orders; track order) {
+        <div ngbAccordionItem #accordionItem="ngbAccordionItem" (show)="loadOrderDetails(order)">
           <h2 ngbAccordionHeader>
             <button ngbAccordionButton class="border-top">
               <div class="container-fluid">
-                <div *ngIf="accordionItem.collapsed" class="row g-2 w-100">
+                @if (accordionItem.collapsed) {
+                <div class="row g-2 w-100">
                   <div class="col-12 col-sm-2 d-flex align-items-center flex-column">
                     <div class="fs-sm text-body-secondary fw-bold text-center">
                       n°{{order.id}}
+                      @if (order.hasMissingInformations) {
                       <i class="ai-triangle-alert fs-base text-danger ms-2" style="-webkit-text-stroke: 1px;"
-                        placement="right" *ngIf="order.hasMissingInformations"
+                        placement="right"
                         ngbTooltip="Des renseignements complémentaires sont nécessaires : veuillez vous reporter au détail de la commande"></i>
+                      }
                     </div>
                     <span class="badge bg-opacity-10 fs-xs text-wrap mt-2 mr-2"
                       [ngClass]="getClassForCustomerOrderStatus(order)" style="white-space: normal;">
@@ -162,37 +173,39 @@
                       {{order.createdDate | date:'dd/MM/yyyy'}}
                     </div>
                   </div>
-
                   <div class="col-12 col-sm-3">
                     <div class="fs-sm text-body-secondary fw-bold mb-1">Affaire</div>
                     <div class="fs-sm fw-medium text-dark">
                       {{capitalizeName(order.affairesList)}}
                     </div>
                   </div>
-
                   <div class="col-12 col-sm-3">
                     <div class="fs-sm text-body-secondary fw-bold mb-1">Services</div>
                     <div class="fs-sm fw-medium text-dark">
                       {{order.servicesList}}
                     </div>
                   </div>
-
-                  <div class="col-12 col-sm-2"
-                    *ngIf="order.responsable && responsablesForCurrentUser && responsablesForCurrentUser.length>0">
+                  @if (order.responsable && responsablesForCurrentUser && responsablesForCurrentUser.length>0) {
+                  <div class="col-12 col-sm-2">
                     <div class="fs-sm text-body-secondary mb-2">Responsable</div>
                     <div class="fs-sm fw-medium text-dark">
                       {{order.responsable.firstname}}
                       {{order.responsable.lastname}}</div>
                   </div>
+                  }
                 </div>
-                <div *ngIf="!accordionItem.collapsed " class="row g-2 w-100">
+                }
+                @if (!accordionItem.collapsed ) {
+                <div class="row g-2 w-100">
                   <div class="row g-2 w-100 mb-3 justify-content-between">
                     <div class="col-12 col-sm-auto d-flex align-items-center">
                       <div class="fs-xl fw-bold">
                         n°{{order.id}}
+                        @if (order.hasMissingInformations) {
                         <i class="ai-triangle-alert fs-base text-danger ms-2" style="-webkit-text-stroke: 1px;"
-                          placement="right" *ngIf="order.hasMissingInformations"
+                          placement="right"
                           ngbTooltip="Des renseignements complémentaires sont nécessaires : veuillez vous reporter au détail de la commande"></i>
+                        }
                       </div>
                       <span class="badge bg-opacity-10 fs-xs text-wrap ms-3"
                         [ngClass]="getClassForCustomerOrderStatus(order)" style="white-space: normal;">
@@ -200,7 +213,8 @@
                       </span>
                     </div>
                     <!-- Action buttons -->
-                    <div class="col-12 col-sm-auto" *ngIf="!expandedOrder">
+                    @if (!expandedOrder) {
+                    <div class="col-12 col-sm-auto">
                       <div class="row gap-1">
                         <div class="spinner-grow text-primary mt-2" role="status">
                           <span class="visually-hidden">Loading...</span>
@@ -213,15 +227,27 @@
                         </div>
                       </div>
                     </div>
-                    <div class="col-12 col-sm-auto" *ngIf="expandedOrder">
+                    }
+                    @if (expandedOrder) {
+                    <div class="col-12 col-sm-auto">
                       <div class="row gap-1">
-                        <div *ngFor="let asso of expandedOrder.assoAffaireOrders" class="col-auto p-0">
+                        @for (asso of expandedOrder.assoAffaireOrders; track asso) {
+                        <div class="col-auto p-0">
+                          @if ((!asso.affaire.paymentIban || !asso.affaire.paymentBic || !asso.affaire.mails ||
+                          asso.affaire.mails.length==0) && invoiceSummary && invoiceSummary.billingLabelType &&
+                          invoiceSummary.billingLabelType.id == billingLabelTypeCodeAffaire.id ) {
                           <button class="btn btn-primary btn-icon rounded-circle" role="button"
                             ngbTooltip="Renseignez l’IBAN pour les remboursements."
-                            [routerLink]='"/account/affaire/edit/order/" + asso.affaire.id + "/" + expandedOrder.id'
-                            *ngIf="(!asso.affaire.paymentIban || !asso.affaire.paymentBic || !asso.affaire.mails || asso.affaire.mails.length==0) && invoiceSummary && invoiceSummary.billingLabelType && invoiceSummary.billingLabelType.id == billingLabelTypeCodeAffaire.id ;else just_edit_affaire">
+                            [routerLink]='"/account/affaire/edit/order/" + asso.affaire.id + "/" + expandedOrder.id'>
                             <i class="ai-edit"></i>
                           </button>
+                          } @else {
+                          <a class="btn btn-sm  mt-3 mt-md-0 ms-md-auto btn-secondary" role="button"
+                            [routerLink]='"/account/affaire/edit/order/" + asso.affaire.id + "/" + this.expandedOrder.id'>
+                            <i class="ai-edit ms-n1 me-2"></i>
+                            Modifier
+                          </a>
+                          }
                           <ng-template #just_edit_affaire> <a class="btn btn-sm  mt-3 mt-md-0 ms-md-auto btn-secondary"
                               role="button"
                               [routerLink]='"/account/affaire/edit/order/" + asso.affaire.id + "/" + this.expandedOrder.id'>
@@ -229,14 +255,16 @@
                               Modifier
                             </a></ng-template>
                         </div>
-                        <div *ngIf="expandedOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_DRAFT"
-                          class="col-auto p-0">
+                        }
+                        @if (expandedOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_DRAFT) {
+                        <div class="col-auto p-0">
                           <button type="button" class="btn btn-primary btn-icon rounded-circle" aria-label="Edit"
                             placement="top" ngbTooltip="Reprenez votre brouillon."
                             (click)=" $event.stopPropagation(); resumeDraft(expandedOrder.id, $event); $event.preventDefault();">
                             <i class="ai-edit-alt"></i>
                           </button>
                         </div>
+                        }
                         <div class="col-auto p-0">
                           <button type="button" class="btn btn-primary btn-icon rounded-circle" aria-label="see"
                             placement="top" ngbTooltip="Consultez le détail de votre commande."
@@ -244,30 +272,33 @@
                             <i class="ai-show"></i>
                           </button>
                         </div>
-                        <ng-template *ngFor="let asso of expandedOrder.assoAffaireOrders">
-                          <div *ngFor="let service of asso.services" class="col-auto p-0">
-                            <button type="button" class="btn btn-primary btn-icon rounded-circle" aria-label="see"
-                              placement="top"
-                              [ngbTooltip]="'Consultez votre annonce légale : ' + asso.affaire.denomination + ' - ' "
-                              (click)="$event.stopPropagation(); goToJssAnnouncement(service, $event ); $event.preventDefault();">
-                              <i class="ai-search"></i>
-                            </button>
-                          </div>
-                        </ng-template>
-                        <div
-                          *ngIf="order.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT
-                          || order.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BEING_PROCESSED
-                          || order.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED && !expandedOrder.isPayed "
-                          class="col-auto p-0">
+                        @for (asso of expandedOrder.assoAffaireOrders; track asso) {
+                        @for (service of asso.services; track service) {
+                        <div class="col-auto p-0">
+                          <button type="button" class="btn btn-primary btn-icon rounded-circle" aria-label="see"
+                            placement="top"
+                            [ngbTooltip]="'Consultez votre annonce légale : ' + asso.affaire.denomination + ' - ' "
+                            (click)="$event.stopPropagation(); goToJssAnnouncement(service, $event ); $event.preventDefault();">
+                            <i class="ai-search"></i>
+                          </button>
+                        </div>
+                        }
+                        }
+                        @if (order.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT
+                        || order.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BEING_PROCESSED
+                        || order.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED && !expandedOrder.isPayed )
+                        {
+                        <div class="col-auto p-0">
                           <button type="button" class="btn btn-primary btn-icon rounded-circle" aria-label="deposit"
                             placement="top" ngbTooltip="Payer un acompte."
                             [routerLink]=' "/account/order/pay/" + expandedOrder.id'>
                             <i class="ai-card"></i>
                           </button>
                         </div>
-                        <div
-                          *ngIf="expandedOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED && !expandedOrder.isPayed "
-                          class="col-auto p-0">
+                        }
+                        @if (expandedOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED &&
+                        !expandedOrder.isPayed ) {
+                        <div class="col-auto p-0">
                           <button type="button" class="btn btn-primary btn-icon rounded-circle" aria-label="bill"
                             placement="top" ngbTooltip="Payer votre facture."
                             [routerLink]=' "/account/order/pay/" + order.id'>
@@ -275,17 +306,19 @@
                             <i class="ai-file fs-xl position-absolute"></i>
                           </button>
                         </div>
-                        <div *ngIf="expandedOrder.customerOrderStatus.code != CUSTOMER_ORDER_STATUS_DRAFT"
-                          class="col-auto p-0">
+                        }
+                        @if (expandedOrder.customerOrderStatus.code != CUSTOMER_ORDER_STATUS_DRAFT) {
+                        <div class="col-auto p-0">
                           <button type="button" class="btn btn-primary btn-icon rounded-circle" aria-label="order"
                             placement="top" ngbTooltip="Téléchargez votre Bon de commande."
                             (click)="$event.stopPropagation(); getPurchaseOrderAttachment(expandedOrder); $event.preventDefault();">
                             <i class="ai-cloud-download"></i>
                           </button>
                         </div>
-                        <div *ngIf="expandedOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED
-                            || expandedOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_PAYED"
-                          class="col-auto p-0">
+                        }
+                        @if (expandedOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED
+                        || expandedOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_PAYED) {
+                        <div class="col-auto p-0">
                           <button type="button" class="btn btn-primary btn-icon rounded-circle"
                             (click)="$event.stopPropagation(); downloadInvoice(order); $event.preventDefault();"
                             aria-label="download-bill" placement="top" ngbTooltip="Téléchargez votre facture.">
@@ -293,11 +326,12 @@
                             <i class="ai-file fs-xl position-absolute"></i>
                           </button>
                         </div>
-                        <div *ngIf="expandedOrder.hasCreditNote &&
+                        }
+                        @if (expandedOrder.hasCreditNote &&
                         (expandedOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED
-                          || expandedOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_PAYED
-                          || expandedOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED)"
-                          class="col-auto p-0">
+                        || expandedOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_PAYED
+                        || expandedOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED)) {
+                        <div class="col-auto p-0">
                           <button
                             (click)="$event.stopPropagation(); downloadLastInvoiceAndCreditNote(expandedOrder); $event.preventDefault();"
                             type="button" class="btn btn-primary btn-icon rounded-circle" aria-label="download-bills"
@@ -306,9 +340,10 @@
                             <i class="ai-folder fs-xl position-absolute"></i>
                           </button>
                         </div>
+                        }
                       </div>
-
                     </div>
+                    }
                   </div>
                   <div class="row g-2 w-100">
                     <div class="col-12 col-sm-3">
@@ -317,37 +352,37 @@
                         {{order.createdDate | date:'dd/MM/yyyy'}}
                       </div>
                     </div>
-
                     <div class="col-12 col-sm-3">
                       <div class="fs-sm text-body-secondary fw-bold mb-1">Affaire</div>
                       <div class="fs-sm fw-medium text-dark">
                         {{capitalizeName(order.affairesList)}}
                       </div>
                     </div>
-
                     <div class="col-12 col-sm-3">
                       <div class="fs-sm text-body-secondary fw-bold mb-1">Services</div>
                       <div class="fs-sm fw-medium text-dark">
                         {{order.servicesList}}
                       </div>
                     </div>
-
-                    <div class="col-12 col-sm-3"
-                      *ngIf="order.responsable && responsablesForCurrentUser && responsablesForCurrentUser.length>0">
+                    @if (order.responsable && responsablesForCurrentUser && responsablesForCurrentUser.length>0) {
+                    <div class="col-12 col-sm-3">
                       <div class="fs-sm text-body-secondary mb-2">Responsable</div>
                       <div class="fs-sm fw-medium text-dark">
                         {{order.responsable.firstname}}
                         {{order.responsable.lastname}}</div>
                     </div>
+                    }
                   </div>
                 </div>
+                }
               </div>
             </button>
           </h2>
           <div ngbAccordionCollapse>
             <div ngbAccordionBody>
               <ng-template>
-                <div class="accordion-item border-top mb-0" *ngIf="!ordersAssoAffaireOrders[order.id]">
+                @if (!ordersAssoAffaireOrders[order.id]) {
+                <div class="accordion-item border-top mb-0">
                   <div class="accordion-header">
                     <p class="card-text placeholder-glow">
                       <span class="placeholder placeholder-sm col-7 me-2"></span>
@@ -358,12 +393,14 @@
                     </p>
                   </div>
                 </div>
-
-                <div *ngIf="ordersAssoAffaireOrders[order.id]">
-                  <div *ngFor="let asso of ordersAssoAffaireOrders[order.id]">
-                    <div *ngFor="let service of asso.services" class="card mb-3 ">
+                }
+                @if (ordersAssoAffaireOrders[order.id]) {
+                <div>
+                  @for (asso of ordersAssoAffaireOrders[order.id]; track asso) {
+                  <div>
+                    @for (service of asso.services; track service) {
+                    <div class="card mb-3 ">
                       <div class="card-body p-3 d-flex flex-column flex-sm-row align-items-start align-items-sm-center">
-
                         <!-- Libellé + Affaire -->
                         <div class="flex-fill text-break">
                           <h4 class="h6 mb-1">
@@ -372,20 +409,26 @@
                           <div class="text-body-secondary fs-sm">
                             {{ capitalizeName(asso.affaire.denomination ? asso.affaire.denomination :
                             (asso.affaire.firstname + ' ' + asso.affaire.lastname)) }}
-                            <span *ngIf="asso.affaire.city">
+                            @if (asso.affaire.city) {
+                            <span>
                               - {{ capitalizeName(asso.affaire.city.label) }}
                             </span>
-                            <span *ngIf="asso.affaire.siret">
+                            }
+                            @if (asso.affaire.siret) {
+                            <span>
                               - {{ asso.affaire.siret }}
                             </span>
+                            }
                           </div>
                         </div>
-
                         <!-- Has AL and can download publication flags etc... -->
-                        <div
-                          *ngIf="expandedOrder && (service.serviceStatus.includes('Terminé') || service.serviceStatus.includes('Publié'))">
-                          <div *ngFor="let provision of service.provisions">
-                            <div *ngIf="provision && provision.announcement" class="mx-3 row">
+                        @if (expandedOrder && (service.serviceStatus.includes('Terminé') ||
+                        service.serviceStatus.includes('Publié'))) {
+                        <div>
+                          @for (provision of service.provisions; track provision) {
+                          <div>
+                            @if (provision && provision.announcement) {
+                            <div class="mx-3 row">
                               <div class="col-auto p-0 ms-1">
                                 <button type="button" class="btn btn-secondary btn-icon rounded-circle" aria-label="see"
                                   placement="top"
@@ -411,45 +454,53 @@
                                 </button>
                               </div>
                             </div>
+                            }
                           </div>
+                          }
                         </div>
-
+                        }
                         <!-- Statut -->
                         <div class="mt-2 mt-sm-0 ps-2 ps-sm-3 text-nowrap">
                           <span class="badge bg-info bg-opacity-10 text-info fs-xs">
                             {{ service.serviceStatus }}
                           </span>
                         </div>
-
                         <!-- Icône alerte -->
                         <div class="mt-2 mt-sm-0 ps-sm-3 d-flex align-items-center">
+                          @if (service.hasMissingInformations) {
                           <i class="ai-triangle-alert fs-base text-danger" style="-webkit-text-stroke: 1px;"
-                            placement="right" *ngIf="service.hasMissingInformations"
+                            placement="right"
                             ngbTooltip="Des renseignements complémentaires sont nécessaires : veuillez vous reporter au détail du devis">
                           </i>
+                          }
                         </div>
-
                         <!-- Prix -->
-                        <div class="mt-2 mt-sm-0 ps-sm-3 text-sm-end text-start" *ngIf="service.serviceTotalPrice">
+                        @if (service.serviceTotalPrice) {
+                        <div class="mt-2 mt-sm-0 ps-sm-3 text-sm-end text-start">
                           <div class="fs-sm text-body-secondary mb-1">Prix estimatif</div>
                           <div class="fs-sm fw-medium text-dark">
                             {{ service.serviceTotalPrice | currency:'EUR' }}
                           </div>
                         </div>
-
+                        }
                       </div>
                     </div>
+                    }
                   </div>
+                  }
                 </div>
-
+                }
                 <div class="card border-0 bg-secondary  my-3">
                   <div class="card-body">
                     <div class="row g-4">
                       <!-- Bloc : Client ref -->
-                      <div class="col"
-                        *ngIf="ordersInvoiceLabelResult[order.id] && ordersInvoiceLabelResult[order.id].externalReference && ordersInvoiceLabelResult[order.id].commandNumber || (expandedOrder && expandedOrder.description)">
-                        <div
-                          *ngIf="ordersInvoiceLabelResult[order.id] && ordersInvoiceLabelResult[order.id].externalReference && ordersInvoiceLabelResult[order.id].commandNumber">
+                      @if (ordersInvoiceLabelResult[order.id] && ordersInvoiceLabelResult[order.id].externalReference &&
+                      ordersInvoiceLabelResult[order.id].commandNumber || (expandedOrder && expandedOrder.description))
+                      {
+                      <div class="col">
+                        @if (ordersInvoiceLabelResult[order.id] && ordersInvoiceLabelResult[order.id].externalReference
+                        && ordersInvoiceLabelResult[order.id].commandNumber) {
+                        <div>
                           <div class="fs-sm fw-medium text-dark mb-1">Votre référence :</div>
                           <div class="fs-sm">
                             {{ ordersInvoiceLabelResult[order.id].externalReference }}<br>
@@ -459,35 +510,41 @@
                             {{ ordersInvoiceLabelResult[order.id].commandNumber }}<br>
                           </div>
                         </div>
-                        <div *ngIf="expandedOrder && expandedOrder.description">
+                        }
+                        @if (expandedOrder && expandedOrder.description) {
+                        <div>
                           <div class="fs-sm fw-medium text-dark mb-1 mt-2">Vos informations :</div>
                           <div class="fs-sm">
                             {{ expandedOrder.description }}
                           </div>
                         </div>
+                        }
                       </div>
-
+                      }
                       <!-- Bloc : Envoi de la facture -->
                       <div class="col">
                         <div class="fs-sm fw-medium text-dark mb-1">Envoi de la facture à :</div>
-                        <div class="fs-sm" *ngIf="ordersMailComputeResult[order.id]">
+                        @if (ordersMailComputeResult[order.id]) {
+                        <div class="fs-sm">
                           {{ getCustomerOrderBillingMailList(order) }}
                         </div>
-                        <div class="fs-sm" *ngIf="!ordersMailComputeResult[order.id]">
+                        }
+                        @if (!ordersMailComputeResult[order.id]) {
+                        <div class="fs-sm">
                           <p class="card-text placeholder-glow">
                             <span class="placeholder placeholder-sm col-7 me-2"></span>
                             <span class="placeholder placeholder-sm col-4"></span>
                           </p>
                         </div>
                         <button type="button" class="btn btn-link btn-sm px-2 mt-2 hover-bg-light "
-                          *ngIf="order.customerOrderStatus.code==CUSTOMER_ORDER_STATUS_DRAFT"
                           (click)="cancelDraft(order); $event.stopPropagation();">
                           <i class="ai-file-text me-2"></i>Abandonner
                         </button>
+                        }
                       </div>
-
                       <!-- Bloc : Libellé de facturation -->
-                      <div class="col" *ngIf="ordersInvoiceLabelResult[order.id]">
+                      @if (ordersInvoiceLabelResult[order.id]) {
+                      <div class="col">
                         <div class="fs-sm fw-medium text-dark mb-1">Libellé de facturation :</div>
                         <div class="fs-sm">
                           {{ ordersInvoiceLabelResult[order.id].billingLabel }}<br>
@@ -496,29 +553,32 @@
                           {{
                           ordersInvoiceLabelResult[order.id].billingLabelCity?ordersInvoiceLabelResult[order.id].billingLabelCity.label:''
                           }}
-                          <span *ngIf="ordersInvoiceLabelResult[order.id].commandNumber?.length">
+                          @if (ordersInvoiceLabelResult[order.id].commandNumber.length) {
+                          <span>
                             <br>Commande {{ ordersInvoiceLabelResult[order.id].commandNumber }}
                           </span>
+                          }
                         </div>
                       </div>
-
+                      }
                       <!-- Bloc : Loader Adresse -->
-                      <div class="col-sm-6 col-lg-5" *ngIf="!ordersInvoiceLabelResult[order.id]">
+                      @if (!ordersInvoiceLabelResult[order.id]) {
+                      <div class="col-sm-6 col-lg-5">
                         <p class="card-text placeholder-glow">
                           <span class="placeholder placeholder-sm col-7 me-2"></span>
                           <span class="placeholder placeholder-sm col-4"></span>
                           <span class="placeholder placeholder-sm col-4"></span>
                         </p>
                       </div>
-
+                      }
                       <!-- Bloc : Bouton avis -->
-                      <div class="col-sm-6 col-lg-3 text-sm-end align-self-start"
-                        *ngIf="order.customerOrderStatus.code === CUSTOMER_ORDER_STATUS_BILLED  && false">
+                      @if (order.customerOrderStatus.code === CUSTOMER_ORDER_STATUS_BILLED && false) {
+                      <div class="col-sm-6 col-lg-3 text-sm-end align-self-start">
                         <button class="btn btn-sm btn-outline-primary w-100 w-sm-auto" type="button">
                           <i class="ai-star me-2 ms-n1"></i>Laisser un avis
                         </button>
                       </div>
-
+                      }
                     </div>
                   </div>
                 </div>
@@ -526,12 +586,14 @@
             </div>
           </div>
         </div>
+        }
       </div>
 
 
       <!-- Orders accordion -->
       <div class="accordion accordion-alt accordion-orders" id="orders">
-        <div class="accordion-item border-top mb-0" *ngIf="isFirstLoading ">
+        @if (isFirstLoading ) {
+        <div class="accordion-item border-top mb-0">
           <div class="accordion-header">
             <p class="card-text placeholder-glow">
               <span class="placeholder placeholder-sm col-7 me-2"></span>
@@ -542,11 +604,13 @@
             </p>
           </div>
         </div>
+        }
 
       </div>
 
       <!-- Pagination -->
-      <div class="d-sm-flex align-items-center pt-4 pt-sm-5" *ngIf="!hideSeeMore">
+      @if (!hideSeeMore) {
+      <div class="d-sm-flex align-items-center pt-4 pt-sm-5">
         <nav class="order-sm-2 ms-sm-auto">
         </nav>
         <button class="btn btn-primary w-100 w-sm-auto order-sm-1 ms-sm-auto me-sm-n5" type="button"
@@ -554,6 +618,7 @@
           <i class="ai-chevrons-down me-2 ms-n1"></i>
           Voir plus</button>
       </div>
+      }
     </div>
   </div>
 

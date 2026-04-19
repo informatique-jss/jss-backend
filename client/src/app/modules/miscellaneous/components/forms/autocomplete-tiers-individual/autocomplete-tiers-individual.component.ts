@@ -8,9 +8,10 @@ import { TIERS_ENTITY_TYPE } from '../../../../../routing/search/search.componen
 import { GenericAutocompleteComponent } from '../generic-autocomplete/generic-autocomplete.component';
 
 @Component({
-  selector: 'autocomplete-tiers-individual',
-  templateUrl: '../generic-autocomplete/generic-autocomplete.component.html',
-  styleUrls: ['../generic-autocomplete/generic-autocomplete.component.css']
+    selector: 'autocomplete-tiers-individual',
+    templateUrl: '../generic-autocomplete/generic-autocomplete.component.html',
+    styleUrls: ['../generic-autocomplete/generic-autocomplete.component.css'],
+    standalone: false
 })
 export class AutocompleteTiersIndividualComponent extends GenericAutocompleteComponent<IndexEntity, IndexEntity> implements OnInit {
 

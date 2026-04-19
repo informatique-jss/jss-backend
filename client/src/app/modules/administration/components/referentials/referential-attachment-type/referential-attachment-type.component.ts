@@ -7,9 +7,10 @@ import { AppService } from 'src/app/services/app.service';
 import { GenericReferentialComponent } from '../generic-referential/generic-referential-component';
 
 @Component({
-  selector: 'referential-attachment-type',
-  templateUrl: './referential-attachment-type.component.html',
-  styleUrls: ['./../generic-referential/generic-referential.component.css']
+    selector: 'referential-attachment-type',
+    templateUrl: './referential-attachment-type.component.html',
+    styleUrls: ['./../generic-referential/generic-referential.component.css'],
+    standalone: false
 })
 export class ReferentialAttachmentTypeComponent extends GenericReferentialComponent<AttachmentType> implements OnInit {
 

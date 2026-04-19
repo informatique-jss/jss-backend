@@ -1,49 +1,59 @@
-<div class="d-flex align-items-center mb-4" *ngIf="idQuotation">
-  <h1 class="h2 mb-0 me-3">Devis {{idQuotation}} </h1>
-</div>
-<section class="card border-0 py-1 p-md-2 p-xl-3 p-xxl-4 mb-4">
-  <div class="card-body" *ngIf="!invoiceSummary">
-    <p class="card-text placeholder-glow">
-      <span class="placeholder placeholder-sm col-7 me-2"></span>
-      <span class="placeholder placeholder-sm col-4"></span>
-      <span class="placeholder placeholder-sm col-4"></span>
-      <span class="placeholder placeholder-sm col-4"></span>
-      <span class="placeholder placeholder-sm col-4"></span>
-    </p>
+@if (idQuotation) {
+  <div class="d-flex align-items-center mb-4">
+    <h1 class="h2 mb-0 me-3">Devis {{idQuotation}} </h1>
   </div>
-  <div class="card-body" *ngIf="invoiceSummary">
-    <div class="d-flex align-items-center mt-sm-n1 pb-4 mb-0 mb-lg-1 mb-xl-3">
-      <i class="ai-wallet text-primary lead pe-1 me-2"></i>
-      <h2 class="h4 mb-0">
-        Paiement </h2>
+}
+<section class="card border-0 py-1 p-md-2 p-xl-3 p-xxl-4 mb-4">
+  @if (!invoiceSummary) {
+    <div class="card-body">
+      <p class="card-text placeholder-glow">
+        <span class="placeholder placeholder-sm col-7 me-2"></span>
+        <span class="placeholder placeholder-sm col-4"></span>
+        <span class="placeholder placeholder-sm col-4"></span>
+        <span class="placeholder placeholder-sm col-4"></span>
+        <span class="placeholder placeholder-sm col-4"></span>
+      </p>
     </div>
-
-    <ul ngbNav #nav="ngbNav" [activeId]="1" class="nav-tabs">
-      <li [ngbNavItem]="1">
-        <button ngbNavLink>Par carte bleue</button>
-        <ng-template ngbNavContent>
-          <div class="alert alert-info" role="alert">
-            Le paiement de ce devis vaudra validation et création de la commande correspondante.
-          </div>
-          <p>Pour payer par carte bleue un montant de <strong>{{invoiceSummary.remainingToPay | currency:'EUR'
-              }}</strong>, utilisez le
-            bouton ci-dessous ou flashez le QR code ci-dessous</p>
+  }
+  @if (invoiceSummary) {
+    <div class="card-body">
+      <div class="d-flex align-items-center mt-sm-n1 pb-4 mb-0 mb-lg-1 mb-xl-3">
+        <i class="ai-wallet text-primary lead pe-1 me-2"></i>
+        <h2 class="h4 mb-0">
+        Paiement </h2>
+      </div>
+      <ul ngbNav #nav="ngbNav" [activeId]="1" class="nav-tabs">
+        <li [ngbNavItem]="1">
+          <button ngbNavLink>Par carte bleue</button>
+          <ng-template ngbNavContent>
+            <div class="alert alert-info" role="alert">
+              Le paiement de ce devis vaudra validation et création de la commande correspondante.
+            </div>
+            <p>Pour payer par carte bleue un montant de <strong>{{invoiceSummary.remainingToPay | currency:'EUR'
+            }}</strong>, utilisez le
+          bouton ci-dessous ou flashez le QR code ci-dessous</p>
           <div class="mt-3"><generic-input [(model)]="defaultMail" label="Mail de réception du reçu"
-              [form]="payOrderForm" propertyName="defaultMail" [isMandatory]="true" [isDisabled]="false"
-              [isDisplayLabel]="true" (onFormChange)="refreshQrCode()" [icon]="'mail'"></generic-input></div>
-          <div class="error color-red" *ngIf="!qrCodeRecourse">Le mail de réception du reçu est obligatoire</div>
-          <div class="picture d-flex justify-content-center" *ngIf="qrCodeRecourse">
-            <img id="img" [src]="qrCodeRecourse">
-          </div>
+            [form]="payOrderForm" propertyName="defaultMail" [isMandatory]="true" [isDisabled]="false"
+          [isDisplayLabel]="true" (onFormChange)="refreshQrCode()" [icon]="'mail'"></generic-input></div>
+          @if (!qrCodeRecourse) {
+            <div class="error color-red">Le mail de réception du reçu est obligatoire</div>
+          }
+          @if (qrCodeRecourse) {
+            <div class="picture d-flex justify-content-center">
+              <img id="img" [src]="qrCodeRecourse">
+            </div>
+          }
           <div class="text-center justify-content-center align-items-center row pt-1 pt-sm-2">
             <div class="col-auto ">
               <osi-tooltip class="" tootltipCodeToDisplay="MYJSS_ACCOUNT_PAY_ORDER"></osi-tooltip>
             </div>
             <div class="btn-group col-auto" role="group" aria-label="Outline button group">
-              <button type="button" class="btn btn-primary" (click)="payedCb()" *ngIf="qrCodeImage">Payer en
+              @if (qrCodeImage) {
+                <button type="button" class="btn btn-primary" (click)="payedCb()">Payer en
                 ligne</button>
+              }
               <button type="button" class="btn btn-outline-secondary"
-                [routerLink]='"/account/quotations/details/" + this.idQuotation'>Fermer</button>
+              [routerLink]='"/account/quotations/details/" + this.idQuotation'>Fermer</button>
             </div>
             <div class="col-auto px-4 ms-2 me-2"></div>
           </div>
@@ -56,34 +66,35 @@
             Le paiement de ce devis vaudra validation et création de la commande correspondante.
           </div>
           <p>Pour payer par virement le montant de <strong>{{invoiceSummary.remainingToPay | currency:'EUR' }}</strong>,
-            utilisez les
-            informations suivantes :</p>.
-          <p>Titulaire : SOC DE PUBLICATIONS PUBLICITE SOCIETES
-          </p>
-          <p class="text-center"> {{JSS_IBAN}} <i style="cursor: pointer;" [copy-clipboard]="JSS_IBAN"
-              (copied)="notifyCopied( )" class="ai-copy" placement="right"
-              ngbTooltip="Copier dans le presse-papier"></i>
-          </p>
-          <p class="text-center"> {{JSS_BIC}} <i style="cursor: pointer;" [copy-clipboard]="JSS_BIC"
-              (copied)="notifyCopied( )" class="ai-copy" placement="right"
-              ngbTooltip="Copier dans le presse-papier"></i>
-          </p>
-          <div class="alert alert-danger" role="alert">
-            Veuillez indiquer absolument la référence <span class="color-red">{{idQuotation}} </span> <i
-              style="cursor: pointer;" [copy-clipboard]="JSS_BIC" (copied)="notifyCopied( )" class="ai-copy"
-              placement="right" ngbTooltip="Copier dans le presse-papier"></i> de la commande
-            dans le libellé de votre
-            virement
-          </div>
-          <div class="text-center pt-1 pt-sm-2">
-            <div class="btn-group   " role="group" aria-label="Outline button group">
-              <button type="button" class="btn btn-outline-secondary"
-                [routerLink]='"/account/quotations/details/" + this.idQuotation'>Fermer</button>
-            </div>
-          </div>
-        </ng-template>
-      </li>
-    </ul>
-    <div [ngbNavOutlet]="nav" class="mt-2"></div>
+          utilisez les
+        informations suivantes :</p>.
+        <p>Titulaire : SOC DE PUBLICATIONS PUBLICITE SOCIETES
+        </p>
+        <p class="text-center"> {{JSS_IBAN}} <i style="cursor: pointer;" [copy-clipboard]="JSS_IBAN"
+          (copied)="notifyCopied( )" class="ai-copy" placement="right"
+        ngbTooltip="Copier dans le presse-papier"></i>
+      </p>
+      <p class="text-center"> {{JSS_BIC}} <i style="cursor: pointer;" [copy-clipboard]="JSS_BIC"
+        (copied)="notifyCopied( )" class="ai-copy" placement="right"
+      ngbTooltip="Copier dans le presse-papier"></i>
+    </p>
+    <div class="alert alert-danger" role="alert">
+      Veuillez indiquer absolument la référence <span class="color-red">{{idQuotation}} </span> <i
+      style="cursor: pointer;" [copy-clipboard]="JSS_BIC" (copied)="notifyCopied( )" class="ai-copy"
+    placement="right" ngbTooltip="Copier dans le presse-papier"></i> de la commande
+    dans le libellé de votre
+    virement
   </div>
+  <div class="text-center pt-1 pt-sm-2">
+    <div class="btn-group   " role="group" aria-label="Outline button group">
+      <button type="button" class="btn btn-outline-secondary"
+      [routerLink]='"/account/quotations/details/" + this.idQuotation'>Fermer</button>
+    </div>
+  </div>
+</ng-template>
+</li>
+</ul>
+<div [ngbNavOutlet]="nav" class="mt-2"></div>
+</div>
+}
 </section>

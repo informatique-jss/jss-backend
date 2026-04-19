@@ -2,12 +2,18 @@
   <mat-label>{{label}}</mat-label>
   <mat-select [formControlName]="propertyName"
     [required]="isMandatory && (conditionnalRequired==undefined || conditionnalRequired)" [compareWith]="compareWithId">
-    <mat-option *ngFor="let type of types" [value]="type">
-      {{displayLabel(type)}} <span *ngIf="type.preTaxPrice && type.preTaxPrice>0">({{type.preTaxPrice}} €)</span>
+    @for (type of types; track type) {
+      <mat-option [value]="type">
+        {{displayLabel(type)}} @if (type.preTaxPrice && type.preTaxPrice>0) {
+        <span>({{type.preTaxPrice}} €)</span>
+      }
     </mat-option>
-  </mat-select>
+  }
+</mat-select>
+@if (!isDisabled && model!=undefined) {
   <mat-icon color="accent" matSuffix (click)="clearField();$event.stopPropagation()"
-    *ngIf="!isDisabled && model!=undefined" class="pointer">
+    class="pointer">
     close
   </mat-icon>
+}
 </mat-form-field>

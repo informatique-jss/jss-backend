@@ -8,8 +8,8 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.hibernate5.jakarta.Hibernate5JakartaModule;
-import com.fasterxml.jackson.datatype.hibernate5.jakarta.Hibernate5JakartaModule.Feature;
+import com.fasterxml.jackson.datatype.hibernate6.Hibernate6Module;
+import com.fasterxml.jackson.datatype.hibernate6.Hibernate6Module.Feature;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
@@ -19,9 +19,9 @@ public class WebConfig implements WebMvcConfigurer {
         for (HttpMessageConverter converter : converters) {
             if (converter instanceof org.springframework.http.converter.json.MappingJackson2HttpMessageConverter) {
                 ObjectMapper mapper = ((MappingJackson2HttpMessageConverter) converter).getObjectMapper();
-                Hibernate5JakartaModule module = new Hibernate5JakartaModule();
+                Hibernate6Module module = new Hibernate6Module();
                 module.enable(Feature.FORCE_LAZY_LOADING);
-                module.disable(Hibernate5JakartaModule.Feature.USE_TRANSIENT_ANNOTATION);
+                module.disable(Hibernate6Module.Feature.USE_TRANSIENT_ANNOTATION);
                 mapper.registerModule(module);
             }
         }

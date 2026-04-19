@@ -6,9 +6,10 @@ import { GenericSelectComponent } from '../generic-select/generic-select.compone
 import { AppService } from 'src/app/services/app.service';
 
 @Component({
-  selector: 'select-provision-screen-type',
-  templateUrl: './select-provision-screen-type.component.html',
-  styleUrls: ['./select-provision-screen-type.component.css']
+    selector: 'select-provision-screen-type',
+    templateUrl: './select-provision-screen-type.component.html',
+    styleUrls: ['./select-provision-screen-type.component.css'],
+    standalone: false
 })
 export class SelectProvisionScreenTypeComponent extends GenericSelectComponent<ProvisionScreenType> implements OnInit {
 

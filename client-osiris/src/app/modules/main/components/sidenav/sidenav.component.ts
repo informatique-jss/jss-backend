@@ -1,4 +1,4 @@
-import { NgIf } from '@angular/common';
+
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { NgIcon } from '@ng-icons/core';
@@ -14,10 +14,10 @@ import { UserProfileComponent } from '../user-profile/user-profile.component';
     UserProfileComponent,
     AppMenuComponent,
     SimplebarAngularModule,
-    NgIf,
     NgIcon,
-    RouterLink, SHARED_IMPORTS
-  ],
+    RouterLink,
+    SHARED_IMPORTS
+],
   templateUrl: './sidenav.component.html',
   standalone: true
 })

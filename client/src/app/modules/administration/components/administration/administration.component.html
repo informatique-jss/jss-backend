@@ -9,427 +9,593 @@
                 <mat-label>Référentiel</mat-label>
                 <input type="text" [(ngModel)]="selectedReferential" matInput formControlName="entity"
                   [matAutocomplete]="matAutocomplete">
-                <mat-autocomplete autoActiveFirstOption #matAutocomplete="matAutocomplete"
-                  (optionSelected)='changeReferential()'>
-                  <mat-option *ngFor="let referential of filteredReferentials | async" [value]="referential">
-                    {{referential}}
-                  </mat-option>
-                </mat-autocomplete>
-              </mat-form-field>
-            </td>
-          </tr>
-        </table>
-        <referential-act-type *ngIf="selectedReferential==ACT_TYPE_REFERENTIAL"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()"></referential-act-type>
-        <referential-building-domiciliation *ngIf="selectedReferential==BUILDING_DOMICILIATION_REFERENTIAL"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()">
-        </referential-building-domiciliation>
-        <referential-domiciliation-contract-type *ngIf="selectedReferential==DOMICIALIATION_CONTRACT_TYPE_REFERENTIAL"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()">
-        </referential-domiciliation-contract-type>
-        <referential-fund-type *ngIf="selectedReferential==FUND_TYPE_REFERENTIAL"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()"></referential-fund-type>
-        <referential-journal-type *ngIf="selectedReferential==JOURNAL_TYPE_REFERENTIAL"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()"></referential-journal-type>
-        <referential-mail-redirection-type *ngIf="selectedReferential==MAIL_REDIRECTION_TYPE_REFERENTIAL"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()">
-        </referential-mail-redirection-type>
-        <referential-notice-type-family *ngIf="selectedReferential==NOTICE_TYPE_FAMILY_REFERENTIAL"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()">
-        </referential-notice-type-family>
-        <referential-provision-family-type *ngIf="selectedReferential==PROVISION_FAMILY_TYPE_REFERENTIAL"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()">
-        </referential-provision-family-type>
-        <referential-record-type *ngIf="selectedReferential==RECORD_TYPE_REFERENTIAL"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()">
-        </referential-record-type>
-        <referential-transfert-fund-type *ngIf="selectedReferential==TRANSFERT_FUNDS_TYPE_REFERENTIAL"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()">
-        </referential-transfert-fund-type>
-        <referential-billing-closure-recipient-type
-          *ngIf="selectedReferential==BILLING_CLOSURE_RECIPIENT_TYPE_REFERENTIAL"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()">
-        </referential-billing-closure-recipient-type>
-        <referential-billing-closure-type *ngIf="selectedReferential==BILLING_CLOSURE_TYPE_REFERENTIAL"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()">
-        </referential-billing-closure-type>
-        <referential-billing-label-type *ngIf="selectedReferential==BILLING_LABEL_TYPE_REFERENTIAL"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()">
-        </referential-billing-label-type>
-        <referential-payment-deadline-type *ngIf="selectedReferential==PAYMENT_DEALINE_TYPE_REFERENTIAL"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()">
-        </referential-payment-deadline-type>
-        <referential-refund-type *ngIf="selectedReferential==REFUND_TYPE_REFERENTIAL"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()">
-        </referential-refund-type>
-        <referential-subscription-period-type *ngIf="selectedReferential==SUBSCRIPTION_PERIOD_TYPE_REFERENTIAL"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()">
-        </referential-subscription-period-type>
-        <referential-tiers-category *ngIf="selectedReferential==TIERS_CATEGORY_REFERENTIAL"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()">
-        </referential-tiers-category>
-        <referential-tiers-type *ngIf="selectedReferential==TIERS_TYPE_REFERENTIAL"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()">
-        </referential-tiers-type>
-        <referential-tiers-followup-type *ngIf="selectedReferential==TIERS_FOLLOWUP_TYPE_REFERENTIAL"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()">
-        </referential-tiers-followup-type>
-        <referential-attachment-type *ngIf="selectedReferential==ATTACHMENT_TYPE_REFERENTIAL"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()">
-        </referential-attachment-type>
-        <referential-type-document *ngIf="selectedReferential==TYPE_DOCUMENT_REFERENTIAL"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()">
-        </referential-type-document>
-        <referential-civility *ngIf="selectedReferential==CIVILITY_REFERENTIAL"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()">
-        </referential-civility>
-        <referential-competent-authority-type *ngIf="selectedReferential==COMPETENT_AUTHORITY_TYPE_REFERENTIAL"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()">
-        </referential-competent-authority-type>
-        <referential-country *ngIf="selectedReferential==COUNTRY_REFERENTIAL"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()">
-        </referential-country>
-        <referential-delivery-service *ngIf="selectedReferential==DELIVERY_SERVICE_REFERENTIAL"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()">
-        </referential-delivery-service>
-        <referential-document-type *ngIf="selectedReferential==DOCUMENT_TYPE_REFERENTIAL"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()">
-        </referential-document-type>
-        <referential-language *ngIf="selectedReferential==LANGUAGE_REFERENTIAL"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()">
-        </referential-language>
-        <referential-legal-form *ngIf="selectedReferential==LEGAL_FORM_REFERENTIAL"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()">
-        </referential-legal-form>
-        <referential-payment-type *ngIf="selectedReferential==PAYMENT_TYPE_REFERENTIAL"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()">
-        </referential-payment-type>
-        <referential-region *ngIf="selectedReferential==REGIONS_REFERENTIAL"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()">
-        </referential-region>
-        <referential-vat *ngIf="selectedReferential==VAT_REFERENTIAL"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()">
-        </referential-vat>
-        <referential-weekday *ngIf="selectedReferential==WEEK_DAY_REFERENTIAL"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()">
-        </referential-weekday>
-        <referential-character-price *ngIf="selectedReferential==CHARACTER_PRICE_REFERENTIAL"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()">
-        </referential-character-price>
-        <referential-notice-type *ngIf="selectedReferential==NOTICE_TYPE"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()">
-        </referential-notice-type>
-        <referential-provision-type *ngIf="selectedReferential==PROVISION_TYPE_REFERENTIAL"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()">
-        </referential-provision-type>
-        <referential-announcement-notice-template *ngIf="selectedReferential==ANNOUNCEMENT_NOTICE_TEMPLATE_REFERENTIAL"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()">
-        </referential-announcement-notice-template>
-        <referential-announcement-notice-template-fragment
-          *ngIf="selectedReferential==ANNOUNCEMENT_NOTICE_TEMPLATE_FRAGMENT_REFERENTIAL"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()">
-        </referential-announcement-notice-template-fragment>
-        <referential-billing-item *ngIf="selectedReferential==BILLING_ITEM_REFERENTIAL"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()">
-        </referential-billing-item>
-        <referential-billing-type *ngIf="selectedReferential==BILLING_TYPE_REFERENTIAL"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()">
-        </referential-billing-type>
-        <referential-city *ngIf="selectedReferential==CITY_REFERENTIAL"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()">
-        </referential-city>
-        <referential-department *ngIf="selectedReferential==DEPARTMENT_REFERENTIAL"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()">
-        </referential-department>
-        <referential-gift *ngIf="selectedReferential==GIFT_REFERENTIAL"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()">
-        </referential-gift>
-        <referential-special-offer *ngIf="selectedReferential==SPECIAL_OFFER_REFERENTIAL"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()">
-        </referential-special-offer>
-        <referential-accounting-account-class *ngIf="selectedReferential==ACCOUNTING_ACCOUNT_CLASS_REFERENTIAL"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()">
-        </referential-accounting-account-class>
-        <referential-accounting-account *ngIf="selectedReferential==ACCOUNTING_ACCOUNT_REFERENTIAL"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()">
-        </referential-accounting-account>
-        <referential-competitor *ngIf="selectedReferential==COMPETITOR_REFERENTIAL"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()">
-        </referential-competitor>
-        <referential-vat-collection-type *ngIf="selectedReferential==VAT_COLLECTION_TYPE_REFERENTIAL"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()">
-        </referential-vat-collection-type>
-        <referential-accounting-journal *ngIf="selectedReferential==ACCOUNTING_JOURNAL_REFERENTIAL"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()">
-        </referential-accounting-journal>
-        <referential-invoice-status *ngIf="selectedReferential==INVOICE_STAUTS_REFERENTIAL"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()">
-        </referential-invoice-status>
-        <referential-principal-accounting-account *ngIf="selectedReferential==PRINCIPAL_ACCOUNTING_ACCOUNT_REFERENTIAL"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()">
-        </referential-principal-accounting-account>
-        <referential-customer-order-origin *ngIf="selectedReferential==CUSTOMER_ORDER_ORIGIN_REFERENTIAL"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()">
-        </referential-customer-order-origin>
-        <referential-department-vat-setting *ngIf="selectedReferential==DEPARTMENT_VAT_SETTING_REFERENTIAL"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()">
-        </referential-department-vat-setting>
-        <referential-quotation-abandon-reason *ngIf="selectedReferential==QUOTATION_ABANDON_REASON_REFERENTIAL"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()">
-        </referential-quotation-abandon-reason>
-        <referential-rff-frequency *ngIf="selectedReferential==RFF_FREQUENCY_REFERENTIAL"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()">
-        </referential-rff-frequency>
-        <referential-service-family *ngIf="selectedReferential==SERVICE_FAMILY_REFERENTIAL"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()">
-        </referential-service-family>
-        <referential-service-family-group *ngIf="selectedReferential==SERVICE_FAMILY_GROUP_REFERENTIAL"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()">
-        </referential-service-family-group>
-        <referential-service-type *ngIf="selectedReferential==SERVICE_TYPE_REFERENTIAL"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()">
-        </referential-service-type>
-        <referential-customer-order-frequency *ngIf="selectedReferential==CUSTOMER_ORDER_FREQUENCY_REFERENTIAL"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()">
-        </referential-customer-order-frequency>
-        <referential-active-directory-group *ngIf="selectedReferential==ACTIVE_DIRECTORY_GROUP_REFERENTIAL"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()">
-        </referential-active-directory-group>
-        <referential-paper-set-type *ngIf="selectedReferential==PAPER_SET_TYPE_REFERENTIAL"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()"></referential-paper-set-type>
-        <referential-service-field-type *ngIf="selectedReferential==SERVICE_FIELD_TYPE_REFERENTIAL"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()">
-        </referential-service-field-type>
-        <referential-indicator *ngIf="selectedReferential==INDICATOR_REFERENTIAL"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()">
-        </referential-indicator>
-        <referential-indicator-group *ngIf="selectedReferential==INDICATOR_GROUP_REFERENTIAL"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()">
-        </referential-indicator-group>
-        <referential-invoicing-blockage *ngIf="selectedReferential==INVOICING_BLOCAKGE_REFERENTIAL"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()">
-        </referential-invoicing-blockage>
-        <referential-order-blockage *ngIf="selectedReferential==ORDER_BLOCAKGE_REFERENTIAL"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()">
-        </referential-order-blockage>
-        <referential-incident-responsibility *ngIf="selectedReferential==INCIDENT_RESPONSIBILITY_REFERENTIAL"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()">
-        </referential-incident-responsibility>
-        <referential-incident-cause *ngIf="selectedReferential==INCIDENT_CAUSE_REFERENTIAL"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()">
-        </referential-incident-cause>
-        <referential-incident-type *ngIf="selectedReferential==INCIDENT_TYPE_REFERENTIAL"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()">
-        </referential-incident-type>
-        <referential-reporting-working-table *ngIf="selectedReferential==REPORTING_WORKING_TABLE_REFERENTIAL"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()">
-        </referential-reporting-working-table>
-        <referential-reporting-dashboard *ngIf="selectedReferential==REPORTING_DASHBOARD_REFERENTIAL"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()">
-        </referential-reporting-dashboard>
-        <referential-reporting-widget *ngIf="selectedReferential==REPORTING_WIDGET_REFERENTIAL"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()">
-        </referential-reporting-widget>
-        <referential-discovering-origin *ngIf="selectedReferential==DISCOVERING_ORIGIN_REFERENTIAL"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()">
-        </referential-discovering-origin>
-        <referential-business-sector *ngIf="selectedReferential==BUSINESS_SECTOR_REFERENTIAL"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()">
-        </referential-business-sector>
-        <referential-pay-slip-line-type *ngIf="selectedReferential==PAY_SLIP_LINE_TYPE_REFERENTIAL"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()">
-        </referential-pay-slip-line-type>
-        <referential-tooltip-entry *ngIf="selectedReferential==TOOLTIP_ENTRY_REFERENTIAL"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()">
-        </referential-tooltip-entry>
-        <referential-rejection-cause *ngIf="selectedReferential==REJECTION_CAUSE_REFERENTIAL"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()">
-        </referential-rejection-cause>
-        <referential-tiers-group *ngIf="selectedReferential==TIERS_GROUP_REFERENTIAL"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()"></referential-tiers-group>
-        <referential-information-banner *ngIf="selectedReferential==INFORMATION_BANNER_REFERENTIAL"
-          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
-          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
-          [cloneEvent]="cloneEvent.asObservable()"></referential-information-banner>
-        <button matTooltip="Sauvegarder" mat-fab color="warn" class="fab-button" *ngIf="editMode"
-          (click)="saveEntity()">
-          <mat-icon>save</mat-icon>
-        </button>
-        <button matTooltip="Modifier l'élément" mat-fab color="accent" class="second-fab-button"
-          *ngIf="selectedEntity && !editMode" (click)="editEntity()">
-          <mat-icon>edit</mat-icon>
-        </button>
-        <button matTooltip="Cloner l'élément" mat-fab color="accent" class="third-fab-button"
-          *ngIf="selectedEntity && !editMode" (click)="cloneEntity()">
-          <mat-icon>content_copy</mat-icon>
-        </button>
-        <button matTooltip="Ajouter un élément" mat-fab color="accent" class="fab-button"
-          *ngIf="selectedReferential && !editMode" (click)="createEntity()">
-          <mat-icon>add</mat-icon>
-        </button>
-      </div>
-    </mat-tab>
-    <mat-tab label="Constantes">
-      <ng-template matTabContent>
-        <constant></constant>
-      </ng-template>
-    </mat-tab>
-    <mat-tab label="Logs" *ngIf="canViewLogdModule()">
-      <log></log>
-    </mat-tab>
-  </mat-tab-group>
-</div>
+                  <mat-autocomplete autoActiveFirstOption #matAutocomplete="matAutocomplete"
+                    (optionSelected)='changeReferential()'>
+                    @for (referential of filteredReferentials | async; track referential) {
+                      <mat-option [value]="referential">
+                        {{referential}}
+                      </mat-option>
+                    }
+                  </mat-autocomplete>
+                </mat-form-field>
+              </td>
+            </tr>
+          </table>
+          @if (selectedReferential==ACT_TYPE_REFERENTIAL) {
+            <referential-act-type
+              (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+              [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+            [cloneEvent]="cloneEvent.asObservable()"></referential-act-type>
+          }
+          @if (selectedReferential==BUILDING_DOMICILIATION_REFERENTIAL) {
+            <referential-building-domiciliation
+              (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+              [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+              [cloneEvent]="cloneEvent.asObservable()">
+            </referential-building-domiciliation>
+          }
+          @if (selectedReferential==DOMICIALIATION_CONTRACT_TYPE_REFERENTIAL) {
+            <referential-domiciliation-contract-type
+              (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+              [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+              [cloneEvent]="cloneEvent.asObservable()">
+            </referential-domiciliation-contract-type>
+          }
+          @if (selectedReferential==FUND_TYPE_REFERENTIAL) {
+            <referential-fund-type
+              (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+              [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+            [cloneEvent]="cloneEvent.asObservable()"></referential-fund-type>
+          }
+          @if (selectedReferential==JOURNAL_TYPE_REFERENTIAL) {
+            <referential-journal-type
+              (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+              [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+            [cloneEvent]="cloneEvent.asObservable()"></referential-journal-type>
+          }
+          @if (selectedReferential==MAIL_REDIRECTION_TYPE_REFERENTIAL) {
+            <referential-mail-redirection-type
+              (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+              [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+              [cloneEvent]="cloneEvent.asObservable()">
+            </referential-mail-redirection-type>
+          }
+          @if (selectedReferential==NOTICE_TYPE_FAMILY_REFERENTIAL) {
+            <referential-notice-type-family
+              (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+              [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+              [cloneEvent]="cloneEvent.asObservable()">
+            </referential-notice-type-family>
+          }
+          @if (selectedReferential==PROVISION_FAMILY_TYPE_REFERENTIAL) {
+            <referential-provision-family-type
+              (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+              [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+              [cloneEvent]="cloneEvent.asObservable()">
+            </referential-provision-family-type>
+          }
+          @if (selectedReferential==RECORD_TYPE_REFERENTIAL) {
+            <referential-record-type
+              (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+              [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+              [cloneEvent]="cloneEvent.asObservable()">
+            </referential-record-type>
+          }
+          @if (selectedReferential==TRANSFERT_FUNDS_TYPE_REFERENTIAL) {
+            <referential-transfert-fund-type
+              (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+              [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+              [cloneEvent]="cloneEvent.asObservable()">
+            </referential-transfert-fund-type>
+          }
+          @if (selectedReferential==BILLING_CLOSURE_RECIPIENT_TYPE_REFERENTIAL) {
+            <referential-billing-closure-recipient-type
+              (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+              [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+              [cloneEvent]="cloneEvent.asObservable()">
+            </referential-billing-closure-recipient-type>
+          }
+          @if (selectedReferential==BILLING_CLOSURE_TYPE_REFERENTIAL) {
+            <referential-billing-closure-type
+              (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+              [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+              [cloneEvent]="cloneEvent.asObservable()">
+            </referential-billing-closure-type>
+          }
+          @if (selectedReferential==BILLING_LABEL_TYPE_REFERENTIAL) {
+            <referential-billing-label-type
+              (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+              [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+              [cloneEvent]="cloneEvent.asObservable()">
+            </referential-billing-label-type>
+          }
+          @if (selectedReferential==PAYMENT_DEALINE_TYPE_REFERENTIAL) {
+            <referential-payment-deadline-type
+              (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+              [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+              [cloneEvent]="cloneEvent.asObservable()">
+            </referential-payment-deadline-type>
+          }
+          @if (selectedReferential==REFUND_TYPE_REFERENTIAL) {
+            <referential-refund-type
+              (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+              [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+              [cloneEvent]="cloneEvent.asObservable()">
+            </referential-refund-type>
+          }
+          @if (selectedReferential==SUBSCRIPTION_PERIOD_TYPE_REFERENTIAL) {
+            <referential-subscription-period-type
+              (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+              [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+              [cloneEvent]="cloneEvent.asObservable()">
+            </referential-subscription-period-type>
+          }
+          @if (selectedReferential==TIERS_CATEGORY_REFERENTIAL) {
+            <referential-tiers-category
+              (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+              [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+              [cloneEvent]="cloneEvent.asObservable()">
+            </referential-tiers-category>
+          }
+          @if (selectedReferential==TIERS_TYPE_REFERENTIAL) {
+            <referential-tiers-type
+              (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+              [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+              [cloneEvent]="cloneEvent.asObservable()">
+            </referential-tiers-type>
+          }
+          @if (selectedReferential==TIERS_FOLLOWUP_TYPE_REFERENTIAL) {
+            <referential-tiers-followup-type
+              (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+              [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+              [cloneEvent]="cloneEvent.asObservable()">
+            </referential-tiers-followup-type>
+          }
+          @if (selectedReferential==ATTACHMENT_TYPE_REFERENTIAL) {
+            <referential-attachment-type
+              (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+              [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+              [cloneEvent]="cloneEvent.asObservable()">
+            </referential-attachment-type>
+          }
+          @if (selectedReferential==TYPE_DOCUMENT_REFERENTIAL) {
+            <referential-type-document
+              (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+              [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+              [cloneEvent]="cloneEvent.asObservable()">
+            </referential-type-document>
+          }
+          @if (selectedReferential==CIVILITY_REFERENTIAL) {
+            <referential-civility
+              (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+              [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+              [cloneEvent]="cloneEvent.asObservable()">
+            </referential-civility>
+          }
+          @if (selectedReferential==COMPETENT_AUTHORITY_TYPE_REFERENTIAL) {
+            <referential-competent-authority-type
+              (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+              [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+              [cloneEvent]="cloneEvent.asObservable()">
+            </referential-competent-authority-type>
+          }
+          @if (selectedReferential==COUNTRY_REFERENTIAL) {
+            <referential-country
+              (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+              [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+              [cloneEvent]="cloneEvent.asObservable()">
+            </referential-country>
+          }
+          @if (selectedReferential==DELIVERY_SERVICE_REFERENTIAL) {
+            <referential-delivery-service
+              (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+              [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+              [cloneEvent]="cloneEvent.asObservable()">
+            </referential-delivery-service>
+          }
+          @if (selectedReferential==DOCUMENT_TYPE_REFERENTIAL) {
+            <referential-document-type
+              (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+              [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+              [cloneEvent]="cloneEvent.asObservable()">
+            </referential-document-type>
+          }
+          @if (selectedReferential==LANGUAGE_REFERENTIAL) {
+            <referential-language
+              (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+              [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+              [cloneEvent]="cloneEvent.asObservable()">
+            </referential-language>
+          }
+          @if (selectedReferential==LEGAL_FORM_REFERENTIAL) {
+            <referential-legal-form
+              (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+              [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+              [cloneEvent]="cloneEvent.asObservable()">
+            </referential-legal-form>
+          }
+          @if (selectedReferential==PAYMENT_TYPE_REFERENTIAL) {
+            <referential-payment-type
+              (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+              [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+              [cloneEvent]="cloneEvent.asObservable()">
+            </referential-payment-type>
+          }
+          @if (selectedReferential==REGIONS_REFERENTIAL) {
+            <referential-region
+              (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+              [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+              [cloneEvent]="cloneEvent.asObservable()">
+            </referential-region>
+          }
+          @if (selectedReferential==VAT_REFERENTIAL) {
+            <referential-vat
+              (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+              [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+              [cloneEvent]="cloneEvent.asObservable()">
+            </referential-vat>
+          }
+          @if (selectedReferential==WEEK_DAY_REFERENTIAL) {
+            <referential-weekday
+              (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+              [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+              [cloneEvent]="cloneEvent.asObservable()">
+            </referential-weekday>
+          }
+          @if (selectedReferential==CHARACTER_PRICE_REFERENTIAL) {
+            <referential-character-price
+              (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+              [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+              [cloneEvent]="cloneEvent.asObservable()">
+            </referential-character-price>
+          }
+          @if (selectedReferential==NOTICE_TYPE) {
+            <referential-notice-type
+              (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+              [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+              [cloneEvent]="cloneEvent.asObservable()">
+            </referential-notice-type>
+          }
+          @if (selectedReferential==PROVISION_TYPE_REFERENTIAL) {
+            <referential-provision-type
+              (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+              [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+              [cloneEvent]="cloneEvent.asObservable()">
+            </referential-provision-type>
+          }
+          @if (selectedReferential==ANNOUNCEMENT_NOTICE_TEMPLATE_REFERENTIAL) {
+            <referential-announcement-notice-template
+              (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+              [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+              [cloneEvent]="cloneEvent.asObservable()">
+            </referential-announcement-notice-template>
+          }
+          @if (selectedReferential==ANNOUNCEMENT_NOTICE_TEMPLATE_FRAGMENT_REFERENTIAL) {
+            <referential-announcement-notice-template-fragment
+              (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+              [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+              [cloneEvent]="cloneEvent.asObservable()">
+            </referential-announcement-notice-template-fragment>
+          }
+          @if (selectedReferential==BILLING_ITEM_REFERENTIAL) {
+            <referential-billing-item
+              (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+              [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+              [cloneEvent]="cloneEvent.asObservable()">
+            </referential-billing-item>
+          }
+          @if (selectedReferential==BILLING_TYPE_REFERENTIAL) {
+            <referential-billing-type
+              (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+              [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+              [cloneEvent]="cloneEvent.asObservable()">
+            </referential-billing-type>
+          }
+          @if (selectedReferential==CITY_REFERENTIAL) {
+            <referential-city
+              (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+              [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+              [cloneEvent]="cloneEvent.asObservable()">
+            </referential-city>
+          }
+          @if (selectedReferential==DEPARTMENT_REFERENTIAL) {
+            <referential-department
+              (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+              [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+              [cloneEvent]="cloneEvent.asObservable()">
+            </referential-department>
+          }
+          @if (selectedReferential==GIFT_REFERENTIAL) {
+            <referential-gift
+              (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+              [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+              [cloneEvent]="cloneEvent.asObservable()">
+            </referential-gift>
+          }
+          @if (selectedReferential==SPECIAL_OFFER_REFERENTIAL) {
+            <referential-special-offer
+              (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+              [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+              [cloneEvent]="cloneEvent.asObservable()">
+            </referential-special-offer>
+          }
+          @if (selectedReferential==ACCOUNTING_ACCOUNT_CLASS_REFERENTIAL) {
+            <referential-accounting-account-class
+              (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+              [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+              [cloneEvent]="cloneEvent.asObservable()">
+            </referential-accounting-account-class>
+          }
+          @if (selectedReferential==ACCOUNTING_ACCOUNT_REFERENTIAL) {
+            <referential-accounting-account
+              (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+              [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+              [cloneEvent]="cloneEvent.asObservable()">
+            </referential-accounting-account>
+          }
+          @if (selectedReferential==COMPETITOR_REFERENTIAL) {
+            <referential-competitor
+              (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+              [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+              [cloneEvent]="cloneEvent.asObservable()">
+            </referential-competitor>
+          }
+          @if (selectedReferential==VAT_COLLECTION_TYPE_REFERENTIAL) {
+            <referential-vat-collection-type
+              (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+              [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+              [cloneEvent]="cloneEvent.asObservable()">
+            </referential-vat-collection-type>
+          }
+          @if (selectedReferential==ACCOUNTING_JOURNAL_REFERENTIAL) {
+            <referential-accounting-journal
+              (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+              [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+              [cloneEvent]="cloneEvent.asObservable()">
+            </referential-accounting-journal>
+          }
+          @if (selectedReferential==INVOICE_STAUTS_REFERENTIAL) {
+            <referential-invoice-status
+              (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+              [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+              [cloneEvent]="cloneEvent.asObservable()">
+            </referential-invoice-status>
+          }
+          @if (selectedReferential==PRINCIPAL_ACCOUNTING_ACCOUNT_REFERENTIAL) {
+            <referential-principal-accounting-account
+              (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+              [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+              [cloneEvent]="cloneEvent.asObservable()">
+            </referential-principal-accounting-account>
+          }
+          @if (selectedReferential==CUSTOMER_ORDER_ORIGIN_REFERENTIAL) {
+            <referential-customer-order-origin
+              (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+              [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+              [cloneEvent]="cloneEvent.asObservable()">
+            </referential-customer-order-origin>
+          }
+          @if (selectedReferential==DEPARTMENT_VAT_SETTING_REFERENTIAL) {
+            <referential-department-vat-setting
+              (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+              [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+              [cloneEvent]="cloneEvent.asObservable()">
+            </referential-department-vat-setting>
+          }
+          @if (selectedReferential==QUOTATION_ABANDON_REASON_REFERENTIAL) {
+            <referential-quotation-abandon-reason
+              (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+              [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+              [cloneEvent]="cloneEvent.asObservable()">
+            </referential-quotation-abandon-reason>
+          }
+          @if (selectedReferential==RFF_FREQUENCY_REFERENTIAL) {
+            <referential-rff-frequency
+              (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+              [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+              [cloneEvent]="cloneEvent.asObservable()">
+            </referential-rff-frequency>
+          }
+          @if (selectedReferential==SERVICE_FAMILY_REFERENTIAL) {
+            <referential-service-family
+              (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+              [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+              [cloneEvent]="cloneEvent.asObservable()">
+            </referential-service-family>
+          }
+          @if (selectedReferential==SERVICE_FAMILY_GROUP_REFERENTIAL) {
+            <referential-service-family-group
+              (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+              [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+              [cloneEvent]="cloneEvent.asObservable()">
+            </referential-service-family-group>
+          }
+          @if (selectedReferential==SERVICE_TYPE_REFERENTIAL) {
+            <referential-service-type
+              (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+              [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+              [cloneEvent]="cloneEvent.asObservable()">
+            </referential-service-type>
+          }
+          @if (selectedReferential==CUSTOMER_ORDER_FREQUENCY_REFERENTIAL) {
+            <referential-customer-order-frequency
+              (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+              [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+              [cloneEvent]="cloneEvent.asObservable()">
+            </referential-customer-order-frequency>
+          }
+          @if (selectedReferential==ACTIVE_DIRECTORY_GROUP_REFERENTIAL) {
+            <referential-active-directory-group
+              (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+              [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+              [cloneEvent]="cloneEvent.asObservable()">
+            </referential-active-directory-group>
+          }
+          @if (selectedReferential==PAPER_SET_TYPE_REFERENTIAL) {
+            <referential-paper-set-type
+              (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+              [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+            [cloneEvent]="cloneEvent.asObservable()"></referential-paper-set-type>
+          }
+          @if (selectedReferential==SERVICE_FIELD_TYPE_REFERENTIAL) {
+            <referential-service-field-type
+              (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+              [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+              [cloneEvent]="cloneEvent.asObservable()">
+            </referential-service-field-type>
+          }
+          @if (selectedReferential==INDICATOR_REFERENTIAL) {
+            <referential-indicator
+              (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+              [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+              [cloneEvent]="cloneEvent.asObservable()">
+            </referential-indicator>
+          }
+          @if (selectedReferential==INDICATOR_GROUP_REFERENTIAL) {
+            <referential-indicator-group
+              (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+              [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+              [cloneEvent]="cloneEvent.asObservable()">
+            </referential-indicator-group>
+          }
+          @if (selectedReferential==INVOICING_BLOCAKGE_REFERENTIAL) {
+            <referential-invoicing-blockage
+              (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+              [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+              [cloneEvent]="cloneEvent.asObservable()">
+            </referential-invoicing-blockage>
+          }
+          @if (selectedReferential==ORDER_BLOCAKGE_REFERENTIAL) {
+            <referential-order-blockage
+              (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+              [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+              [cloneEvent]="cloneEvent.asObservable()">
+            </referential-order-blockage>
+          }
+          @if (selectedReferential==INCIDENT_RESPONSIBILITY_REFERENTIAL) {
+            <referential-incident-responsibility
+              (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+              [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+              [cloneEvent]="cloneEvent.asObservable()">
+            </referential-incident-responsibility>
+          }
+          @if (selectedReferential==INCIDENT_CAUSE_REFERENTIAL) {
+            <referential-incident-cause
+              (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+              [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+              [cloneEvent]="cloneEvent.asObservable()">
+            </referential-incident-cause>
+          }
+          @if (selectedReferential==INCIDENT_TYPE_REFERENTIAL) {
+            <referential-incident-type
+              (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+              [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+              [cloneEvent]="cloneEvent.asObservable()">
+            </referential-incident-type>
+          }
+          @if (selectedReferential==REPORTING_WORKING_TABLE_REFERENTIAL) {
+            <referential-reporting-working-table
+              (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+              [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+              [cloneEvent]="cloneEvent.asObservable()">
+            </referential-reporting-working-table>
+          }
+          @if (selectedReferential==REPORTING_DASHBOARD_REFERENTIAL) {
+            <referential-reporting-dashboard
+              (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+              [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+              [cloneEvent]="cloneEvent.asObservable()">
+            </referential-reporting-dashboard>
+          }
+          @if (selectedReferential==REPORTING_WIDGET_REFERENTIAL) {
+            <referential-reporting-widget
+              (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+              [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+              [cloneEvent]="cloneEvent.asObservable()">
+            </referential-reporting-widget>
+          }
+          @if (selectedReferential==DISCOVERING_ORIGIN_REFERENTIAL) {
+            <referential-discovering-origin
+              (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+              [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+              [cloneEvent]="cloneEvent.asObservable()">
+            </referential-discovering-origin>
+          }
+          @if (selectedReferential==BUSINESS_SECTOR_REFERENTIAL) {
+            <referential-business-sector
+              (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+              [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+              [cloneEvent]="cloneEvent.asObservable()">
+            </referential-business-sector>
+          }
+          @if (selectedReferential==PAY_SLIP_LINE_TYPE_REFERENTIAL) {
+            <referential-pay-slip-line-type
+              (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+              [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+              [cloneEvent]="cloneEvent.asObservable()">
+            </referential-pay-slip-line-type>
+          }
+          @if (selectedReferential==TOOLTIP_ENTRY_REFERENTIAL) {
+            <referential-tooltip-entry
+              (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+              [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+              [cloneEvent]="cloneEvent.asObservable()">
+            </referential-tooltip-entry>
+          }
+          @if (selectedReferential==REJECTION_CAUSE_REFERENTIAL) {
+            <referential-rejection-cause
+              (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+              [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+              [cloneEvent]="cloneEvent.asObservable()">
+            </referential-rejection-cause>
+          }
+          @if (selectedReferential==TIERS_GROUP_REFERENTIAL) {
+            <referential-tiers-group
+              (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+              [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+            [cloneEvent]="cloneEvent.asObservable()"></referential-tiers-group>
+          }
+          @if (selectedReferential==INFORMATION_BANNER_REFERENTIAL) {
+            <referential-information-banner
+              (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+              [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+            [cloneEvent]="cloneEvent.asObservable()"></referential-information-banner>
+          }
+          @if (editMode) {
+            <button matTooltip="Sauvegarder" mat-fab color="warn" class="fab-button"
+              (click)="saveEntity()">
+              <mat-icon>save</mat-icon>
+            </button>
+          }
+          @if (selectedEntity && !editMode) {
+            <button matTooltip="Modifier l'élément" mat-fab color="accent" class="second-fab-button"
+              (click)="editEntity()">
+              <mat-icon>edit</mat-icon>
+            </button>
+          }
+          @if (selectedEntity && !editMode) {
+            <button matTooltip="Cloner l'élément" mat-fab color="accent" class="third-fab-button"
+              (click)="cloneEntity()">
+              <mat-icon>content_copy</mat-icon>
+            </button>
+          }
+          @if (selectedReferential && !editMode) {
+            <button matTooltip="Ajouter un élément" mat-fab color="accent" class="fab-button"
+              (click)="createEntity()">
+              <mat-icon>add</mat-icon>
+            </button>
+          }
+        </div>
+      </mat-tab>
+      <mat-tab label="Constantes">
+        <ng-template matTabContent>
+          <constant></constant>
+        </ng-template>
+      </mat-tab>
+      @if (canViewLogdModule()) {
+        <mat-tab label="Logs">
+          <log></log>
+        </mat-tab>
+      }
+    </mat-tab-group>
+  </div>

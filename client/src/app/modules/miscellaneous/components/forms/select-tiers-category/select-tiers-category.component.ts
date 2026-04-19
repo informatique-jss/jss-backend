@@ -6,9 +6,10 @@ import { GenericSelectComponent } from '../generic-select/generic-select.compone
 import { AppService } from 'src/app/services/app.service';
 
 @Component({
-  selector: 'select-tiers-category',
-  templateUrl: './select-tiers-category.component.html',
-  styleUrls: ['./select-tiers-category.component.css']
+    selector: 'select-tiers-category',
+    templateUrl: './select-tiers-category.component.html',
+    styleUrls: ['./select-tiers-category.component.css'],
+    standalone: false
 })
 export class SelectTiersCategoryComponent extends GenericSelectComponent<TiersCategory> implements OnInit {
 

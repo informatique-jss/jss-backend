@@ -14,9 +14,10 @@ import { AccountingAccountClassService } from '../../services/accounting.account
 import { AccountingBalanceService } from '../../services/accounting.balance.service';
 
 @Component({
-  selector: 'accounting-balance-generale',
-  templateUrl: './accounting-balance-generale.component.html',
-  styleUrls: ['./accounting-balance-generale.component.css']
+    selector: 'accounting-balance-generale',
+    templateUrl: './accounting-balance-generale.component.html',
+    styleUrls: ['./accounting-balance-generale.component.css'],
+    standalone: false
 })
 export class AccountingBalanceGeneraleComponent implements OnInit {
 

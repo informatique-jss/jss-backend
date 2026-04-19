@@ -7,9 +7,10 @@ import { GenericAutocompleteComponent } from '../generic-autocomplete/generic-au
 import { AppService } from 'src/app/services/app.service';
 
 @Component({
-  selector: 'autocomplete-azure-invoice',
-  templateUrl: '../generic-autocomplete/generic-autocomplete.component.html',
-  styleUrls: ['../generic-autocomplete/generic-autocomplete.component.css']
+    selector: 'autocomplete-azure-invoice',
+    templateUrl: '../generic-autocomplete/generic-autocomplete.component.html',
+    styleUrls: ['../generic-autocomplete/generic-autocomplete.component.css'],
+    standalone: false
 })
 export class AutocompleteAzureInvoiceComponent extends GenericAutocompleteComponent<AzureInvoice, AzureInvoice> implements OnInit {
 

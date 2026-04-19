@@ -3,17 +3,19 @@
   <p>Choisissez le type d'action à réaliser :</p>
   <select-paper-set-type [(model)]="selectedPaperSetType" label="Type d'action à réaliser" [form]="serviceTypeForm"
     propertyName="selectedPaperSetType" [isMandatory]="true" [isDisabled]="false"
-    [excludedPaperSetTypes]="excludedPaperSetTypes"></select-paper-set-type>
+  [excludedPaperSetTypes]="excludedPaperSetTypes"></select-paper-set-type>
   <p>Choisissez l'autorité compétente liée à cette action :</p>
   <autocomplete-competent-authority [(model)]="newPaperSet.competentAuthority" [form]="serviceTypeForm"
     propertyName="competentAuthority" [isMandatory]="false"
-    label="Autorité compétente"></autocomplete-competent-authority>
+  label="Autorité compétente"></autocomplete-competent-authority>
 </div>
 <div mat-dialog-content style="margin-top : 15px">
   <generic-textarea [(model)]="newPaperSet.creationComment" label="Commentaire" [form]="serviceTypeForm"
-    propertyName="comment" [isMandatory]="false" [isDisabled]="false" [numberOfLines]="5"></generic-textarea>
+  propertyName="comment" [isMandatory]="false" [isDisabled]="false" [numberOfLines]="5"></generic-textarea>
 </div>
 <div mat-dialog-actions align="end">
   <button mat-raised-button color="accent" (click)="closeDialog()">Annuler</button>
-  <button mat-raised-button color="warn" *ngIf="selectedPaperSetType" (click)="validatePaperSetType()">Valider</button>
+  @if (selectedPaperSetType) {
+    <button mat-raised-button color="warn" (click)="validatePaperSetType()">Valider</button>
+  }
 </div>

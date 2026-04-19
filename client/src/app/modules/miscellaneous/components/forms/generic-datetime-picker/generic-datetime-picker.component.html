@@ -1,7 +1,11 @@
 <mat-form-field class="full-width" [formGroup]="form!">
-  <mat-label *ngIf="label && label.length>0">{{label}}</mat-label>
+  @if (label && label.length>0) {
+    <mat-label>{{label}}</mat-label>
+  }
   <input matInput [formControlName]="propertyName" [placeholder]="label" type="datetime-local" (change)="dateChange()"
     [min]="minDate" [max]="maxDate">
-  <mat-hint *ngIf="hint && hint.length>0">
-    {{hint}}</mat-hint>
-</mat-form-field>
+    @if (hint && hint.length>0) {
+      <mat-hint>
+      {{hint}}</mat-hint>
+    }
+  </mat-form-field>

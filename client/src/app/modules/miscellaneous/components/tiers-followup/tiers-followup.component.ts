@@ -22,9 +22,10 @@ import { ConstantService } from '../../services/constant.service';
 import { TiersFollowupService } from '../../services/tiers.followup.service';
 
 @Component({
-  selector: 'tiers-followup',
-  templateUrl: './tiers-followup.component.html',
-  styleUrls: ['./tiers-followup.component.css']
+    selector: 'tiers-followup',
+    templateUrl: './tiers-followup.component.html',
+    styleUrls: ['./tiers-followup.component.css'],
+    standalone: false
 })
 export class TiersFollowupComponent implements OnInit {
 

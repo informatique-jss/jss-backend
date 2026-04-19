@@ -6,9 +6,10 @@ import { RestUserPreferenceService } from '../../../../services/rest.user.prefer
 import { KanbanView } from '../../model/KanbanView';
 
 @Component({
-  selector: 'save-current-view-dialog',
-  templateUrl: './save-current-view-dialog.component.html',
-  styleUrls: ['./save-current-view-dialog.component.css']
+    selector: 'save-current-view-dialog',
+    templateUrl: './save-current-view-dialog.component.html',
+    styleUrls: ['./save-current-view-dialog.component.css'],
+    standalone: false
 })
 export class SaveCurrentViewDialog<T, U extends IWorkflowElement<T>> implements OnInit {
 

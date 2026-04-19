@@ -4,9 +4,10 @@ import { AppService } from 'src/app/services/app.service';
 import { GenericFormComponent } from '../generic-form.components';
 
 @Component({
-  selector: 'generic-toggle-choice',
-  templateUrl: './generic-toggle-choice.component.html',
-  styleUrls: ['./generic-toggle-choice.component.css']
+    selector: 'generic-toggle-choice',
+    templateUrl: './generic-toggle-choice.component.html',
+    styleUrls: ['./generic-toggle-choice.component.css'],
+    standalone: false
 })
 export class GenericToggleChoiceComponent<T> extends GenericFormComponent implements OnInit {
   @Input() firstValue: T | undefined;

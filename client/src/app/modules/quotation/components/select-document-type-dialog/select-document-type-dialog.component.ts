@@ -5,9 +5,10 @@ import { TypeDocument } from '../../model/guichet-unique/referentials/TypeDocume
 import { SelectMultiServiceTypeDialogComponent } from '../select-multi-service-type-dialog/select-multi-service-type-dialog.component';
 
 @Component({
-  selector: 'app-select-document-type-dialog',
-  templateUrl: './select-document-type-dialog.component.html',
-  styleUrls: ['./select-document-type-dialog.component.css']
+    selector: 'app-select-document-type-dialog',
+    templateUrl: './select-document-type-dialog.component.html',
+    styleUrls: ['./select-document-type-dialog.component.css'],
+    standalone: false
 })
 export class SelectDocumentTypeDialogComponent implements OnInit {
 

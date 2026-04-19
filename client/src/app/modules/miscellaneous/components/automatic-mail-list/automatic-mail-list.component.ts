@@ -17,9 +17,10 @@ import { CustomerMailService } from '../../services/customer.mail.service';
 import { UploadAttachmentService } from '../../services/upload.attachment.service';
 
 @Component({
-  selector: 'automatic-mail-list',
-  templateUrl: './automatic-mail-list.component.html',
-  styleUrls: ['./automatic-mail-list.component.css']
+    selector: 'automatic-mail-list',
+    templateUrl: './automatic-mail-list.component.html',
+    styleUrls: ['./automatic-mail-list.component.css'],
+    standalone: false
 })
 export class AutomaticMailListComponent implements OnInit {
   @Input() tiers: Tiers | undefined;

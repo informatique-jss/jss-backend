@@ -1,23 +1,27 @@
-<div [ngClass]="{ 'mat-elevation-z2 form-div' : !forIntegration}"
-  *ngIf="entity && entity.id!=undefined && entity.id!=null">
-  <div class="full-width">
-    <div class="row-field-container">
-      <mat-form-field class="full-width">
-        <input matInput (keyup)="applyFilter($event.target)" placeholder="Rechercher">
-      </mat-form-field>
-      <button (click)="downloadAllFiles()" mat-mini-fab color="accent" class="mini-fab-add"
-        matTooltip="Télécharger tous les fichiers">
-        <mat-icon>download</mat-icon>
-      </button>
-      <button (click)="uploadFile()" mat-mini-fab color="warn" class="mini-fab-add" matTooltip="Uploader le fichier">
-        <mat-icon>add</mat-icon>
-      </button>
+@if (entity && entity.id!=undefined && entity.id!=null) {
+  <div [ngClass]="{ 'mat-elevation-z2 form-div' : !forIntegration}"
+    >
+    <div class="full-width">
+      <div class="row-field-container">
+        <mat-form-field class="full-width">
+          <input matInput (keyup)="applyFilter($event.target)" placeholder="Rechercher">
+        </mat-form-field>
+        <button (click)="downloadAllFiles()" mat-mini-fab color="accent" class="mini-fab-add"
+          matTooltip="Télécharger tous les fichiers">
+          <mat-icon>download</mat-icon>
+        </button>
+        <button (click)="uploadFile()" mat-mini-fab color="warn" class="mini-fab-add" matTooltip="Uploader le fichier">
+          <mat-icon>add</mat-icon>
+        </button>
+      </div>
+      <sort-table [columns]="displayedColumns" [actions]="tableActions" [values]="filteredAttachments"
+        [noPaddingBottom]="true" [noMaxHeight]="true" tableName="Pièce jointes" [filterText]="searchText">
+      </sort-table>
     </div>
-    <sort-table [columns]="displayedColumns" [actions]="tableActions" [values]="filteredAttachments"
-      [noPaddingBottom]="true" [noMaxHeight]="true" tableName="Pièce jointes" [filterText]="searchText">
-    </sort-table>
   </div>
-</div>
-<div class="mat-elevation-z2 form-div" *ngIf="entity && (entity.id==undefined || entity.id==null)">
-  Veuillez enregistrer une première fois avant de pouvoir télécharger des documents.
-</div>
+}
+@if (entity && (entity.id==undefined || entity.id==null)) {
+  <div class="mat-elevation-z2 form-div">
+    Veuillez enregistrer une première fois avant de pouvoir télécharger des documents.
+  </div>
+}

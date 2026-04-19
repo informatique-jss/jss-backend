@@ -9,9 +9,10 @@ import { Candidacy } from '../../model/Candidacy';
 import { CandidacyService } from '../../services/candidacy.service';
 
 @Component({
-  selector: 'candidacy',
-  templateUrl: './candidacy.component.html',
-  styleUrls: ['./candidacy.component.css']
+    selector: 'candidacy',
+    templateUrl: './candidacy.component.html',
+    styleUrls: ['./candidacy.component.css'],
+    standalone: false
 })
 export class CandidacyComponent implements OnInit {
   displayedColumnsCandidacies: SortTableColumn<Candidacy>[] = [];

@@ -6,9 +6,10 @@ import { GenericSelectComponent } from '../generic-select/generic-select.compone
 import { AppService } from 'src/app/services/app.service';
 
 @Component({
-  selector: 'select-vat-collection-type',
-  templateUrl: './select-vat-collection-type.component.html',
-  styleUrls: ['./select-vat-collection-type.component.css']
+    selector: 'select-vat-collection-type',
+    templateUrl: './select-vat-collection-type.component.html',
+    styleUrls: ['./select-vat-collection-type.component.css'],
+    standalone: false
 })
 export class SelectVatCollectionTypeComponent extends GenericSelectComponent<VatCollectionType> implements OnInit {
 

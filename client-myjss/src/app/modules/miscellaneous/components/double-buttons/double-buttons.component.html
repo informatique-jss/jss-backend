@@ -10,9 +10,15 @@
     <i class="ai-arrow-right ms-2"></i>
   </a>
 </div>
-<div class="mt-4" *ngIf="linkLabel && linkLabel.length>0">
-  <a *ngIf="!linkRouteToJssMedia" [routerLink]="linkRoute" (click)="trackCtaClickLink()"
-    [ngClass]="isLightButtons ? 'text-white': 'text-blue'">{{linkLabel}}</a>
-  <a *ngIf="linkRouteToJssMedia" [href]="frontendJssUrl+linkRoute" (click)="trackCtaClickLink()" target="_blank"
-    [ngClass]="isLightButtons ? 'text-white': 'text-blue'">{{linkLabel}}</a>
-</div>
+@if (linkLabel && linkLabel.length>0) {
+  <div class="mt-4">
+    @if (!linkRouteToJssMedia) {
+      <a [routerLink]="linkRoute" (click)="trackCtaClickLink()"
+      [ngClass]="isLightButtons ? 'text-white': 'text-blue'">{{linkLabel}}</a>
+    }
+    @if (linkRouteToJssMedia) {
+      <a [href]="frontendJssUrl+linkRoute" (click)="trackCtaClickLink()" target="_blank"
+      [ngClass]="isLightButtons ? 'text-white': 'text-blue'">{{linkLabel}}</a>
+    }
+  </div>
+}

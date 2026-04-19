@@ -6,9 +6,10 @@ import { ServiceFieldType } from 'src/app/modules/quotation/model/ServiceFieldTy
 import { AppService } from 'src/app/services/app.service';
 
 @Component({
-  selector: 'select-value-service-field-type',
-  templateUrl: '../generic-select/generic-select.component.html',
-  styleUrls: ['../generic-select/generic-select.component.css']
+    selector: 'select-value-service-field-type',
+    templateUrl: '../generic-select/generic-select.component.html',
+    styleUrls: ['../generic-select/generic-select.component.css'],
+    standalone: false
 })
 
 export class SelectValueServiceFieldTypeComponent extends GenericSelectComponent<ServiceTypeFieldTypePossibleValue> implements OnInit {

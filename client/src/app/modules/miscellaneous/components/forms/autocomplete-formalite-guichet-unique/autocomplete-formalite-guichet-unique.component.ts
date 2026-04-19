@@ -12,9 +12,10 @@ import { GenericAutocompleteComponent } from '../generic-autocomplete/generic-au
 import { FormaliteGuichetUniqueService } from '../../../services/formalite.guichet.unique.service';
 
 @Component({
-  selector: 'autocomplete-guichet-unique-formalite',
-  templateUrl: './autocomplete-formalite-guichet-unique.component.html',
-  styleUrls: ['./autocomplete-formalite-guichet-unique.component.css']
+    selector: 'autocomplete-guichet-unique-formalite',
+    templateUrl: './autocomplete-formalite-guichet-unique.component.html',
+    styleUrls: ['./autocomplete-formalite-guichet-unique.component.css'],
+    standalone: false
 })
 export class AutocompleteGuichetUniqueFormaliteComponent extends GenericAutocompleteComponent<FormaliteGuichetUnique, FormaliteGuichetUnique> implements OnInit {
   /**

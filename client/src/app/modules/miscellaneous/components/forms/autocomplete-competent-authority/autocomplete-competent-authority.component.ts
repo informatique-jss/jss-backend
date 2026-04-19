@@ -9,9 +9,10 @@ import { CompetentAuthorityService } from '../../../services/competent.authority
 import { GenericAutocompleteComponent } from '../generic-autocomplete/generic-autocomplete.component';
 
 @Component({
-  selector: 'autocomplete-competent-authority',
-  templateUrl: '../generic-autocomplete/generic-autocomplete.component.html',
-  styleUrls: ['../generic-autocomplete/generic-autocomplete.component.css']
+    selector: 'autocomplete-competent-authority',
+    templateUrl: '../generic-autocomplete/generic-autocomplete.component.html',
+    styleUrls: ['../generic-autocomplete/generic-autocomplete.component.css'],
+    standalone: false
 })
 export class AutocompleteCompetentAuthorityComponent extends GenericAutocompleteComponent<CompetentAuthority, CompetentAuthority> implements OnInit {
 

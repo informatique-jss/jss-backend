@@ -3,9 +3,10 @@ import { FormBuilder } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 
 @Component({
-  selector: 'app-siren-dialog',
-  templateUrl: './siren-dialog.component.html',
-  styleUrls: ['./siren-dialog.component.css']
+    selector: 'app-siren-dialog',
+    templateUrl: './siren-dialog.component.html',
+    styleUrls: ['./siren-dialog.component.css'],
+    standalone: false
 })
 export class SiretDialogComponent implements OnInit {
 

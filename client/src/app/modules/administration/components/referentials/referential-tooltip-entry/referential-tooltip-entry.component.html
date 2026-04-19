@@ -11,38 +11,42 @@
     </sort-table>
   </div>
 </div>
-<div class="mat-elevation-z2 form-div" *ngIf="selectedEntity ">
-  <form [formGroup]="entityForm">
-    <div class="full-width">
-      <fieldset [disabled]="editMode==false" class="fieldset-no-border">
-        <table class="full-width">
-          <tr *ngIf="selectedEntity.id">
-            <td>
-              <generic-input [(model)]="selectedEntity.id" label="Identifiant technique" [form]="entityForm"
-                propertyName="id" [isMandatory]="true" [isDisabled]="true"></generic-input>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <generic-input [(model)]="selectedEntity.code" label="Codification" [form]="entityForm"
+@if (selectedEntity ) {
+  <div class="mat-elevation-z2 form-div">
+    <form [formGroup]="entityForm">
+      <div class="full-width">
+        <fieldset [disabled]="editMode==false" class="fieldset-no-border">
+          <table class="full-width">
+            @if (selectedEntity.id) {
+              <tr>
+                <td>
+                  <generic-input [(model)]="selectedEntity.id" label="Identifiant technique" [form]="entityForm"
+                  propertyName="id" [isMandatory]="true" [isDisabled]="true"></generic-input>
+                </td>
+              </tr>
+            }
+            <tr>
+              <td>
+                <generic-input [(model)]="selectedEntity.code" label="Codification" [form]="entityForm"
                 propertyName="code" [isMandatory]="true" [isDisabled]="!editMode" [maxLength]="60"></generic-input>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <generic-input [(model)]="selectedEntity.label" label="Texte de description du tooltip"
-                [form]="entityForm" propertyName="label" [isMandatory]="true" [isDisabled]="!editMode"
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <generic-input [(model)]="selectedEntity.label" label="Texte de description du tooltip"
+                  [form]="entityForm" propertyName="label" [isMandatory]="true" [isDisabled]="!editMode"
                 [maxLength]="300"></generic-input>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <generic-toggle [(model)]="selectedEntity.isVisible" label="A afficher dans MyJSS ?" [form]="entityForm"
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <generic-toggle [(model)]="selectedEntity.isVisible" label="A afficher dans MyJSS ?" [form]="entityForm"
                 propertyName="isVisible" [isDisabled]="!editMode"></generic-toggle>
-            </td>
-          </tr>
-        </table>
-      </fieldset>
-    </div>
-  </form>
-</div>
+              </td>
+            </tr>
+          </table>
+        </fieldset>
+      </div>
+    </form>
+  </div>
+}

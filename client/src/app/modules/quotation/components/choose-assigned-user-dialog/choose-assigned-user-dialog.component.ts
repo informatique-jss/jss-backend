@@ -4,9 +4,10 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { Employee } from 'src/app/modules/profile/model/Employee';
 
 @Component({
-  selector: 'choose-assigned-user-dialog',
-  templateUrl: './choose-assigned-user-dialog.component.html',
-  styleUrls: ['./choose-assigned-user-dialog.component.css']
+    selector: 'choose-assigned-user-dialog',
+    templateUrl: './choose-assigned-user-dialog.component.html',
+    styleUrls: ['./choose-assigned-user-dialog.component.css'],
+    standalone: false
 })
 export class ChooseAssignedUserDialogComponent implements OnInit {
 

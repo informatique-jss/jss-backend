@@ -2,9 +2,10 @@ import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { ECharts, EChartsOption } from 'echarts';
 
 @Component({
-  selector: 'gauge-chart',
-  templateUrl: './gauge-chart.component.html',
-  styleUrls: ['./gauge-chart.component.css']
+    selector: 'gauge-chart',
+    templateUrl: './gauge-chart.component.html',
+    styleUrls: ['./gauge-chart.component.css'],
+    standalone: false
 })
 export class GaugeChartComponent implements OnChanges {
 

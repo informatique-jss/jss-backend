@@ -23,13 +23,17 @@
                 [isDisplayLabel]="false" [icon]="'search'">
               </generic-input>
               <div class="input-icons-wrapper">
-                <div *ngIf="isLoading" class="spinner-border spinner-border-sm" role="status">
-                  <span class="visually-hidden">chargement...</span>
-                </div>
-                <button *ngIf="searchText" class="btn btn-link p-0 m-0 clear-icon-btn" (click)="clearSearch()"
-                  type="button">
-                  <i class="bi bi-x-lg fs-6"></i>
-                </button>
+                @if (isLoading) {
+                  <div class="spinner-border spinner-border-sm" role="status">
+                    <span class="visually-hidden">chargement...</span>
+                  </div>
+                }
+                @if (searchText) {
+                  <button class="btn btn-link p-0 m-0 clear-icon-btn" (click)="clearSearch()"
+                    type="button">
+                    <i class="bi bi-x-lg fs-6"></i>
+                  </button>
+                }
               </div>
             </div>
             <div class="col-12 col-md-4">
@@ -43,58 +47,74 @@
       </div>
     </div>
 
-    <section class="position-relative pt-0" *ngIf="searchResults && searchResults.length>0">
-      <div class="container">
-        <div class="row">
-          <div class="col-lg-9 mx-auto">
-            <div class="card border rounded-2 up-hover p-4 mb-4" *ngFor="let announcement of searchResults">
-              <div class="row g-3">
-                <div>
-                  <div class="d-flex flex-wrap gap-1">
-                    <a *ngIf="announcement.noticeTypeFamily"
-                      class="badge tag-custom-dark mb-2 me-1 margin-category">{{announcement.noticeTypeFamily.label}}</a>
-                    <ng-container *ngIf="announcement.noticeTypes!=null">
-                      <a *ngFor="let noticeType of announcement.noticeTypes"
-                        class="badge tag-custom-light mb-2 me-1 margin-category">{{noticeType.label}}</a>
-                    </ng-container>
-                  </div>
-                  <h3 class="card-title">
-                    <a style="cursor: pointer;" [routerLink]='"/announcement/" + announcement.id'
-                      class="btn-link text-reset stretched-link">{{announcement.affaireLabel}}</a>
-                  </h3>
-                  <div class="row">
-                    <div class="col-auto" *ngIf="announcement.affaireSiren && announcement.affaireSiren.length>0">
-                      {{announcement.affaireSiren}} <span class="mt-2 me-2 bullet-point-custom"></span>
+    @if (searchResults && searchResults.length>0) {
+      <section class="position-relative pt-0">
+        <div class="container">
+          <div class="row">
+            <div class="col-lg-9 mx-auto">
+              @for (announcement of searchResults; track announcement) {
+                <div class="card border rounded-2 up-hover p-4 mb-4">
+                  <div class="row g-3">
+                    <div>
+                      <div class="d-flex flex-wrap gap-1">
+                        @if (announcement.noticeTypeFamily) {
+                          <a
+                          class="badge tag-custom-dark mb-2 me-1 margin-category">{{announcement.noticeTypeFamily.label}}</a>
+                        }
+                        @if (announcement.noticeTypes!=null) {
+                          @for (noticeType of announcement.noticeTypes; track noticeType) {
+                            <a
+                            class="badge tag-custom-light mb-2 me-1 margin-category">{{noticeType.label}}</a>
+                          }
+                        }
+                      </div>
+                      <h3 class="card-title">
+                        <a style="cursor: pointer;" [routerLink]='"/announcement/" + announcement.id'
+                        class="btn-link text-reset stretched-link">{{announcement.affaireLabel}}</a>
+                      </h3>
+                      <div class="row">
+                        @if (announcement.affaireSiren && announcement.affaireSiren.length>0) {
+                          <div class="col-auto">
+                            {{announcement.affaireSiren}} <span class="mt-2 me-2 bullet-point-custom"></span>
+                          </div>
+                        }
+                        <div class="col-auto  ms-auto"> {{announcement.department.label}} ({{announcement.department.code}})
+                        </div>
+                        <div class="col-auto"> {{announcement.publicationDate | date:'EEEE d MMMM y'}} </div>
+                      </div>
                     </div>
-                    <div class="col-auto  ms-auto"> {{announcement.department.label}} ({{announcement.department.code}})
-                    </div>
-                    <div class="col-auto"> {{announcement.publicationDate | date:'EEEE d MMMM y'}} </div>
                   </div>
                 </div>
+              }
+              @if (isLoading) {
+                <div class="panel-loader">
+                  <div class="skeleton skeleton-header"></div>
+                  <div class="skeleton skeleton-line"></div>
+                  <div class="skeleton skeleton-line"></div>
+                  <div class="skeleton skeleton-line short"></div>
+                  <div class="skeleton skeleton-block"></div>
+                </div>
+              }
+              @if (!isLoading) {
+                <div class="col-12 text-center mt-5">
+                  @if (displayLoadMoreButton) {
+                    <button type="button" class="btn btn-primary-soft"
+                      (click)="getNextAnnouncements()">Voir
+                      + d'annonces <i class="bi bi-arrow-down-circle ms-2 align-middle"></i></button>
+                    }
+                  </div>
+                }
               </div>
             </div>
-
-            <div class="panel-loader" *ngIf="isLoading">
-              <div class="skeleton skeleton-header"></div>
-              <div class="skeleton skeleton-line"></div>
-              <div class="skeleton skeleton-line"></div>
-              <div class="skeleton skeleton-line short"></div>
-              <div class="skeleton skeleton-block"></div>
-            </div>
-
-            <div class="col-12 text-center mt-5" *ngIf="!isLoading">
-              <button type="button" class="btn btn-primary-soft" *ngIf="displayLoadMoreButton"
-                (click)="getNextAnnouncements()">Voir
-                + d'annonces <i class="bi bi-arrow-down-circle ms-2 align-middle"></i></button>
-            </div>
           </div>
-        </div>
-      </div>
-    </section>
+        </section>
+      }
 
-    <section class="position-relative pt-0"
-      *ngIf="searchText && searchText.length>2 && !isLoading && isClickedOnce && (!searchResults || searchResults.length==0)">
-      <p class="text-center">Aucun résultat trouvé</p>
-    </section>
-  </div>
-</section>
+      @if (searchText && searchText.length>2 && !isLoading && isClickedOnce && (!searchResults || searchResults.length==0)) {
+        <section class="position-relative pt-0"
+          >
+          <p class="text-center">Aucun résultat trouvé</p>
+        </section>
+      }
+    </div>
+  </section>

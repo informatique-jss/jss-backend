@@ -6,9 +6,10 @@ import { IncidentReportStatus } from '../../../../reporting/model/IncidentReport
 import { GenericMultipleSelectComponent } from '../generic-select/generic-multiple-select.component';
 
 @Component({
-  selector: 'select-incident-report-status',
-  templateUrl: './../generic-select/generic-multiple-select.component.html',
-  styleUrls: ['./../generic-select/generic-select.component.css']
+    selector: 'select-incident-report-status',
+    templateUrl: './../generic-select/generic-multiple-select.component.html',
+    styleUrls: ['./../generic-select/generic-select.component.css'],
+    standalone: false
 })
 export class SelectIncidentReportStatusComponent extends GenericMultipleSelectComponent<IncidentReportStatus> implements OnInit {
 

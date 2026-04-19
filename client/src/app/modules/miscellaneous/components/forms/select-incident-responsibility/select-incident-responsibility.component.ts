@@ -6,9 +6,10 @@ import { IncidentResponsibilityService } from '../../../../reporting/services/in
 import { GenericSelectComponent } from '../generic-select/generic-select.component';
 
 @Component({
-  selector: 'select-incident-responsibility',
-  templateUrl: './../generic-select/generic-select.component.html',
-  styleUrls: ['./../generic-select/generic-select.component.css']
+    selector: 'select-incident-responsibility',
+    templateUrl: './../generic-select/generic-select.component.html',
+    styleUrls: ['./../generic-select/generic-select.component.css'],
+    standalone: false
 })
 export class SelectIncidentResponsibilityComponent extends GenericSelectComponent<IncidentResponsibility> implements OnInit {
 

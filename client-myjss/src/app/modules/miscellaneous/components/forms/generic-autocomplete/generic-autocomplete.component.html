@@ -1,19 +1,23 @@
 <div class="position-relative ">
   <div [formGroup]="form!" class="needs-validation">
-    <label [for]="'fl-text'+uniqueId" *ngIf="isDisplayLabel && label && label.length>0"
+    @if (isDisplayLabel && label && label.length>0) {
+      <label [for]="'fl-text'+uniqueId"
       class="form-label">{{label}}</label>
-    <div class="alert alert-info d-flex mb-2" role="alert" *ngIf="infoToDisplay">
-      <i class="ai-circle-info fs-xl"></i>
-      <div class="ps-2">{{infoToDisplay}}
+    }
+    @if (infoToDisplay) {
+      <div class="alert alert-info d-flex mb-2" role="alert">
+        <i class="ai-circle-info fs-xl"></i>
+        <div class="ps-2">{{infoToDisplay}}
+        </div>
       </div>
-    </div>
+    }
     <div>
       <ng-autocomplete [data]="filteredTypes" [searchKeyword]="searchKeyword" [placeholder]="label"
         [attr.name]="propertyName" [initialValue]="selectedItem" (selected)='optionSelected($event)'
         (inputChanged)='onChangeSearch($event)' [itemTemplate]="itemTemplate" [notFoundTemplate]="notFoundTemplate"
         [minQueryLength]="expectedMinLengthInput" [debounceTime]="debounceTime" (scrolledToEnd)="fetchNextPage()"
         #autoComp [historyIdentifier]="propertyName" historyHeading="Choix récents" [isLoading]="isLoading"
-        [disabled]="isDisabled"></ng-autocomplete>
+      [disabled]="isDisabled"></ng-autocomplete>
     </div>
     <ng-template #itemTemplate let-item>
       <a [innerHTML]="displayLabel(item)"></a>

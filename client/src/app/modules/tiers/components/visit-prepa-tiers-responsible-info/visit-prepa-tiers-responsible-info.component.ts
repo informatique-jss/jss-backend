@@ -20,9 +20,10 @@ import { TiersSearchResultService } from '../../services/tiers.search.result.ser
 import { TiersService } from '../../services/tiers.service';
 
 @Component({
-  selector: 'visit-prepa-tiers-responsible-info',
-  templateUrl: './visit-prepa-tiers-responsible-info.component.html',
-  styleUrls: ['./visit-prepa-tiers-responsible-info.component.css']
+    selector: 'visit-prepa-tiers-responsible-info',
+    templateUrl: './visit-prepa-tiers-responsible-info.component.html',
+    styleUrls: ['./visit-prepa-tiers-responsible-info.component.css'],
+    standalone: false
 })
 
 export class VisitPrepaTiersResponsibleInfoComponent implements OnInit, AfterContentChecked {

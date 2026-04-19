@@ -26,10 +26,11 @@ import { SimpleProvisionComponent } from '../simple-provision/simple-provision.c
 
 
 @Component({
-  selector: 'provision-item',
-  templateUrl: './provision-item.component.html',
-  styleUrls: ['./provision-item.component.css'],
-  viewProviders: [MatExpansionPanel]
+    selector: 'provision-item',
+    templateUrl: './provision-item.component.html',
+    styleUrls: ['./provision-item.component.css'],
+    viewProviders: [MatExpansionPanel],
+    standalone: false
 })
 export class ProvisionItemComponent implements OnInit {
 

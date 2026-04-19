@@ -8,9 +8,10 @@ import { GenericMultipleSelectComponent } from '../generic-select/generic-multip
 import { AppService } from 'src/app/services/app.service';
 
 @Component({
-  selector: 'select-day',
-  templateUrl: './select-day.component.html',
-  styleUrls: ['./select-day.component.css']
+    selector: 'select-day',
+    templateUrl: './select-day.component.html',
+    styleUrls: ['./select-day.component.css'],
+    standalone: false
 })
 export class SelectDayComponent extends GenericMultipleSelectComponent<WeekDay> implements OnInit {
 

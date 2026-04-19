@@ -6,9 +6,10 @@ import { ConstantService } from 'src/app/modules/miscellaneous/services/constant
 import { AppService } from 'src/app/services/app.service';
 
 @Component({
-  selector: 'constant',
-  templateUrl: './constant.component.html',
-  styleUrls: ['./constant.component.css']
+    selector: 'constant',
+    templateUrl: './constant.component.html',
+    styleUrls: ['./constant.component.css'],
+    standalone: false
 })
 export class ConstantComponent implements OnInit {
 

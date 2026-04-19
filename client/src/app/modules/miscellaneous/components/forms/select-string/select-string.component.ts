@@ -4,9 +4,10 @@ import { AppService } from 'src/app/services/app.service';
 import { GenericSelectComponent } from '../generic-select/generic-select.component';
 
 @Component({
-  selector: 'select-string',
-  templateUrl: '../generic-select/generic-select.component.html',
-  styleUrls: ['../generic-select/generic-select.component.css'],
+    selector: 'select-string',
+    templateUrl: '../generic-select/generic-select.component.html',
+    styleUrls: ['../generic-select/generic-select.component.css'],
+    standalone: false
 })
 export class SelectStringComponent extends GenericSelectComponent<string> implements OnInit {
 

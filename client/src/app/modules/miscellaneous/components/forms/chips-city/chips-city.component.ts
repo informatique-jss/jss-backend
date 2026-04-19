@@ -1,18 +1,19 @@
-import { ChangeDetectionStrategy, Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { debounceTime, distinctUntilChanged, filter, switchMap, tap } from 'rxjs/operators';
+import { AppService } from 'src/app/services/app.service';
 import { City } from '../../../model/City';
 import { Country } from '../../../model/Country';
 import { CityService } from '../../../services/city.service';
 import { GenericChipsComponent } from '../generic-chips/generic-chips.component';
-import { AppService } from 'src/app/services/app.service';
 
 @Component({
-  selector: 'chips-city',
-  templateUrl: './chips-city.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  styleUrls: ['./chips-city.component.css']
+    selector: 'chips-city',
+    templateUrl: './chips-city.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    styleUrls: ['./chips-city.component.css'],
+    standalone: false
 })
 export class ChipsCityComponent extends GenericChipsComponent<City> implements OnInit {
 
@@ -26,7 +27,11 @@ export class ChipsCityComponent extends GenericChipsComponent<City> implements O
    */
   @Input() modelCountry: Country | undefined;
 
-  constructor(private formBuild: UntypedFormBuilder, private cityService: CityService, private appService3: AppService) {
+  constructor(private formBuild: UntypedFormBuilder,
+    private cityService: CityService,
+    private appService3: AppService,
+    private cdr: ChangeDetectorRef
+  ) {
     super(formBuild, appService3)
   }
 
@@ -46,6 +51,7 @@ export class ChipsCityComponent extends GenericChipsComponent<City> implements O
         )
       ).subscribe(response => {
         this.filteredTypes = response;
+        this.cdr.markForCheck();
       });
   }
 

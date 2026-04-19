@@ -3,9 +3,10 @@ import { FormBuilder } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 
 @Component({
-  selector: 'counter-part-dialog',
-  templateUrl: './counter-part-dialog.component.html',
-  styleUrls: ['./counter-part-dialog.component.css']
+    selector: 'counter-part-dialog',
+    templateUrl: './counter-part-dialog.component.html',
+    styleUrls: ['./counter-part-dialog.component.css'],
+    standalone: false
 })
 export class CounterPartDialogComponent implements OnInit {
 

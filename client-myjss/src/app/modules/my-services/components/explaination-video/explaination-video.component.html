@@ -6,12 +6,14 @@
     <div class="col-lg-8 order-lg-2">
       <div class="d-md-flex h-100 rounded-5 overflow-hidden px-4 px-sm-5 pt-5 ">
         <div class="d-md-flex px-2 px-sm-0 px-xl-2 px-xxl-4 pt-xl-3">
-          <div class="position-absolute top-50 start-50 translate-middle" *ngIf="!videoPlaying">
-            <button class="btn btn-icon btn-xl btn-primary rounded-circle" aria-label="Play video"
-              (click)="playVideo()">
-              <i class="ai-play-filled"></i>
-            </button>
-          </div>
+          @if (!videoPlaying) {
+            <div class="position-absolute top-50 start-50 translate-middle">
+              <button class="btn btn-icon btn-xl btn-primary rounded-circle" aria-label="Play video"
+                (click)="playVideo()">
+                <i class="ai-play-filled"></i>
+              </button>
+            </div>
+          }
 
           <div class="w-100 flex-md-shrink-0 rounded-5 mx-auto video-display ">
             <video #videoPlayer class="w-100 h-100 position-absolute top-0 start-0" controls [poster]="posterPath">
@@ -46,16 +48,18 @@
         </div>
       </a>
     </div>
-    <div *ngIf="thirdStepTitle && thirdStepDescription " class="col-sm-6 col-lg-6 order-lg-4">
-      <a class="card border-0 h-100 text-decoration-none" style="cursor: pointer;" (click)="jumpTo(thirdJumpTo)">
-        <div class="card border-0 h-100 py-lg-2 py-xl-4">
-          <div class="card-body">
-            <p class="text-grey">Étape 03</p>
-            <h3 class="text-white">{{thirdStepTitle}}</h3>
-            <p class="mb-0 text-grey">{{thirdStepDescription}}</p>
+    @if (thirdStepTitle && thirdStepDescription ) {
+      <div class="col-sm-6 col-lg-6 order-lg-4">
+        <a class="card border-0 h-100 text-decoration-none" style="cursor: pointer;" (click)="jumpTo(thirdJumpTo)">
+          <div class="card border-0 h-100 py-lg-2 py-xl-4">
+            <div class="card-body">
+              <p class="text-grey">Étape 03</p>
+              <h3 class="text-white">{{thirdStepTitle}}</h3>
+              <p class="mb-0 text-grey">{{thirdStepDescription}}</p>
+            </div>
           </div>
-        </div>
-      </a>
-    </div>
+        </a>
+      </div>
+    }
   </div>
 </section>

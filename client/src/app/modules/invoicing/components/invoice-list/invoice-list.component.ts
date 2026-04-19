@@ -21,9 +21,10 @@ import { InvoiceService } from '../../services/invoice.service';
 import { getColumnLink } from '../invoice-tools';
 
 @Component({
-  selector: 'invoice-list',
-  templateUrl: './invoice-list.component.html',
-  styleUrls: ['./invoice-list.component.css']
+    selector: 'invoice-list',
+    templateUrl: './invoice-list.component.html',
+    styleUrls: ['./invoice-list.component.css'],
+    standalone: false
 })
 export class InvoiceListComponent implements OnInit, AfterContentChecked {
 

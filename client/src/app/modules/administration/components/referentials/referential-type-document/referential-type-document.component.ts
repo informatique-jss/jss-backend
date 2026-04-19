@@ -11,9 +11,10 @@ import { ConstantService } from '../../../../miscellaneous/services/constant.ser
 import { AttachmentType } from 'src/app/modules/miscellaneous/model/AttachmentType';
 
 @Component({
-  selector: 'referential-type-document',
-  templateUrl: './referential-type-document.component.html',
-  styleUrls: ['./../generic-referential/generic-referential.component.css']
+    selector: 'referential-type-document',
+    templateUrl: './referential-type-document.component.html',
+    styleUrls: ['./../generic-referential/generic-referential.component.css'],
+    standalone: false
 })
 export class ReferentialTypeDocumentComponent extends GenericReferentialComponent<TypeDocument> implements OnInit {
   constructor(private typeDocumentService: TypeDocumentService,

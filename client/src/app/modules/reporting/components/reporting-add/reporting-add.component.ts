@@ -10,9 +10,10 @@ import { UserReportingService } from '../../services/user.reporting.service';
 import { ReportingComponent } from '../reporting/reporting.component';
 
 @Component({
-  selector: 'app-reporting-add',
-  templateUrl: './reporting-add.component.html',
-  styleUrls: ['./reporting-add.component.css']
+    selector: 'app-reporting-add',
+    templateUrl: './reporting-add.component.html',
+    styleUrls: ['./reporting-add.component.css'],
+    standalone: false
 })
 export class ReportingAddComponent implements OnInit {
 

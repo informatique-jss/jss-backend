@@ -8,9 +8,10 @@ import { AppService } from 'src/app/services/app.service';
 import { GenericChipsComponent } from '../generic-chips/generic-chips.component';
 
 @Component({
-  selector: 'chips-responsable',
-  templateUrl: './chips-responsable.component.html',
-  styleUrls: ['./chips-responsable.component.css']
+    selector: 'chips-responsable',
+    templateUrl: './chips-responsable.component.html',
+    styleUrls: ['./chips-responsable.component.css'],
+    standalone: false
 })
 export class ChipsResponsableComponent extends GenericChipsComponent<Responsable> implements OnInit {
 

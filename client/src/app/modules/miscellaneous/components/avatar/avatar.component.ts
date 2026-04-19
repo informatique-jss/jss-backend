@@ -3,9 +3,10 @@ import { Employee } from 'src/app/modules/profile/model/Employee';
 import { EmployeeService } from 'src/app/modules/profile/services/employee.service';
 
 @Component({
-  selector: 'avatar',
-  templateUrl: './avatar.component.html',
-  styleUrls: ['./avatar.component.css']
+    selector: 'avatar',
+    templateUrl: './avatar.component.html',
+    styleUrls: ['./avatar.component.css'],
+    standalone: false
 })
 export class AvatarComponent implements OnInit {
 

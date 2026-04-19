@@ -28,10 +28,11 @@ import { SettlementBillingComponent } from '../settlement-billing/settlement-bil
 import { PrincipalComponent } from '../tiers-main/tiers-main.component';
 
 @Component({
-  selector: 'tiers',
-  templateUrl: './tiers.component.html',
-  styleUrls: ['./tiers.component.css'],
-  encapsulation: ViewEncapsulation.None,
+    selector: 'tiers',
+    templateUrl: './tiers.component.html',
+    styleUrls: ['./tiers.component.css'],
+    encapsulation: ViewEncapsulation.None,
+    standalone: false
 })
 export class TiersComponent implements OnInit, AfterContentChecked {
 

@@ -3,9 +3,10 @@ import { FormBuilder } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
-  selector: 'edit-comment-dialog.component',
-  templateUrl: './edit-comment-dialog.component.html',
-  styleUrls: ['./edit-comment-dialog.component.css']
+    selector: 'edit-comment-dialog.component',
+    templateUrl: './edit-comment-dialog.component.html',
+    styleUrls: ['./edit-comment-dialog.component.css'],
+    standalone: false
 })
 export class EditCommentDialogComponent implements OnInit {
   title: string = "Editer le commentaire"

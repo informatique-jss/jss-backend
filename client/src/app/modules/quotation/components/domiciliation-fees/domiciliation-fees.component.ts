@@ -14,9 +14,10 @@ import { DomiciliationFeeService } from '../../services/domiciliation.fee.servic
 import { ProvisionTypeService } from '../../services/provision.type.service';
 
 @Component({
-  selector: 'domiciliation-fees',
-  templateUrl: './domiciliation-fees.component.html',
-  styleUrls: ['./domiciliation-fees.component.css']
+    selector: 'domiciliation-fees',
+    templateUrl: './domiciliation-fees.component.html',
+    styleUrls: ['./domiciliation-fees.component.css'],
+    standalone: false
 })
 export class DomiciliationFeesComponent implements OnInit {
 

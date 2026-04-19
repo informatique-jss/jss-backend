@@ -15,7 +15,7 @@
 <section>
   <div class="jarallax overflow-hidden z-2 d-none d-md-block" data-speed="0.5">
     <div class="jarallax-img"
-      style="background-image: url('assets/img/my-jss-tools/mandatory-documents-jarallax.jpg');"></div>
+    style="background-image: url('assets/img/my-jss-tools/mandatory-documents-jarallax.jpg');"></div>
   </div>
   <div class="d-block d-md-none">
     <img src="assets/img/my-jss-tools/mandatory-documents-jarallax.jpg" />
@@ -25,7 +25,7 @@
 <section class="container py-5">
   <h2 class="m-4 text-center">Trouvez rapidement les pièces requises</h2>
   <p class="text-center">Consultez la liste de nos services et découvrez les documents à fournir. Utilisez la barre de
-    recherche pour accéder rapidement aux pièces nécessaires.</p>
+  recherche pour accéder rapidement aux pièces nécessaires.</p>
 
   <div class="w-100 my-3 d-flex justify-content-between">
     <div class="col-12">
@@ -34,38 +34,44 @@
           <div class="row align-items-center">
             <generic-input style="flex-grow: 1;" [(model)]="searchText" label="Rechercher" [form]="practicalSheetsForm"
               propertyName="secondSearchText" [isMandatory]="false" [isDisabled]="false" [isDisplayLabel]="false"
-              (onFormChange)="applyFilterOnServiceTypes()" [icon]="'search'" class="btn-search col"></generic-input>
-            <button *ngIf="searchText" class="col-1 btn btn-link btn-search" (click)="clearSearch()">
-              <i class="ai ai-cross-alt"></i>
-            </button>
+            (onFormChange)="applyFilterOnServiceTypes()" [icon]="'search'" class="btn-search col"></generic-input>
+            @if (searchText) {
+              <button class="col-1 btn btn-link btn-search" (click)="clearSearch()">
+                <i class="ai ai-cross-alt"></i>
+              </button>
+            }
           </div>
         </div>
       </div>
     </div>
   </div>
-  <div class="accordion-item border-top mb-0" *ngIf="!filteredServiceTypesByFamily">
-    <div class="accordion-header">
-      <p class="card-text placeholder-glow">
-        <span class="placeholder placeholder-sm col-7 me-2"></span>
-        <span class="placeholder placeholder-sm col-4"></span>
-        <span class="placeholder placeholder-sm col-4 me-2"></span>
-        <span class="placeholder placeholder-sm col-6"></span>
-        <span class="placeholder placeholder-sm col-8"></span>
-      </p>
+  @if (!filteredServiceTypesByFamily) {
+    <div class="accordion-item border-top mb-0">
+      <div class="accordion-header">
+        <p class="card-text placeholder-glow">
+          <span class="placeholder placeholder-sm col-7 me-2"></span>
+          <span class="placeholder placeholder-sm col-4"></span>
+          <span class="placeholder placeholder-sm col-4 me-2"></span>
+          <span class="placeholder placeholder-sm col-6"></span>
+          <span class="placeholder placeholder-sm col-8"></span>
+        </p>
+      </div>
     </div>
-  </div>
+  }
   <ul class="nav nav-tabs" role="tablist">
-    <ng-container *ngFor="let item of serviceFamilies;">
-      <li class="nav-item"
-        *ngIf="filteredServiceTypesByFamily[item.id] && filteredServiceTypesByFamily[item.id].length>0">
-        <a class="nav-link" [class.active]="item == selectedFamilyTab" (click)="selectFamilyTab(item)">
-          {{item.customLabel}}
-        </a>
-      </li>
-    </ng-container>
+    @for (item of serviceFamilies; track item) {
+      @if (filteredServiceTypesByFamily[item.id] && filteredServiceTypesByFamily[item.id].length>0) {
+        <li class="nav-item"
+          >
+          <a class="nav-link" [class.active]="item == selectedFamilyTab" (click)="selectFamilyTab(item)">
+            {{item.customLabel}}
+          </a>
+        </li>
+      }
+    }
   </ul>
-  <ng-container *ngFor="let serviceType of filteredServiceTypesByFamily[selectedFamilyTab.id];">
-    <ng-container *ngIf="serviceType">
+  @for (serviceType of filteredServiceTypesByFamily[selectedFamilyTab.id]; track serviceType) {
+    @if (serviceType) {
       <div class="card dark-blue-dropdown rounded-3 mt-3 ">
         <div class="card-header d-flex justify-content-between align-items-center p-0 py-2 pointer"
           (click)="goToDetailServiceType(serviceType)">
@@ -75,8 +81,8 @@
           </button>
         </div>
       </div>
-    </ng-container>
-  </ng-container>
+    }
+  }
 </section>
 
 <div class="pb-5 mb-md-3 mb-lg-4 mb-xxl-5">

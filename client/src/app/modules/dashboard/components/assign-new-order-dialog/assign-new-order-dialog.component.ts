@@ -11,9 +11,10 @@ import { CustomerOrderService } from 'src/app/modules/quotation/services/custome
 import { AppService } from 'src/app/services/app.service';
 
 @Component({
-  selector: 'app-assign-new-order-dialog',
-  templateUrl: './assign-new-order-dialog.component.html',
-  styleUrls: ['./assign-new-order-dialog.component.css']
+    selector: 'app-assign-new-order-dialog',
+    templateUrl: './assign-new-order-dialog.component.html',
+    styleUrls: ['./assign-new-order-dialog.component.css'],
+    standalone: false
 })
 export class AssignNewOrderDialogComponent implements OnInit {
 

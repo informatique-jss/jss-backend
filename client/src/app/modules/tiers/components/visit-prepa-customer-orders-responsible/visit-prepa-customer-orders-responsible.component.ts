@@ -18,9 +18,10 @@ import { Responsable } from '../../model/Responsable';
 import { Tiers } from '../../model/Tiers';
 
 @Component({
-  selector: 'visit-prepa-customer-orders-responsible',
-  templateUrl: './visit-prepa-customer-orders-responsible.component.html',
-  styleUrls: ['./visit-prepa-customer-orders-responsible.component.css']
+    selector: 'visit-prepa-customer-orders-responsible',
+    templateUrl: './visit-prepa-customer-orders-responsible.component.html',
+    styleUrls: ['./visit-prepa-customer-orders-responsible.component.css'],
+    standalone: false
 })
 
 export class VisitPrepaCustomerOrdersResponsibleComponent implements OnInit, AfterContentChecked {

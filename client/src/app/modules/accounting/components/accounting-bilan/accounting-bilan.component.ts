@@ -7,9 +7,10 @@ import { AccountingBalanceViewTitle } from '../../model/AccountingBalanceViewTit
 import { AccountingBalanceViewTitleService } from '../../services/accounting.balance.view.title.service';
 
 @Component({
-  selector: 'accounting-bilan',
-  templateUrl: './accounting-bilan.component.html',
-  styleUrls: ['./accounting-bilan.component.css']
+    selector: 'accounting-bilan',
+    templateUrl: './accounting-bilan.component.html',
+    styleUrls: ['./accounting-bilan.component.css'],
+    standalone: false
 })
 export class AccountingBilanComponent implements OnInit {
 

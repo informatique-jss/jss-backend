@@ -15,9 +15,10 @@ import { CommentSearch } from '../../model/CommentSearch';
 import { CommentService } from '../../services/comment.service';
 
 @Component({
-  selector: 'myjss-comment-management',
-  templateUrl: './myjss-comment-management.component.html',
-  styleUrls: ['./myjss-comment-management.component.css']
+    selector: 'myjss-comment-management',
+    templateUrl: './myjss-comment-management.component.html',
+    styleUrls: ['./myjss-comment-management.component.css'],
+    standalone: false
 })
 export class MyjssCommentManagementComponent implements OnInit, AfterContentChecked {
 

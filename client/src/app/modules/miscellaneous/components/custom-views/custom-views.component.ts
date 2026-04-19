@@ -8,9 +8,10 @@ import { AppService } from 'src/app/services/app.service';
 import { RestUserPreferenceService } from '../../../../services/rest.user.preference.service';
 
 @Component({
-  selector: 'custom-views',
-  templateUrl: './custom-views.component.html',
-  styleUrls: ['./custom-views.component.css'],
+    selector: 'custom-views',
+    templateUrl: './custom-views.component.html',
+    styleUrls: ['./custom-views.component.css'],
+    standalone: false
 })
 export class CustomViewsComponent<T, U extends IWorkflowElement<T>> implements OnInit {
 

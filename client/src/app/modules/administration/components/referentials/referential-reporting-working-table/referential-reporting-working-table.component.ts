@@ -7,9 +7,10 @@ import { AppService } from 'src/app/services/app.service';
 import { GenericReferentialComponent } from '../generic-referential/generic-referential-component';
 
 @Component({
-  selector: 'referential-reporting-working-table',
-  templateUrl: './referential-reporting-working-table.component.html',
-  styleUrls: ['./../generic-referential/generic-referential.component.css']
+    selector: 'referential-reporting-working-table',
+    templateUrl: './referential-reporting-working-table.component.html',
+    styleUrls: ['./../generic-referential/generic-referential.component.css'],
+    standalone: false
 })
 export class ReferentialReportingWorkingTableComponent extends GenericReferentialComponent<ReportingWorkingTable> implements OnInit {
   constructor(private reportingWorkingTableService: ReportingWorkingTableService,

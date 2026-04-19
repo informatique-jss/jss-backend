@@ -1,25 +1,29 @@
-<div *ngIf="reporting">
-  <div class="mat-elevation-z2 form-div">
-    <div class=" full-width padding-top">
-      <form [formGroup]="userReportingForm">
-        <table class="full-width">
-          <tr>
-            <select-reporting-dataset [(model)]="reporting.dataset" label="Jeu de données" [form]="userReportingForm"
-              (onFormChange)="selectDataSet($event,[])" propertyName="dataset" [isMandatory]="true"
+@if (reporting) {
+  <div>
+    <div class="mat-elevation-z2 form-div">
+      <div class=" full-width padding-top">
+        <form [formGroup]="userReportingForm">
+          <table class="full-width">
+            <tr>
+              <select-reporting-dataset [(model)]="reporting.dataset" label="Jeu de données" [form]="userReportingForm"
+                (onFormChange)="selectDataSet($event,[])" propertyName="dataset" [isMandatory]="true"
               [isDisabled]="false"></select-reporting-dataset>
-          </tr>
-          <tr>
-            <generic-input [(model)]="reporting.name" label="Nom du rapport" [form]="userReportingForm"
+            </tr>
+            <tr>
+              <generic-input [(model)]="reporting.name" label="Nom du rapport" [form]="userReportingForm"
               propertyName="name" [isMandatory]="true" [isDisabled]="false" [maxLength]="250"></generic-input>
-          </tr>
-        </table>
-      </form>
+            </tr>
+          </table>
+        </form>
+      </div>
     </div>
-  </div>
-  <reporting [hidden]="!dataToDisplay" [settings]="reporting.settings"
+    <reporting [hidden]="!dataToDisplay" [settings]="reporting.settings"
     (columnsChange)="selectDataSet(reporting.dataset,$event)"></reporting>
-  <button matTooltip="Sauvegarder" mat-fab color="warn" class="fab-button" (click)="saveReporting()"
-    *ngIf="reporting && reporting.dataset">
-    <mat-icon>save</mat-icon>
-  </button>
-</div>
+    @if (reporting && reporting.dataset) {
+      <button matTooltip="Sauvegarder" mat-fab color="warn" class="fab-button" (click)="saveReporting()"
+        >
+        <mat-icon>save</mat-icon>
+      </button>
+    }
+  </div>
+}

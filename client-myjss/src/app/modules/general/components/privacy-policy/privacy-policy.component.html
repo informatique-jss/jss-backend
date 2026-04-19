@@ -3,33 +3,40 @@
     <ol class="pt-lg-5 pb-lg-4 pb-2 breadcrumb">
       <li class="breadcrumb-item"><a routerLink="/">Accueil</a></li>
       <li class="breadcrumb-item">
-        <span *ngIf="selectedTab">{{ selectedTab.label }}</span>
+        @if (selectedTab) {
+        <span>{{ selectedTab.label }}</span>
+        }
       </li>
     </ol>
   </nav>
 
   <div class="d-flex justify-content-between align-items-center mb-3">
     <ul class="nav nav-tabs" role="tablist">
-      <li class="nav-item" *ngFor="let tab of tabs">
+      @for (tab of tabs; track tab.id) {
+      <li class="nav-item">
         <a class="nav-link" [class.active]="selectedTab.id === tab.id" (click)="selectTab(tab)">
           <i class="fi-home me-2"></i>
           {{ tab.label }}
         </a>
       </li>
+      }
     </ul>
 
-    <a *ngIf="selectedTab && selectedTab.pdf" [href]="selectedTab.pdf" target="_blank" rel="noopener noreferrer"
+    @if (selectedTab && selectedTab.pdf) {
+    <a [href]="selectedTab.pdf" target="_blank" rel="noopener noreferrer"
       class="btn btn-outline-light ms-3 d-flex align-items-center" title="Télécharger le document">
       <i class="bi bi-download me-2"></i>
       Télécharger
     </a>
+    }
 
   </div>
 </section>
 
 <section class="container pb-5">
   <div class="tab-content mt-4">
-    <div class="tab-pane fade show active" *ngIf="selectedTab.id === 'privacy-policy'">
+    @if (selectedTab.id === 'privacy-policy') {
+    <div class="tab-pane fade show active">
       <div class="row">
         <aside class="col-3 me-5">
           <h4 class="pt-3 pt-lg-1 mb-4">Sommaire</h4>
@@ -91,7 +98,6 @@
             </li>
           </ul>
         </aside>
-
         <div class="col-8">
           <h1 class="mb-5">Politique de confidentialité</h1>
           <p>Dernière mise à jour : 01/08/2025</p>
@@ -101,16 +107,13 @@
             RCS de Paris sous le numéro R.C.S. 552 074 627 et ayant son siège au 10 boulevard Haussmann 75009 PARIS
             (ci-après désigné « JSS ») exploite les Sites en ligne <a href="https://www.jss.fr">https://www.jss.fr</a>
             et <a href="https://www.my.jss.fr">https://www.my.jss.fr</a> (ci-après « les Sites »). <br><br>
-
             La présente politique de confidentialité a pour objectif d'informer les utilisateurs des Sites sur la
             manière dont leurs données personnelles sont collectées, utilisées, protégées et conservées et sur la
             politique des Sites en matière de cookies. <br><br>
-
             La protection de la vie privée et des données à caractère personnel constitue une priorité pour JSS, qui
             s'engage à traiter ces données conformément aux exigences de la Loi Informatique et Libertés du 6 janvier
             1978 (ci-après « loi IEL ») et du Règlement (UE) général sur la protection des données du 27 avril 2016
             (ci-après « RGPD »). <br><br>
-
             L’objectif de cette politique est de vous aider à comprendre :
           <ul>
             <li>Les finalités pour lesquelles nous traitons vos données personnelles ; </li>
@@ -129,7 +132,6 @@
             Les changements apportés figureront sur cette page. Dès lors, nous vous invitons à consulter cette politique
             régulièrement.
           </p>
-
           <h3>ARTICLE I. QUI COLLECTE VOS DONNEES ?</h3>
           <p>JSS aura le statut de Responsable de traitement pour les Traitements réalisés sur et via les Sites.<br><br>
             JSS s’engage à protéger toutes les informations liées aux achats effectués sur les Sites ainsi que toutes
@@ -152,17 +154,14 @@
             Ceci précisé, la présente politique de confidentialité concerne les traitements de données réalisés par JSS
             en sa qualité de responsable de traitement.
           </p>
-
           <h3>ARTICLE II. QUELLES SONT LES CATEGORIES DE DONNEES QUE NOUS TRAITONS ?</h3>
           <p>D’une manière générale, les utilisateurs peuvent visiter et naviguer sur les Sites sans communiquer leurs
             données personnelles, c’est-à-dire des informations permettant de les identifier.<br><br>
             Toutefois, JSS est amenée à collecter les données personnelles dans le cadre de son activité commerciale,
             que cela soit en tant qu’éditeur de presse ou fournisseur de services juridiques (publication d’annonce
             légale, gestion des formalités légales, demande d’informations, etc).<br><br>
-
             Le caractère obligatoire ou facultatif des données personnelles collectées et les éventuelles conséquences
             d'un défaut de réponse sont indiqués lors de leur(s) collecte(s) sur les formulaires associés.<br><br>
-
             Vous pouvez consulter le détail des données à caractère personnel que nous sommes susceptibles d’avoir sur
             vous ci-après.<br><br>
             <i>NB : le détail des informations fournies ci-après n’a pas vocation à être exhaustif et vise avant tout à
@@ -193,8 +192,6 @@
             Les Sites sont édités et hébergés par la société JSS. Les données collectées sont hébergées et traitées en
             France.
           </p>
-
-
           <h3>ARTICLE III. POURQUOI NOUS TRAITONS VOS DONNEES (FINALITES ET BASES LEGALES) ?</h3>
           <p>Dans le cadre de l’utilisation des Sites, la société JSS est amenée à collecter des données.
           </p>
@@ -325,7 +322,6 @@
               </tbody>
             </table>
           </div>
-
           <h3>ARTICLE IV. QUI SONT LES DESTINATAIRES DES DONNEES PERSONNELLES ?</h3>
           <p>Dans la limite de leurs attributions respectives et pour les finalités rappelées à l’article III, les
             principales personnes qui seront susceptibles d’avoir accès à vos données sont les suivantes :</p>
@@ -343,7 +339,6 @@
             Vos données à caractère personnel ne sont ni communiquées, ni échangées, ni vendues ni louées sans votre
             consentement exprès préalable conformément aux dispositions légales et réglementaires applicables.
           </p>
-
           <h3>ARTICLE V. QUELS SONT VOS DROITS ?</h3>
           <p>Conformément à la législation applicable, vous disposez des droits suivants sur vos données personnelles :
           </p>
@@ -379,10 +374,8 @@
             <li>Soit par mail à l’adresse suivante : contact&#64;jss.fr</li>
             <li>Soit par courrier à JSS, 10 Boulevard Haussmann, 75009 Paris</li>
           </ul>
-
           <p>Vous disposez également de la possibilité d’introduire une réclamation auprès d’une autorité de contrôle
             compétente et notamment de la CNIL (https://www.cnil.fr/fr/plaintes).</p>
-
           <div class="container serie-border p-2 px-4 my-4">
             <h4>EN SAVOIR PLUS</h4>
             <p class="mb-0">Lorsqu’il s’agit des traitements effectués par JSS dans le cadre de la mise à disposition de
@@ -390,8 +383,6 @@
               cas échéant d’un motif légitime lorsque celui-ci est exigé par la loi.
             </p>
           </div>
-
-
           <h3>ARTICLE VI. VOS DONNEES SONT-ELLES TRANSFEREES EN DEHORS DE L’UE ?</h3>
           <p>Par principe dans le cadre de la mise en œuvre des différents traitements visés dans cette Politique, JSS
             n’effectue pas de traitement de données en dehors de l’Espace Economique Européen (ci-après l’« EEE »).
@@ -402,7 +393,6 @@
             Vous pouvez demander à accéder aux documents assurant des garanties appropriées contractuelles en en faisant
             la demande par email.
           </p>
-
           <h3>ARTICLE VII. COMBIEN DE TEMPS LES DONNEES PERSONNELLES SONT-ELLES CONSERVEES ? </h3>
           <p>Les données personnelles collectées par JSS sont conservées uniquement pour le temps nécessaire, jusqu’à la
             réalisation des finalités poursuivies et décrites à l’article 3 de la présente Politique de Confidentialité.
@@ -493,7 +483,6 @@
               </tbody>
             </table>
           </div>
-
           <h3>ARTICLE VIII. SECURITE DES DONNEES</h3>
           <p>JSS respecte le RGPD et la LIL en matière de sécurité de vos données (confidentialité, intégrité,
             disponibilité) et la résilience de nos systèmes d’information. Elle met en œuvre des mesures techniques et
@@ -507,13 +496,11 @@
             identifiants et mots de passe confidentiels, protocole https sécurisé, journalisation et traçabilité des
             connexions, chiffrement de certaines données…).
           </p>
-
           <h3>ARTICLE IX. MODIFICATION DE LA POLITIQUE DE CONFIDENTIALITE</h3>
           <p>Nous nous réservons le droit de modifier la présente politique de confidentialité à tout moment pour
             refléter les évolutions légales ou fonctionnelles.<br><br>
             Nous vous informerons de toute modification substantielle via le Site ou par e-mail.
           </p>
-
           <h3>ARTICLE X. POLITIQUE EN MATIÈRE DE COOKIES</h3>
           <p>Les Sites utilise des cookies pour assurer son bon fonctionnement et améliorer l’expérience utilisateur.
           </p>
@@ -542,7 +529,6 @@
               pour objectif de fournir des informations et des statistiques sur la pertinence de leur diffusion (nombre
               d’utilisateurs cliquant sur la publicité, nombre de fois où elle est affichée, etc.) </li>
           </ul>
-
           <div class="p-2">
             <table style="background-color: var(--ar-secondary-bg-subtle); color:var(--ar-primary)">
               <thead>
@@ -581,20 +567,19 @@
               </tbody>
             </table>
           </div>
-
           <div>
             Vous pouvez réinitialiser vos préférences de cookies en cliquant <a href="javascript:void(0)"
               (click)="resetCookies()">ici</a>
           </div>
-
         </div>
       </div>
     </div>
-    <div class="tab-pane fade show active" *ngIf="selectedTab.id === 'disclaimer'">
+    }
+    @if (selectedTab.id === 'disclaimer') {
+    <div class="tab-pane fade show active">
       <div class="row">
         <aside class="col-lg-3 mb-4 mb-lg-0 me-5">
         </aside>
-
         <div class="col-lg-8">
           <h1 class="mb-5">Mentions légales</h1>
           <p>Dernière mise à jour : 01/08/2025</p>
@@ -637,8 +622,10 @@
         </div>
       </div>
     </div>
+    }
 
-    <div class="tab-pane fade show active" *ngIf="selectedTab.id === 'terms'">
+    @if (selectedTab.id === 'terms') {
+    <div class="tab-pane fade show active">
       <div class="row">
         <aside class="col-lg-3 mb-4 mb-lg-0 me-5">
           <div>
@@ -727,7 +714,6 @@
             </ul>
           </div>
         </aside>
-
         <div class="col-lg-8">
           <h1 class="mb-5">Conditions générales d'utilisation</h1>
           <i>Toute utilisation effectuée à quelque titre que ce soit des Sites impliquent obligatoirement l’acceptation
@@ -786,7 +772,6 @@
             <li> « Utilisateur » : désigne toute personne qui accède et navigue sur les Sites qu’il soit Client, Abonné
               ou simple visiteur.</li>
           </ul>
-
           <h3>ARTICLE 3. ACCEPTATION DES CONDITIONS GENERALES D’UTILISATION </h3>
           <p class="pb-2">L’utilisation des Sites et des Services qui y sont proposés implique l’acceptation des
             présentes CGU. <br><br>
@@ -824,7 +809,6 @@
               <li> Adresse email ; et</li>
             </ul>
           </ul>
-
           <p>L’Utilisateur souhaitant devenir Client s’engage à fournir à JSS des données complètes, exactes, sincères,
             loyales et à jour, qui ne portent pas atteintes, à quelque titre que ce soit, aux droits des tiers et à
             communiquer à JSS toute mise à jour nécessaire des données communiquées lors de son inscription.<br><br>
@@ -842,7 +826,6 @@
             L’Utilisateur est entièrement responsable de l’exactitude et de la mise à jour des données communiquées dans
             le cadre de l’ouverture et de la gestion de son Compte.<br><br>
           </p>
-
           <h5>5.1.2. Identifiants</h5>
           <p>
             Le Client sera seul responsable de l'utilisation de ses Identifiants ou des actions faites par
@@ -858,7 +841,6 @@
             délai, par message électronique adressé à l’adresse suivante : <a
               href="mailto:contact@jss.fr">contact&#64;jss.fr</a>.
           </p>
-
           <h5>5.1.3. Désinscription</h5>
           <p>
             Le Client peut à tout moment fermer son Compte en adressant un courriel à l’adresse : <a
@@ -867,7 +849,6 @@
             JSS procèdera dans les meilleurs délais à la désactivation du Compte et adressera à l’Utilisateur un
             courriel lui confirmant la clôture de son Compte.
           </p>
-
           <h3>ARTICLE 6. SERVICES</h3>
           <h4>6.1. Services accessibles à tout Utilisateur </h4>
           <p>En se rendant sur le Site my.jss.fr, l’Utilisateur aura accès, gratuitement, à différents
@@ -897,7 +878,6 @@
               <li> Accéder aux articles premium sous réserve d’un abonnement au journal.</li>
             </ul>
           </ul>
-
           <h5>6.2.1. Processus de Commande de Services</h5>
           <p class="pb-2">Tout Utilisateur ayant créé un Compte a la possibilité de passer une Commande de Services
             proposée par JSS.<br><br>
@@ -949,7 +929,6 @@
             L’Utilisateur pourra à tout moment se désinscrire des newsletters en cliquant sur le lien prévu à cet effet
             présent dans chaque courriel envoyé par JSS.<br><br>
           </p>
-
           <h3>ARTICLE 7. OBLIGATIONS DES PARTIES</h3>
           <h4>7.1. Obligation de l’Utilisateur </h4>
           <p>Dans le cadre de l'utilisation des Sites et des Services qui y sont proposés, chaque Utilisateur s'engage à
@@ -981,7 +960,6 @@
           <p>
             L’Utilisateur utilise les Services sous sa responsabilité entière et exclusive.
           </p>
-
           <h4>7.2. Obligation de JSS </h4>
           <p>
             L’obligation générale de JSS est une obligation de moyens. Il ne pèse sur JSS aucune obligation de résultat
@@ -990,7 +968,6 @@
             JSS s’engage à mettre tous les moyens en œuvre pour assurer une continuité d’accès et d’utilisation des
             Sites 7 jours sur 7 et 24 heures sur 24.
           </p>
-
           <h3>ARTICLE 8. RESPONSABILITE</h3>
           <p>
             L’Utilisateur est seul responsable de son utilisation des Sites et des Services qui y sont proposés. </p>
@@ -1028,7 +1005,6 @@
             responsable des dommages causés aux tiers et des conséquences des réclamations ou actions qui pourraient en
             découler.
           </p>
-
           <h3>ARTICLE 9. FORCE MAJEURE</h3>
           <p>
             La responsabilité de JSS ne pourra pas être mise en œuvre si la non-exécution ou le retard dans l’exécution
@@ -1043,7 +1019,6 @@
             plein droit et les parties sont libérées de leurs obligations dans les conditions prévues aux articles 1351
             et 1351-1 du Code civil.
           </p>
-
           <h3>ARTICLE 10. PROPRIETE INTELLECTUELLE</h3>
           <p>
             L’Utilisateur reconnaît les droits de propriété intellectuelle de JSS sur les Sites, ses composantes et les
@@ -1065,7 +1040,6 @@
           <p>
             Toute autre exploitation des Sites et de leur Contenu est exclue du domaine du présent droit et ne pourra
             être effectuée sans l’autorisation préalable expresse de JSS.</p>
-
           <h3>ARTICLE 11. PROTECTION DES DONNEES A CARACTERE PERSONNEL </h3>
           <p>
             Dans le cadre de l’exploitation des Sites, JSS, responsable de traitement, est susceptible de collecter des
@@ -1089,11 +1063,9 @@
             la protection des Données à caractère personnel, aux traitements effectués par JSS et aux modalités
             d’exercice des droits.
           </p>
-
           <h3>ARTICLE 12. SERVICE UTILISATEURS</h3>
           <p>Toute question concernant l’utilisation ou le fonctionnement des Sites et des Services peut être formulée
             via le formulaire contact accessible sur les Sites. </p>
-
           <h3>ARTICLE 13. VALIDITE DES CGU </h3>
           <p>
             Si l’une quelconque des stipulations des présentes CGU venait à être déclarée nulle au regard d’une
@@ -1103,14 +1075,12 @@
           <p>
             Une telle modification ou décision n’autorise en aucun cas les Utilisateurs à méconnaitre les présentes CGU.
           </p>
-
           <h3>ARTICLE 14. MODIFICATION DES CGU </h3>
           <p>
             Les présentes CGU s’appliquent à tout Utilisateur navigant sur les Sites.</p>
           <p>
             Les CGU pourront être modifiées et mises à jour par JSS à tout moment, notamment pour s’adapter à
             l’évolution législative ou réglementaire. </p>
-
           <h3>ARTICLE 15. DISPOSITIONS GENERALES </h3>
           <p>
             Le fait que l'une des Parties n'ait pas exigé l'application d'une clause quelconque des présentes CGU, que
@@ -1119,7 +1089,6 @@
           <p>
             En cas de difficulté d’interprétation entre l’un quelconque des titres figurant en tête des clauses, et
             l’une quelconque de celles-ci, les titres seront déclarés inexistants.</p>
-
           <h3>ARTICLE 16. COMPETENCE ET DROIT APPLICABLE </h3>
           <p>
             LES PRESENTES CONDITIONS GENERALES D’UTILISATION, LEUR EXECUTION ET LEUR INTERPRETATION AINSI QUE LES
@@ -1137,6 +1106,7 @@
         </div>
       </div>
     </div>
+    }
 
   </div>
 </section>

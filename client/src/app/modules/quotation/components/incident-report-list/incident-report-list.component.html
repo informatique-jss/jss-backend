@@ -5,5 +5,7 @@
     </sort-table>
   </div>
 </div>
-<add-incident-report *ngIf="selectedIncident" [incident]="selectedIncident"
+@if (selectedIncident) {
+  <add-incident-report [incident]="selectedIncident"
   [customerOrder]="customerOrder"></add-incident-report>
+}

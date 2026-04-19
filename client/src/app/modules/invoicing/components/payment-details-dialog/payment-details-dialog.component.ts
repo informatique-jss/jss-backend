@@ -22,9 +22,10 @@ import { Refund } from '../../model/Refund';
 import { PaymentService } from '../../services/payment.service';
 
 @Component({
-  selector: 'payment-details-dialog',
-  templateUrl: './payment-details-dialog.component.html',
-  styleUrls: ['./payment-details-dialog.component.css']
+    selector: 'payment-details-dialog',
+    templateUrl: './payment-details-dialog.component.html',
+    styleUrls: ['./payment-details-dialog.component.css'],
+    standalone: false
 })
 export class PaymentDetailsDialogComponent implements OnInit, AfterContentChecked {
 

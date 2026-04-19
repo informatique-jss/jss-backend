@@ -1,17 +1,18 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit, SimpleChanges } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { Observable } from 'rxjs';
+import { AppService } from 'src/app/services/app.service';
 import { City } from '../../../model/City';
 import { Country } from '../../../model/Country';
 import { CityService } from '../../../services/city.service';
 import { GenericAutocompleteComponent } from '../generic-autocomplete/generic-autocomplete.component';
-import { AppService } from 'src/app/services/app.service';
 
 @Component({
-  selector: 'autocomplete-city',
-  templateUrl: '../generic-autocomplete/generic-autocomplete.component.html',
-  styleUrls: ['../generic-autocomplete/generic-autocomplete.component.css'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'autocomplete-city',
+    templateUrl: '../generic-autocomplete/generic-autocomplete.component.html',
+    styleUrls: ['../generic-autocomplete/generic-autocomplete.component.css'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class AutocompleteCityComponent extends GenericAutocompleteComponent<City, City> implements OnInit {
 
@@ -27,7 +28,12 @@ export class AutocompleteCityComponent extends GenericAutocompleteComponent<City
    */
   @Input() preFilterPostalCode: string | undefined;
 
-  constructor(private formBuild: UntypedFormBuilder, private cityService: CityService, private appService3: AppService) {
+  constructor(
+    private formBuild: UntypedFormBuilder,
+    private cityService: CityService,
+    private appService3: AppService,
+    private cdr: ChangeDetectorRef
+  ) {
     super(formBuild, appService3)
   }
 
@@ -38,6 +44,9 @@ export class AutocompleteCityComponent extends GenericAutocompleteComponent<City
   ngOnChanges(changes: SimpleChanges) {
     super.ngOnChanges(changes);
     if (changes && changes.preFilterPostalCode && this.preFilterPostalCode && this.preFilterPostalCode.length > 2)
-      this.searchEntities("").subscribe(response => this.filteredTypes = response);
+      this.searchEntities("").subscribe(response => {
+        this.filteredTypes = response;
+        this.cdr.markForCheck();
+      });
   }
 }

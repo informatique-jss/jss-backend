@@ -6,9 +6,10 @@ import { UserPreferenceService } from '../../../../services/user.preference.serv
 import { BatchSettings } from '../../model/BatchSettings';
 
 @Component({
-  selector: 'monitoring',
-  templateUrl: './monitoring.component.html',
-  styleUrls: ['./monitoring.component.css']
+    selector: 'monitoring',
+    templateUrl: './monitoring.component.html',
+    styleUrls: ['./monitoring.component.css'],
+    standalone: false
 })
 export class MonitoringComponent implements OnInit {
 

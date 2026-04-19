@@ -17,9 +17,10 @@ import { QuotationStatusService } from '../../services/quotation-status.service'
 import { QuotationSearchResultService } from '../../services/quotation.search.result.service';
 import { QuotationComponent } from '../quotation/quotation.component';
 @Component({
-  selector: 'quotation-list',
-  templateUrl: './quotation-list.component.html',
-  styleUrls: ['./quotation-list.component.css']
+    selector: 'quotation-list',
+    templateUrl: './quotation-list.component.html',
+    styleUrls: ['./quotation-list.component.css'],
+    standalone: false
 })
 export class QuotationListComponent implements OnInit {
   @Input() quotationSearch: QuotationSearch = {} as QuotationSearch;
